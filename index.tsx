@@ -15,9 +15,9 @@ const routes: RouteConfig[] = [
 ]
 
 const { waitUntilExit } = render(
-    <Router routes={routes} defaultRoute="task-list">
-        <App />
-    </Router>,
+    <App>
+        <Router routes={routes} defaultRoute="task-list" />
+    </App>,
 )
 
 await waitUntilExit()

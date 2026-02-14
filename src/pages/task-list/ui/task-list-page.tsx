@@ -1,6 +1,8 @@
 import type { FC } from 'react'
 
-import { Box, Text, useStdout } from 'ink'
+import { Box, useStdout } from 'ink'
+
+import { TaskTable } from '@/widgets/task-table'
 
 const TaskListPage: FC = () => {
     const {
@@ -8,25 +10,8 @@ const TaskListPage: FC = () => {
     } = useStdout()
 
     return (
-        <Box width={columns} height={rows} flexDirection="column" justifyContent="center" alignItems="center">
-            <Text color="cyan">
-                {`
-  ██████╗██╗      █████╗ ██╗   ██╗██████╗ ███████╗
- ██╔════╝██║     ██╔══██╗██║   ██║██╔══██╗██╔════╝
- ██║     ██║     ███████║██║   ██║██║  ██║█████╗
- ██║     ██║     ██╔══██║██║   ██║██║  ██║██╔══╝
- ╚██████╗███████╗██║  ██║╚██████╔╝██████╔╝███████╗
-  ╚═════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝
-
- ████████╗ █████╗ ███████╗██╗  ██╗███████╗
- ╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝██╔════╝
-    ██║   ███████║███████╗█████╔╝ ███████╗
-    ██║   ██╔══██║╚════██║██╔═██╗ ╚════██║
-    ██║   ██║  ██║███████║██║  ██╗███████║
-    ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝
-        `}
-            </Text>
-            <Text dimColor>Claude Code Task List with Ease</Text>
+        <Box width={columns} height={rows} flexDirection="column">
+            <TaskTable />
         </Box>
     )
 }

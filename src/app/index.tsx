@@ -1,15 +1,7 @@
-import type { FC } from 'react'
-
-import { TaskListPage } from '@/pages/task-list'
+import type { FC, PropsWithChildren } from 'react'
 
 import { Providers } from './providers'
 
-const App: FC = () => {
-    return (
-        <Providers>
-            <TaskListPage />
-        </Providers>
-    )
-}
+const App: FC<PropsWithChildren> = ({ children }) => <Providers>{children}</Providers>
 
 export { App }

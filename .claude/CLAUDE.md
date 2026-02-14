@@ -11,6 +11,7 @@ TUI application for managing Claude Code tasks. Provides search, view, create, e
 - **UI Framework**: Ink (React for CLI/TUI)
 - **State Management**: Jotai (internal state)
 - **Data Fetching**: TanStack Query (file system queries)
+- **Validation**: Zod (schema validation and type inference)
 - **Distribution**: Single-file executable via Bun
 - **Code Quality**: Biome (formatting and linting)
 
@@ -37,9 +38,9 @@ Follows Feature-Sliced Design architecture:
 - `src/entities/`: Business logic (task model, project model)
 - `src/shared/`: Reusable code
   - `src/shared/ui/`: Base Ink components
-  - `src/shared/lib/`: Utilities (file I/O, parsing, watching)
-  - `src/shared/api/`: File system queries (TanStack Query)
-  - `src/shared/types/`: TypeScript definitions
+  - `src/shared/lib/`: Utilities (generic helpers)
+  - `src/shared/api/`: File system "endpoints" (read/write operations, paths)
+  - `src/shared/domain/`: Domain models (Zod schemas and types)
 
 FSD rules:
 - Lower layers cannot import from upper layers
@@ -49,9 +50,17 @@ FSD rules:
 ### Key Design Principles
 - Reactive UI: File watcher triggers re-renders when tasks change
 - Type safety: Strict TypeScript types for task schema
+- Schema validation: Use Zod for runtime validation of all external data (JSON files, API responses)
 - Path discovery: Scan `~/.claude/projects/` to find all task files across projects
 - Efficient filtering: Support filtering by status, project, keywords
 - Task relationships: Display blockedBy/blocks dependencies
+
+### Validation Rules
+- **Always use Zod for object validation**
+  - Define schemas in `shared/types/` using Zod
+  - Infer TypeScript types from schemas using `z.infer<typeof schema>`
+  - Use `.safeParse()` for validation with error handling
+  - Export both schemas and inferred types from type files
 
 ## Development Commands
 
