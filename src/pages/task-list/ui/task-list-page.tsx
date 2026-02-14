@@ -1,13 +1,14 @@
 import type { FC } from 'react'
 
-import { Box, Text } from 'ink'
-import useDimensions from 'ink-use-stdout-dimensions'
+import { Box, Text, useStdout } from 'ink'
 
 const TaskListPage: FC = () => {
-    const [width = 80, height = 24] = useDimensions()
+    const {
+        stdout: { columns, rows },
+    } = useStdout()
 
     return (
-        <Box width={width} height={height} flexDirection="column" justifyContent="center" alignItems="center">
+        <Box width={columns} height={rows} flexDirection="column" justifyContent="center" alignItems="center">
             <Text color="cyan">
                 {`
   ██████╗██╗      █████╗ ██╗   ██╗██████╗ ███████╗
