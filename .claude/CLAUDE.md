@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-TUI application for managing Claude Code tasks. Provides search, view, create, edit, and delete operations for task files stored in `~/.claude/projects/*/tasks/`.
+TUI application for managing Claude Code tasks. Provides search, view, create, edit, and delete operations for task files stored in `~/.claude/tasks/`.
 
 ## Tech Stack
 
@@ -18,7 +18,7 @@ TUI application for managing Claude Code tasks. Provides search, view, create, e
 ## Architecture
 
 ### Task File Format
-- Task files are JSON stored in `~/.claude/projects/{project-hash}/tasks/{task-id}.json`
+- Task files are JSON stored in `~/.claude/tasks/{task-id}.json`
 - Each task has: id, subject, description, activeForm, status (pending/in_progress/completed), owner, blocks/blockedBy arrays, metadata
 - Files are managed by Claude Code's internal task manager
 
@@ -51,16 +51,16 @@ FSD rules:
 - Reactive UI: File watcher triggers re-renders when tasks change
 - Type safety: Strict TypeScript types for task schema
 - Schema validation: Use Zod for runtime validation of all external data (JSON files, API responses)
-- Path discovery: Scan `~/.claude/projects/` to find all task files across projects
+- Path discovery: Scan `~/.claude/tasks/` to find all task files
 - Efficient filtering: Support filtering by status, project, keywords
 - Task relationships: Display blockedBy/blocks dependencies
 
 ### Validation Rules
 - **Always use Zod for object validation**
-  - Define schemas in `shared/types/` using Zod
+  - Define schemas in `shared/domain/` using Zod
   - Infer TypeScript types from schemas using `z.infer<typeof schema>`
   - Use `.safeParse()` for validation with error handling
-  - Export both schemas and inferred types from type files
+  - Export both schemas and inferred types from domain files
 
 ## Development Commands
 

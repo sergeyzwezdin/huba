@@ -1,4 +1,6 @@
 export type { Task } from './task'
 export { taskSchema } from './task'
+export type { TaskList } from './task-list'
+export { taskListSchema } from './task-list'
 export type { TaskStatus } from './task-status'
 export { taskStatusSchema } from './task-status'

@@ -1,6 +1,6 @@
 ---
 paths:
-  - '**/src/*.ts*'
+  - '**/src/*.tsx'
 ---
 
 You are a senior React developer with a preference for clean programming and design patterns, following the best practices.

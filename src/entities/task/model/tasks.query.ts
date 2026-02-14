@@ -2,12 +2,12 @@ import { useQuery } from '@tanstack/react-query'
 
 import { getTaskList } from '@/shared/api'
 import type { Task } from '@/shared/domain'
-import { queryKeys } from '@/shared/keys'
+import { queryKeys } from '@/shared/query'
 
 /**
  * Hook to load all tasks from the file system
  *
- * @param listId - Optional list ID (defaults to CLAUDE_TASKS_LIST_ID env var or 'default')
+ * @param listId - Optional list ID (defaults to CLAUDE_CODE_TASK_LIST_ID env var or 'default')
  */
 export const useTasksQuery = (listId?: string) => {
     return useQuery({

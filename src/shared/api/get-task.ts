@@ -11,7 +11,7 @@ import { getTasksDir } from './paths'
  * Returns null if file is invalid or doesn't exist
  *
  * @param taskId - Task identifier (filename without .json extension)
- * @param listId - Optional list ID (defaults to CLAUDE_TASKS_LIST_ID env var or 'default')
+ * @param listId - Optional list ID (defaults to CLAUDE_CODE_TASK_LIST_ID env var or 'default')
  */
 export const getTask = async (taskId: string, listId?: string): Promise<Task | null> => {
     const dirPath = getTasksDir(listId)

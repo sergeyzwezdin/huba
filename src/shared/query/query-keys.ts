@@ -12,4 +12,14 @@ export const queryKeys = {
          */
         list: (listId?: string) => ['tasks', listId ?? 'default'] as const,
     },
+
+    /**
+     * Task lists query keys
+     */
+    taskLists: {
+        /**
+         * All available task lists
+         */
+        all: () => ['task-lists'] as const,
+    },
 } as const

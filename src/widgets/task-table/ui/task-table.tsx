@@ -3,15 +3,18 @@ import type { FC } from 'react'
 import { Box, Text } from 'ink'
 
 import { TaskRow, useTasksQuery } from '@/entities/task'
-import { useSelectedTaskIndex } from '@/features/task-selection'
+import { useSelectedListId } from '@/features/list-selection'
+import { useSelectedTaskIndex, useTaskNavigation } from '@/features/task-selection'
 
 /**
  * Task table widget
  * Displays a list of all tasks with selection support
  */
 const TaskTable: FC = () => {
-    const { data: tasks, isLoading, error } = useTasksQuery()
+    const [selectedListId] = useSelectedListId()
+    const { data: tasks, isLoading, error } = useTasksQuery(selectedListId ?? undefined)
     const [selectedIndex] = useSelectedTaskIndex()
+    useTaskNavigation(tasks?.length ?? 0)
 
     if (isLoading) {
         return (
