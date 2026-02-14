@@ -1,0 +1,31 @@
+{
+  "name": "claude-tasks",
+  "version": "0.1.0",
+  "description": "TUI for managing Claude Code tasks - search, view, create, edit, and delete tasks across projects",
+  "type": "module",
+  "private": true,
+  "author": "Sergey Zwezdin",
+  "homepage": "https://github.com/sergeyzwezdin/claude-tasks",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sergeyzwezdin/claude-tasks.git"
+  },
+  "scripts": {
+    "dev": "bun run index.tsx",
+    "format": "biome check",
+    "lint": "biome lint",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.3.15",
+    "@types/bun": "latest",
+    "@types/react": "^19.2.14"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "ink": "6.7.0",
+    "react": "19.2.4"
+  }
+}

@@ -1,0 +1,81 @@
+{
+    "$schema": "https://biomejs.dev/schemas/2.3.15/schema.json",
+    "vcs": {
+        "enabled": true,
+        "clientKind": "git",
+        "useIgnoreFile": true
+    },
+    "files": {
+        "ignoreUnknown": false,
+        "includes": [
+            "**",
+            "!.vscode",
+            "!**/.vscode",
+            "!.changeset",
+            "!*.code-workspace",
+            "!package.json",
+            "!tsconfig.json",
+            "!tsconfig.*.json",
+            "!src/**/generated"
+        ]
+    },
+    "formatter": {
+        "enabled": true,
+        "useEditorconfig": true,
+        "lineWidth": 120,
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineEnding": "lf",
+        "attributePosition": "auto",
+        "bracketSpacing": true,
+        "expand": "auto"
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "recommended": true
+        }
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "single",
+            "jsxQuoteStyle": "double",
+            "trailingCommas": "all",
+            "semicolons": "asNeeded",
+            "arrowParentheses": "always",
+            "bracketSameLine": true,
+            "bracketSpacing": true,
+            "attributePosition": "auto"
+        }
+    },
+    "assist": {
+        "enabled": true,
+        "actions": {
+            "source": {
+                "recommended": true,
+                "organizeImports": {
+                    "level": "on",
+                    "options": {
+                        "identifierOrder": "natural",
+                        "groups": [
+                            ["react", "react-*"],
+                            ":BLANK_LINE:",
+                            [":BUN:", ":NODE:"],
+                            ":BLANK_LINE:",
+                            [":PACKAGE:", ":PACKAGE_WITH_PROTOCOL:"],
+                            ":BLANK_LINE:",
+                            ["@/app/**", "@/pages/**", "@/widgets/**", "@/features/**", "@/entities/**", "@/shared/**"],
+                            ":BLANK_LINE:",
+                            ":ALIAS:",
+                            ":BLANK_LINE:",
+                            ":PATH:",
+                            ":BLANK_LINE:",
+                            ":URL:",
+                            "**"
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}
