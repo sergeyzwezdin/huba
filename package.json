@@ -13,6 +13,7 @@
   "scripts": {
     "dev": "bun run index.tsx",
     "format": "biome check",
+    "format:file": "biome check --write --log-level=warn",
     "lint": "biome lint",
     "test": "bun test"
   },
@@ -25,7 +26,10 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.21",
     "ink": "6.7.0",
+    "ink-use-stdout-dimensions": "^1.0.5",
+    "jotai": "^2.17.1",
     "react": "19.2.4"
   }
 }

@@ -1,5 +1,9 @@
+#!/usr/bin/env bun
+
 import { render } from 'ink'
 
-import { Index } from './src'
+import { App } from './src/app'
 
-render(<Index />)
+const { waitUntilExit } = render(<App />)
+
+await waitUntilExit()
