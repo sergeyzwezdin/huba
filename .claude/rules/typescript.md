@@ -79,7 +79,7 @@ You are a senior TypeScript developer with a preference for clean programming an
 
 - Follow SOLID principles.
 - Prefer composition over inheritance.
-- Declare interfaces to define contracts.
+- Declare types to define contracts.
 - Write small classes with a single purpose.
   - Less than 200 instructions.
   - Less than 10 public methods.

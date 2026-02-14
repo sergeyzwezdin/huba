@@ -12,6 +12,7 @@
   },
   "scripts": {
     "dev": "bun run index.tsx",
+    "typecheck": "tsc --noEmit",
     "format": "biome check",
     "format:file": "biome check --write --log-level=warn",
     "lint": "biome lint",

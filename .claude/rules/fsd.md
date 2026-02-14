@@ -324,7 +324,7 @@ feature-name/
 - Co-located tests
 
 **`model/` — Business Logic**
-- Types and interfaces
+- Types
 - Custom hooks
 - State management:
   - Jotai atoms (`*.atom.ts`): `mode.atom.ts`, `active-task.atom.ts`

@@ -58,7 +58,9 @@ FSD rules:
 - Install dependencies: `bun install`
 - Run dev mode: `bun run dev`
 - Build executable: `bun build --compile --outfile=claude-tasks`
+- Type check: `bun run typecheck`
 - Format code: `bun run format`
+- Format specific file: `bun run format:file <file>`
 - Lint code: `bun run lint`
 - Test: `bun test`
 - Single test: `bun test <filename>`
