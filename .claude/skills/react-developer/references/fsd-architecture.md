@@ -1,21 +1,15 @@
----
-paths:
-  - '**/src/**'
----
-
-# Feature-Sliced Design (FSD) Best Practices
-
-Follow Feature-Sliced Design architecture for scalable, maintainable code organization.
+# Feature-Sliced Design (FSD) Architecture
 
 ## Layer Hierarchy (Bottom to Top)
 
 ```
-app/         — Application initialization, providers, entry point
-  ├─ pages/      — Complete screens, route-level components
-  ├─ widgets/    — Composite UI blocks, page sections
-  ├─ features/   — User interactions, business features
-  ├─ entities/   — Business entities, domain models
-  └─ shared/     — Reusable code, no business logic
+src/
+├── app/         — Application initialization, providers, entry point
+├── pages/       — Complete screens, route-level components
+├── widgets/     — Composite UI blocks, page sections
+├── features/    — User interactions, business features
+├── entities/    — Business entities, domain models
+└── shared/      — Reusable code, no business logic
 ```
 
 ### Import Rules
@@ -36,38 +30,26 @@ app/         — Application initialization, providers, entry point
 
 ```typescript
 // ✅ GOOD: Upper layer imports lower layer
-// src/pages/task-list/ui/task-list-page.tsx
 import { TaskTable } from '@/widgets/task-table';
 import { useTaskFilter } from '@/features/task-filtering';
 import type { Task } from '@/entities/task';
 
 // ✅ GOOD: Cross-slice import with public API
-// src/features/task-filtering/model/use-task-filter.ts
-import { useProjectFilter } from '@/features/project-filtering'; // cross-feature dependency
+import { useProjectFilter } from '@/features/project-filtering';
 
 // ❌ BAD: Lower layer imports upper layer
-// src/entities/task/model/types.ts
-import { TaskTable } from '@/widgets/task-table'; // entities can't import widgets
+import { TaskTable } from '@/widgets/task-table'; // in entities/
 
 // ❌ BAD: Imports internal segment directly
 import { TaskTableInternal } from '@/widgets/task-table/ui/task-table-internal';
-// Use: import { TaskTable } from '@/widgets/task-table';
 ```
 
 ## Layer Purposes
 
 ### `app/` — Application Layer
 - **Purpose**: Application-wide setup and initialization
-- **Contains**:
-  - Entry point (index.tsx, main.tsx)
-  - Global providers (QueryClientProvider, theme providers)
-  - Router setup
-  - Global error boundaries
-  - App-level hooks (useApp, useStdin, useStdout)
-- **Rules**:
-  - Can import from all layers
-  - No business logic
-  - Minimal UI - mostly providers and wrappers
+- **Contains**: Entry point, global providers, router setup, global error boundaries, app-level hooks
+- **Rules**: Can import from all layers, no business logic, minimal UI
 
 ```typescript
 // src/app/index.tsx
@@ -83,16 +65,8 @@ const App: FC = () => (
 
 ### `pages/` — Page Layer
 - **Purpose**: Complete screens/routes, orchestrate widgets
-- **Contains**:
-  - Full page components
-  - Page-level layout
-  - Route-specific logic
-  - Page-level state coordination
-- **Rules**:
-  - One page per route/screen
-  - Compose widgets and features
-  - Minimal logic - delegate to widgets/features
-  - No reusable UI (extract to widgets)
+- **Contains**: Full page components, page-level layout, route-specific logic, page-level state coordination
+- **Rules**: One page per route/screen, compose widgets and features, minimal logic, no reusable UI
 
 ```typescript
 // src/pages/task-list/ui/task-list-page.tsx
@@ -110,22 +84,10 @@ const TaskListPage: FC = () => (
 
 ### `widgets/` — Widget Layer
 - **Purpose**: Composite UI blocks, autonomous page sections
-- **Contains**:
-  - Multi-feature UI compositions
-  - Complex reusable components
-  - Widget-specific state
-  - Integration of features + entities
-- **Rules**:
-  - Self-contained (can work independently)
-  - Compose features + entities
-  - Reusable across pages
-  - Can have internal sub-components
+- **Contains**: Multi-feature UI compositions, complex reusable components, widget-specific state, integration of features + entities
+- **Rules**: Self-contained, compose features + entities, reusable across pages, can have internal sub-components
 
 ```typescript
-// src/widgets/task-table/index.ts
-export { TaskTable } from './ui/task-table';
-export type { TaskTableProps } from './model/types';
-
 // src/widgets/task-table/ui/task-table.tsx
 import { Box } from 'ink';
 import { TaskRow } from '@/entities/task';
@@ -153,22 +115,10 @@ const TaskTable: FC = () => {
 
 ### `features/` — Feature Layer
 - **Purpose**: User interactions, business features
-- **Contains**:
-  - User actions (filtering, sorting, selection)
-  - Feature-specific hooks
-  - Feature UI (buttons, inputs for actions)
-  - Feature state management
-- **Rules**:
-  - Focused on single feature/interaction
-  - Stateful logic lives here
-  - Can use entities
-  - Features should be as independent as possible
+- **Contains**: User actions (filtering, sorting, selection), feature-specific hooks, feature UI, feature state management
+- **Rules**: Focused on single feature/interaction, stateful logic lives here, can use entities, features should be independent
 
 ```typescript
-// src/features/task-filtering/index.ts
-export { TaskFilterInput } from './ui/task-filter-input';
-export { useTaskFilter } from './model/use-task-filter';
-
 // src/features/task-filtering/model/use-task-filter.ts
 import { useMemo, useState } from 'react';
 import type { Task } from '@/entities/task';
@@ -186,23 +136,10 @@ export const useTaskFilter = (tasks: Task[]) => {
 
 ### `entities/` — Entity Layer
 - **Purpose**: Business entities and domain models
-- **Contains**:
-  - Domain types (Task, Project)
-  - Entity-specific UI (TaskRow, ProjectBadge)
-  - Entity utilities (task validation, parsing)
-  - Entity constants (statuses, defaults)
-- **Rules**:
-  - Represents business domain
-  - No feature-specific logic
-  - Reusable across features
-  - Pure functions preferred
+- **Contains**: Domain types, entity-specific UI, entity utilities, entity constants
+- **Rules**: Represents business domain, no feature-specific logic, reusable across features, pure functions preferred
 
 ```typescript
-// src/entities/task/index.ts
-export type { Task, TaskStatus } from './model/types';
-export { TaskRow } from './ui/task-row';
-export { parseTaskFile, isValidTask } from './lib/task-utils';
-
 // src/entities/task/model/types.ts
 export type TaskStatus = 'pending' | 'in_progress' | 'completed';
 
@@ -218,15 +155,6 @@ export type Task = {
 };
 
 // src/entities/task/ui/task-row.tsx
-import { Box, Text } from 'ink';
-import type { FC } from 'react';
-import type { Task } from '../model/types';
-
-type TaskRowProps = {
-  task: Task;
-  selected: boolean;
-};
-
 const TaskRow: FC<TaskRowProps> = ({ task, selected }) => (
   <Box>
     <Text color={selected ? 'blue' : undefined}>
@@ -234,23 +162,12 @@ const TaskRow: FC<TaskRowProps> = ({ task, selected }) => (
     </Text>
   </Box>
 );
-
-export { TaskRow };
 ```
 
 ### `shared/` — Shared Layer
 - **Purpose**: Reusable code with no business logic
-- **Contains**:
-  - UI primitives (Button, Input, Spinner)
-  - Generic utilities (date formatting, file I/O)
-  - API/query setup (TanStack Query, file system queries)
-  - Common types (Nullable, AsyncState)
-  - Constants (colors, paths)
-- **Rules**:
-  - No business logic
-  - No knowledge of entities/features
-  - Highly reusable
-  - Could be extracted to separate package
+- **Contains**: UI primitives, generic utilities, API/query setup, common types, constants
+- **Rules**: No business logic, no knowledge of entities/features, highly reusable, could be extracted to separate package
 
 **Shared segments:**
 - `shared/ui/` — Base components (Button, Spinner, ErrorMessage)
@@ -258,16 +175,10 @@ export { TaskRow };
 - `shared/api/` — API setup (queryClient, file system watchers)
 - `shared/types/` — Common types
 - `shared/config/` — Configuration (paths, env vars)
+- `shared/domain/` — Domain models (Zod schemas and types)
 
 ```typescript
 // src/shared/ui/spinner/spinner.tsx
-import { Box, Text } from 'ink';
-import type { FC } from 'react';
-
-type SpinnerProps = {
-  text: string;
-};
-
 const Spinner: FC<SpinnerProps> = ({ text }) => (
   <Box>
     <Text>
@@ -276,24 +187,11 @@ const Spinner: FC<SpinnerProps> = ({ text }) => (
   </Box>
 );
 
-export { Spinner };
-
 // src/shared/lib/file/read-json.ts
-import fs from 'node:fs/promises';
-
 export const readJsonFile = async <T>(path: string): Promise<T> => {
   const content = await fs.readFile(path, 'utf-8');
   return JSON.parse(content);
 };
-
-// src/shared/api/query-client.ts
-import { QueryClient } from '@tanstack/react-query';
-
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: { staleTime: 30_000, retry: 1 },
-  },
-});
 ```
 
 ## Slice Structure
@@ -317,24 +215,11 @@ feature-name/
 
 ### Segments
 
-**`ui/` — UI Components**
-- React components
-- Presentational logic
-- Ink-specific rendering
-- Co-located tests
+**`ui/`** — React components, presentational logic, Ink rendering, co-located tests
 
-**`model/` — Business Logic**
-- Types
-- Custom hooks
-- State management:
-  - Jotai atoms (`*.atom.ts`): `mode.atom.ts`, `active-task.atom.ts`
-  - TanStack Query queries (`*.query.ts`): `tasks.query.ts`, `folders.query.ts`
-- Domain logic
+**`model/`** — Types, custom hooks, state management (Jotai atoms: `*.atom.ts`, TanStack Query: `*.query.ts`), domain logic
 
-**`lib/` — Utilities**
-- Helper functions specific to this slice
-- Calculations, transformations
-- Pure functions preferred
+**`lib/`** — Helper functions specific to this slice, calculations, transformations, pure functions preferred
 
 **When NOT to create a segment:**
 - Don't create empty segments
@@ -344,8 +229,6 @@ feature-name/
 ## Public API (index.ts)
 
 Every slice must export a public API through `index.ts`.
-
-**Segment-based exports (preferred):**
 
 ```typescript
 // src/features/task-filtering/index.ts
@@ -364,7 +247,7 @@ export { matchesFilter } from './lib/filter-helpers';
 
 **Rules:**
 - Export only public interface
-- Don't export internals (sub-components, helpers)
+- Don't export internals
 - Group exports by segment with comments
 - Export types separately with `export type`
 - Use named exports (no default exports)
@@ -392,24 +275,15 @@ import { Button } from '@/shared/ui/button';
 
 ## Naming Conventions
 
-**Slices:** kebab-case
-- `task-filtering`, `task-table`, `project-badge`
-
-**Components:** PascalCase
-- `TaskFilterInput`, `TaskTable`, `ProjectBadge`
-
-**Hooks:** camelCase with `use` prefix
-- `useTaskFilter`, `useFileWatcher`, `useProjectList`
-
-**Types:** PascalCase
-- `Task`, `Project`, `TaskStatus`
-
+**Slices:** kebab-case (`task-filtering`, `task-table`)
+**Components:** PascalCase (`TaskFilterInput`, `TaskTable`)
+**Hooks:** camelCase with `use` prefix (`useTaskFilter`)
+**Types:** PascalCase (`Task`, `TaskStatus`)
 **Files:** kebab-case, match export name
 - `task-table.tsx` exports `TaskTable`
 - `use-task-filter.ts` exports `useTaskFilter`
 - `tasks.query.ts` exports `useTasksQuery`, `useTaskQuery`
 - `mode.atom.ts` exports `modeAtom`, `useModeAtom`
-- `types.ts` for multiple type exports
 
 ## Common Patterns
 
@@ -417,15 +291,9 @@ import { Button } from '@/shared/ui/button';
 
 ```typescript
 // Feature uses entity
-// src/features/task-selection/ui/task-selector.tsx
 import { useState } from 'react';
-import type { FC } from 'react';
 import { TaskRow } from '@/entities/task';
 import type { Task } from '@/entities/task';
-
-type TaskSelectorProps = {
-  tasks: Task[];
-};
 
 const TaskSelector: FC<TaskSelectorProps> = ({ tasks }) => {
   const [selected, setSelected] = useState<string | null>(null);
@@ -443,16 +311,12 @@ const TaskSelector: FC<TaskSelectorProps> = ({ tasks }) => {
     </>
   );
 };
-
-export { TaskSelector };
 ```
 
 ### Widget Orchestration
 
 ```typescript
 // Widget composes features + entities
-// src/widgets/task-management/ui/task-management.tsx
-import type { FC } from 'react';
 import { TaskList } from '@/entities/task';
 import { TaskFilter, useTaskFilter } from '@/features/task-filtering';
 import { TaskSort, useTaskSort } from '@/features/task-sorting';
@@ -469,8 +333,6 @@ const TaskManagement: FC = () => {
     </>
   );
 };
-
-export { TaskManagement };
 ```
 
 ### Cross-Slice Dependencies
@@ -487,7 +349,6 @@ import { useProjectFilter } from '@/features/project-filtering'; // cross-featur
  * NOTE: Depends on project-filtering feature for project-level filtering.
  */
 export const useTaskFilter = (tasks: Task[]) => {
-  // Cross-feature dependency documented
   const { selectedProject } = useProjectFilter();
   // ... filter implementation
 };
@@ -495,47 +356,13 @@ export const useTaskFilter = (tasks: Task[]) => {
 
 ## Anti-Patterns
 
-❌ **Upward imports**
-```typescript
-// entities/task/model/types.ts
-import { TaskTable } from '@/widgets/task-table'; // ❌ entities can't import widgets
-```
-
-❌ **Business logic in shared**
-```typescript
-// shared/lib/task-utils.ts
-export const calculateTaskPriority = (task: Task) => { // ❌ Task is entity
-  // Business logic doesn't belong in shared
-};
-// Move to: entities/task/lib/
-```
-
-❌ **Importing internals**
-```typescript
-import { InternalHelper } from '@/features/task-filtering/lib/internal-helper';
-// ❌ Not exported from index.ts
-// Use: import through public API or move to shared
-```
-
-❌ **God slices**
-```typescript
-// features/tasks/ with 20+ files
-// ❌ Too broad, split into:
-// features/task-filtering/
-// features/task-sorting/
-// features/task-selection/
-```
-
-❌ **Shared with business logic**
-```typescript
-// shared/lib/task-validator.ts
-// ❌ "task" is domain entity
-// Move to: entities/task/lib/validator.ts
-```
+❌ **Upward imports**: entities importing widgets
+❌ **Business logic in shared**: Task-specific utilities in shared/
+❌ **Importing internals**: Bypassing public API (index.ts)
+❌ **God slices**: Feature with 20+ files (split into smaller features)
+❌ **Shared with business logic**: Shared code knowing about domain entities
 
 ## Migration Strategy
-
-When refactoring to FSD:
 
 1. **Start with shared layer** - extract generic utilities
 2. **Define entities** - identify domain models
@@ -543,9 +370,3 @@ When refactoring to FSD:
 4. **Group into widgets** - composite UI blocks
 5. **Create pages** - top-level orchestration
 6. **Setup app layer** - providers and initialization
-
-## References
-
-- [Official FSD Documentation](https://feature-sliced.design/)
-- [FSD Examples](https://github.com/feature-sliced/examples)
-- Project CLAUDE.md for architecture overview

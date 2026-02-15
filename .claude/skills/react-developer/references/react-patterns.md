@@ -1,22 +1,17 @@
----
-paths:
-  - '**/src/*.tsx'
----
-
-You are a senior React developer with a preference for clean programming and design patterns, following the best practices.
+# React & Ink Patterns
 
 ## Component Structure
 
 ### Component Definition
-- Use arrow functions for all components: `const MyComponent: FC = () => {}`
-- Export components as named exports (avoid default exports for better refactoring)
+- Use arrow functions: `const MyComponent: FC = () => {}`
+- Export as named exports (no default exports)
 - Order: props type → component → exports
 
 ```typescript
-type TaskListProps {
+type TaskListProps = {
   tasks: Task[];
   onSelect: (id: string) => void;
-}
+};
 
 const TaskList: FC<TaskListProps> = ({ tasks, onSelect }) => {
   // implementation
@@ -25,31 +20,23 @@ const TaskList: FC<TaskListProps> = ({ tasks, onSelect }) => {
 export { TaskList };
 ```
 
-### Props Typing
-- Define separate types for all component props
-- Use descriptive names: `{ComponentName}Props`
-- Prefer `type` over `interface` for props
-- Use `FC` while defining react components
-- Mark optional props explicitly with `?`
-
 ### Component Organization (within file)
 1. Props type
-3. Component definition
-4. Sub-components (if small and tightly coupled)
-2. Custom hooks (if co-located)
+2. Component definition
+3. Sub-components (if small and tightly coupled)
+4. Custom hooks (if co-located)
 5. Exports
 
 ## Hooks
 
 ### Custom Hooks
-- Extract custom hooks when logic is used 3+ times across components
+- Extract when logic is used 3+ times across components
 - Be liberal with extraction for complex stateful logic (even if used once)
-- Co-locate hooks within the same FSD feature/slice they're used in
+- Co-locate hooks within the same FSD feature/slice
 - Name with `use` prefix: `useTaskFilter`, `useFileWatcher`
-- Return objects for multiple values: `{ data, loading, error }` instead of arrays (unless order is semantically meaningful like `useState`)
+- Return objects for multiple values: `{ data, loading, error }` (not arrays, unless order is semantically meaningful like `useState`)
 
 ```typescript
-// src/features/task-filtering/model/use-task-filter.ts
 const useTaskFilter = (tasks: Task[]) => {
   const [filter, setFilter] = useState('');
   const filtered = useMemo(
@@ -63,7 +50,7 @@ const useTaskFilter = (tasks: Task[]) => {
 
 ### Hook Rules
 - Follow Rules of Hooks (no conditionals, no loops at top level)
-- Dependencies: be explicit in dependency arrays (no exhaustive-deps violations)
+- Be explicit in dependency arrays (no exhaustive-deps violations)
 - Use `useCallback` only when passing callbacks to memoized children (profile first)
 - Use `useMemo` only for expensive computations (profile first)
 - Use `useRef` for:
@@ -72,14 +59,14 @@ const useTaskFilter = (tasks: Task[]) => {
   - Storing previous values across renders
 
 ### State Management
-- Local state: `useState` for component-only state
-- Shared state: Jotai atoms for cross-component state
-- Server state: TanStack Query for async data
-- Derived state: compute during render or `useMemo` if expensive
+- **Local state**: `useState` for component-only state
+- **Shared state**: Jotai atoms for cross-component state
+- **Server state**: TanStack Query for async data
+- **Derived state**: compute during render or `useMemo` if expensive
 
 ```typescript
 // Local
-const [selected, setSelected] = useState<string | null>(null);
+const [selected, setSelected] = useState<string | undefined>(undefined);
 
 // Shared (Jotai)
 const [tasks] = useAtom(tasksAtom);
@@ -126,31 +113,6 @@ const ExpensiveList = ({ children }) => {
 - For list items in large lists
 - Not needed for most components - composition is usually better
 
-## TypeScript
-
-### Strictness
-- Enable strict mode in tsconfig.json
-- No `any` - use `unknown` and narrow types
-- No type assertions unless absolutely necessary (DOM APIs)
-- Prefer union types over enums for string constants
-- Use `as const` for literal type inference
-
-```typescript
-// BAD
-const STATUSES = ['pending', 'completed'];
-type Status = string;
-
-// GOOD
-const STATUSES = ['pending', 'completed'] as const;
-type Status = typeof STATUSES[number]; // 'pending' | 'completed'
-```
-
-### Type Definitions
-- Co-locate types with usage in FSD architecture
-- Shared types go in `src/shared/types/`
-- Entity types go in `src/entities/{entity}/model/types.ts`
-- Export types from public API (index.ts)
-
 ## Error Handling
 
 - Use error boundaries for component tree errors
@@ -173,6 +135,7 @@ if (error) {
 
 ## Ink-Specific (CLI/TUI)
 
+### Core Patterns
 - Use `<Box>` for layout (flexbox model)
 - Use `<Text>` for all text rendering
 - Handle keyboard input with `useInput` hook
@@ -180,6 +143,7 @@ if (error) {
 - Focus management with `useFocus` and `useFocusManager`
 - Avoid expensive re-renders (terminal re-draws are visible)
 - Test TUI components with fixtures, not snapshots
+- **When uncertain about Ink patterns**: Use Context7 to query Ink documentation for latest API details and best practices
 
 ```typescript
 import { Box, Text, useInput } from 'ink';
@@ -205,14 +169,12 @@ const TaskItem = ({ task }: TaskItemProps) => {
 - Extract magic numbers/strings to named constants
 - Use descriptive variable names (no single letters except loop indices)
 
-
 ## Prohibited Patterns
 
 - ❌ Class components (use functional components + hooks)
-- ❌ `React` namespacing of any imports from `react`
+- ❌ `React` namespacing of imports from `react`
 - ❌ Default exports (use named exports)
 - ❌ Prop drilling > 2 levels (use context or Jotai)
-- ❌ `any` type (use `unknown` and narrow)
 - ❌ Premature optimization (profile first)
 - ❌ Side effects in render (use `useEffect`)
 - ❌ Mutating props or state directly

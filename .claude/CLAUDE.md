@@ -15,10 +15,36 @@ TUI application for managing Claude Code tasks. Provides search, view, create, e
 - **Distribution**: Single-file executable via Bun
 - **Code Quality**: Biome (formatting and linting)
 
+## Path Aliases
+
+- `@/*` maps to `./src/*` (configured in tsconfig.json)
+- Examples: `@/pages/list-selection`, `@/shared/routing`, `@/entities/task`
+
+## Development Skills
+
+**ALWAYS use these skills when working on this codebase:**
+
+- **`typescript-developer`**: Use for ALL TypeScript work including:
+  - Creating or modifying any .ts files
+  - Defining types, interfaces, schemas, or models
+  - Writing functions, classes, or utilities
+  - Setting up Zod validation schemas
+  - Any TypeScript code that requires type safety and quality guidance
+
+- **`react-developer`**: Use for ALL React/Ink work including:
+  - Creating or modifying any .tsx files
+  - Building UI components (pages, widgets, features, entities)
+  - Writing custom hooks
+  - Managing state with Jotai or TanStack Query
+  - Organizing code into FSD layers (app/pages/widgets/features/entities/shared)
+  - Any React/Ink TUI development
+
+These skills provide SOLID principles, naming conventions, architectural patterns, and best practices that ensure code consistency across the project.
+
 ## Architecture
 
 ### Task File Format
-- Task files are JSON stored in `~/.claude/tasks/{task-id}.json`
+- Task files are JSON stored in `~/.claude/tasks/{list-id}/{task-id}.json`
 - Each task has: id, subject, description, activeForm, status (pending/in_progress/completed), owner, blocks/blockedBy arrays, metadata
 - Files are managed by Claude Code's internal task manager
 
@@ -27,26 +53,6 @@ TUI application for managing Claude Code tasks. Provides search, view, create, e
 - UI auto-refreshes when Claude Code modifies tasks
 - Use TanStack Query for efficient cache invalidation
 
-### Code Organization (FSD)
-
-Follows Feature-Sliced Design architecture:
-
-- `src/app/`: Application initialization, providers, entry point
-- `src/pages/`: Screen components (task list, task detail, search)
-- `src/widgets/`: Composite UI blocks (task table, filter panel)
-- `src/features/`: User interactions (task filtering, task actions)
-- `src/entities/`: Business logic (task model, project model)
-- `src/shared/`: Reusable code
-  - `src/shared/ui/`: Base Ink components
-  - `src/shared/lib/`: Utilities (generic helpers)
-  - `src/shared/api/`: File system "endpoints" (read/write operations, paths)
-  - `src/shared/domain/`: Domain models (Zod schemas and types)
-
-FSD rules:
-- Lower layers cannot import from upper layers
-- Each slice is independent within its layer
-- Cross-slice imports only through public API (index.ts)
-
 ### Key Design Principles
 - Reactive UI: File watcher triggers re-renders when tasks change
 - Type safety: Strict TypeScript types for task schema
@@ -54,13 +60,6 @@ FSD rules:
 - Path discovery: Scan `~/.claude/tasks/` to find all task files
 - Efficient filtering: Support filtering by status, project, keywords
 - Task relationships: Display blockedBy/blocks dependencies
-
-### Validation Rules
-- **Always use Zod for object validation**
-  - Define schemas in `shared/domain/` using Zod
-  - Infer TypeScript types from schemas using `z.infer<typeof schema>`
-  - Use `.safeParse()` for validation with error handling
-  - Export both schemas and inferred types from domain files
 
 ## Development Commands
 
@@ -74,17 +73,12 @@ FSD rules:
 - Test: `bun test`
 - Single test: `bun test <filename>`
 
-## CI/CD
+## Entry Point & Environment
 
-### GitHub Actions
-- Workflow: `.github/workflows/build.yml`
-- Triggers: Push to main, pull requests
-- Steps:
-  - Install Bun
-  - Type check (`bun run typecheck`)
-  - Run tests (`bun test`)
-  - Build single-file executable (`bun build --compile`)
-  - Create release artifacts (binaries for macOS, Linux, Windows)
+- **Main entry**: `index.tsx` (has `#!/usr/bin/env bun` shebang)
+- **Environment variable**: `CLAUDE_CODE_TASK_LIST_ID`
+  - Controls default route: if set, opens task-list view directly; otherwise shows list-selection
+  - Usage: `CLAUDE_CODE_TASK_LIST_ID=abc123 bun run dev`
 
 ## Technical Constraints
 
