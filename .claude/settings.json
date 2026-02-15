@@ -1,6 +1,11 @@
 {
   "permissions": {
-    "allow": []
+    "allow": [
+      "Bash(bun run lint)",
+      "Bash(bun run typecheck:*)",
+      "Bash(bun run format:file:*)",
+      "Bash(bun run format:*)"
+    ]
   },
   "hooks": {
     "PostToolUse": [
