@@ -180,3 +180,4 @@ const TaskItem = ({ task }: TaskItemProps) => {
 - ❌ Mutating props or state directly
 - ❌ Index as key in lists (use stable IDs)
 - ❌ Mixing concerns in components (extract hooks/sub-components)
+- ❌ Generic `Props` as props type name — always use `{ComponentName}Props` (e.g. `TaskDetailsProps`, not `Props`)

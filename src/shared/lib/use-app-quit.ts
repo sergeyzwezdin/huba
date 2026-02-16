@@ -3,16 +3,12 @@ import { useApp, useInput } from 'ink'
 import { queryClient } from '@/shared/query'
 
 /**
- * Hook to enable graceful application exit
- * Handles 'q' key press and cleanup
+ * Enables graceful application exit on `q` key press.
  *
- * Cleanup includes:
- * - Clearing TanStack Query cache
- * - Exiting the application
- *
- * Note: Ctrl+C (SIGINT) is handled automatically by Ink
+ * Before exiting, clears the TanStack Query cache to avoid
+ * any dangling async work. Ctrl+C (SIGINT) is handled automatically by Ink.
  */
-export const useAppQuit = (): void => {
+const useAppQuit = (): void => {
     const { exit } = useApp()
 
     useInput((input, key) => {
@@ -26,3 +22,5 @@ export const useAppQuit = (): void => {
         }
     })
 }
+
+export { useAppQuit }

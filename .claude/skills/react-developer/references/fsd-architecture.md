@@ -177,16 +177,40 @@ const TaskRow: FC<TaskRowProps> = ({ task, selected }) => (
 - `shared/config/` — Configuration (paths, env vars)
 - `shared/domain/` — Domain models (Zod schemas and types)
 
-```typescript
-// src/shared/ui/spinner/spinner.tsx
-const Spinner: FC<SpinnerProps> = ({ text }) => (
-  <Box>
-    <Text>
-      <Text color="blue">⠋</Text> {text}
-    </Text>
-  </Box>
-);
+### `shared/ui` Component Structure
 
+Each component in `shared/ui` lives in its own sub-folder with a public API `index.ts`. There is **no** barrel `shared/ui/index.ts` — consumers import directly from the component folder.
+
+```
+shared/ui/
+├── panel/
+│   ├── panel.tsx     # Component implementation
+│   └── index.ts      # Public API: export { Panel } from './panel'
+├── spinner/
+│   ├── spinner.tsx
+│   └── index.ts
+```
+
+```typescript
+// src/shared/ui/panel/panel.tsx
+const Panel: FC<PanelProps> = ({ ... }) => { ... }
+export { Panel }          // ✅ named export only, no type export
+
+// src/shared/ui/panel/index.ts
+export { Panel } from './panel'   // ✅ public API, no type re-exports
+
+// Consuming code
+import { Panel } from '@/shared/ui/panel'   // ✅ import from component folder directly
+import { Panel } from '@/shared/ui'         // ❌ no shared/ui barrel file
+```
+
+**Rules:**
+- Each `shared/ui` component gets its own sub-folder
+- Sub-folder has `index.ts` as public API (component export only, no prop types)
+- No top-level `shared/ui/index.ts` barrel
+- Import via `@/shared/ui/<component-name>`
+
+```typescript
 // src/shared/lib/file/read-json.ts
 export const readJsonFile = async <T>(path: string): Promise<T> => {
   const content = await fs.readFile(path, 'utf-8');

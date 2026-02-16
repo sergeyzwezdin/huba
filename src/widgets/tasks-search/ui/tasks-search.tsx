@@ -4,17 +4,17 @@ import { Text } from 'ink'
 
 import { Panel } from '@/shared/ui/panel'
 
-type TaskTableProps = Pick<
+type TasksSearchProps = Pick<
     ComponentProps<typeof Panel>,
     'flexGrow' | 'flexShrink' | 'flexBasis' | 'width' | 'height' | 'minWidth' | 'minHeight'
 >
 
-const TaskTable: FC<TaskTableProps> = (props) => {
+const TasksSearch: FC<TasksSearchProps> = (props) => {
     return (
-        <Panel focusable panelId="task-table" borderStyle="round" titles={['Task List']} {...props}>
-            <Text>Task List</Text>
+        <Panel focusable panelId="tasks-search" borderStyle="round" titles={['Search']} {...props}>
+            <Text>Search</Text>
         </Panel>
     )
 }
 
-export { TaskTable }
+export { TasksSearch }

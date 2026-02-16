@@ -1,6 +1,6 @@
 import type { FC, PropsWithChildren } from 'react'
 
-import { useAppQuit } from '@/features/app-quit'
+import { useAppQuit } from '@/shared/lib'
 
 import { Providers } from './providers'
 
