@@ -10,7 +10,6 @@ import { TaskBlocks } from '@/widgets/task-blocks'
 import { TaskDetails } from '@/widgets/task-details'
 import { TaskTable } from '@/widgets/task-table'
 import { TasksSearch } from '@/widgets/tasks-search'
-import { TasksStatusFilter } from '@/widgets/tasks-status-filter'
 
 import '@/shared/ui/task-select'
 
@@ -28,7 +27,6 @@ const TaskListPage: FC = () => {
         <RequiredWindowSize minWidth={70} minHeight={20}>
             <box style={{ flexDirection: 'column', paddingLeft: 1, paddingRight: 1, paddingTop: 0, flexGrow: 1 }}>
                 <box style={{ flexDirection: 'row', visible: !detailsExpanded }}>
-                    <TasksStatusFilter style={{ width: 18 }} />
                     <TasksSearch style={{ flexGrow: 1 }} />
                     <ListsTable style={{ width: 20 }} />
                 </box>

@@ -16,6 +16,19 @@ import { useSorted } from '../model/use-sorted'
 
 const filterCycle: TaskFilterStatus[] = ['all', 'pending', 'in_progress', 'blocked', 'completed']
 
+const sortLabel: Record<TaskSortField, string> = {
+    id: 'ID',
+    subject: 'Title',
+    status: 'Status',
+    updatedAt: 'UPDATED',
+}
+const filterLabel: Record<Exclude<TaskFilterStatus, 'all'>, string> = {
+    pending: 'Pending',
+    in_progress: 'In Progress',
+    blocked: 'Blocked',
+    completed: 'Completed',
+}
+
 type TaskTableProps = Pick<ComponentProps<typeof Panel>, 'style'>
 
 const TaskTable: FC<TaskTableProps> = (props) => {
@@ -28,8 +41,11 @@ const TaskTable: FC<TaskTableProps> = (props) => {
     const tasks = data?.list ?? []
 
     const [selectedTaskId, setSelectedTaskId] = useAtom(selectedTaskIdAtom)
-    const [, setSort] = useAtom(taskSortAtom)
+    const [sort, setSort] = useAtom(taskSortAtom)
     const [filter, setFilter] = useAtom(taskFilterAtom)
+
+    const subTitle = `${sortLabel[sort.field].toUpperCase()} ${sort.direction === 'asc' ? '↑' : '↓'}`
+    const footer = filter.status !== 'all' ? filterLabel[filter.status].toUpperCase() : undefined
 
     const filteredTasks = useMemo(
         () => (filter.status === 'all' ? tasks : tasks.filter((task) => task.status === filter.status)),
@@ -56,6 +72,11 @@ const TaskTable: FC<TaskTableProps> = (props) => {
                 date: task.updatedAt,
             })),
         [sortedTasks],
+    )
+
+    const selectedTaskIndex = useMemo(
+        () => (selectedTaskId !== undefined ? options.findIndex((option) => option.id === selectedTaskId) : undefined),
+        [options, selectedTaskId],
     )
 
     useKeyboard((key) => {
@@ -92,7 +113,12 @@ const TaskTable: FC<TaskTableProps> = (props) => {
             focusable
             focused={isFocused}
             ref={ref}
-            title={['[1]', `Task List${!!tasks && tasks.length > 0 ? ` (${tasks.length})` : ''}`]}
+            title={['[1]', 'Task List']}
+            subTitle={subTitle}
+            footer={footer}
+            subFooter={
+                selectedTaskIndex !== undefined ? `${selectedTaskIndex + 1}/${tasks.length}` : String(tasks.length)
+            }
             {...props}
             style={props.style}>
             <TaskSelect
