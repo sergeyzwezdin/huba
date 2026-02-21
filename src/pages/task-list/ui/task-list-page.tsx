@@ -28,7 +28,7 @@ const TaskListPage: FC = () => {
         <RequiredWindowSize minWidth={70} minHeight={20}>
             <box style={{ flexDirection: 'column', paddingLeft: 1, paddingRight: 1, paddingTop: 0, flexGrow: 1 }}>
                 <box style={{ flexDirection: 'row', visible: !detailsExpanded }}>
-                    <TasksStatusFilter style={{ width: 16 }} />
+                    <TasksStatusFilter style={{ width: 18 }} />
                     <TasksSearch style={{ flexGrow: 1 }} />
                     <ListsTable style={{ width: 20 }} />
                 </box>

@@ -62,7 +62,7 @@ export const taskSchema = z.object({
      * Last modification time of the task file
      * Injected from filesystem stat, not stored in JSON
      */
-    updatedAt: z.date().optional(),
+    updatedAt: z.date(),
 })
 
 /**

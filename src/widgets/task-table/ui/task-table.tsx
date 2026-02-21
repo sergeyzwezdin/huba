@@ -4,12 +4,17 @@ import { useMemo, useRef } from 'react'
 import { useKeyboard } from '@opentui/react'
 import { useAtom } from 'jotai'
 
-import { selectedTaskIdAtom, useTasksQuery } from '@/entities/task'
+import type { TaskFilterStatus, TaskSortField } from '@/entities/task'
+import { selectedTaskIdAtom, taskFilterAtom, taskSortAtom, useTasksQuery } from '@/entities/task'
 import { selectedListAtom } from '@/entities/task-list'
 import { useFocus, useFocusManager } from '@/shared/focus-manager'
 import { detailsVisibleAtom } from '@/shared/settings'
 import { Panel } from '@/shared/ui/panel'
 import { TaskSelect, type TaskSelectRenderable } from '@/shared/ui/task-select'
+
+import { useSorted } from '../model/use-sorted'
+
+const filterCycle: TaskFilterStatus[] = ['all', 'pending', 'in_progress', 'blocked', 'completed']
 
 type TaskTableProps = Pick<ComponentProps<typeof Panel>, 'style'>
 
@@ -23,17 +28,34 @@ const TaskTable: FC<TaskTableProps> = (props) => {
     const tasks = data?.list ?? []
 
     const [selectedTaskId, setSelectedTaskId] = useAtom(selectedTaskIdAtom)
+    const [, setSort] = useAtom(taskSortAtom)
+    const [filter, setFilter] = useAtom(taskFilterAtom)
+
+    const filteredTasks = useMemo(
+        () => (filter.status === 'all' ? tasks : tasks.filter((task) => task.status === filter.status)),
+        [tasks, filter.status],
+    )
+
+    const sortedTasks = useSorted(filteredTasks)
+
+    const toggleSort = (field: TaskSortField): void => {
+        setSort((prev) =>
+            prev.field === field
+                ? { field, direction: prev.direction === 'asc' ? 'desc' : 'asc' }
+                : { field, direction: 'asc' },
+        )
+    }
 
     const options = useMemo(
         () =>
-            tasks?.map((task) => ({
+            sortedTasks.map((task) => ({
                 id: task.id,
                 title: task.subject,
                 description: task.description,
                 status: task.status,
                 date: task.updatedAt,
             })),
-        [tasks],
+        [sortedTasks],
     )
 
     useKeyboard((key) => {
@@ -46,6 +68,20 @@ const TaskTable: FC<TaskTableProps> = (props) => {
             setTimeout(() => {
                 focus('task-details')
             }, 100)
+        } else if (key.shift && key.name === 'i') {
+            toggleSort('id')
+        } else if (key.shift && key.name === 't') {
+            toggleSort('subject')
+        } else if (key.shift && key.name === 's') {
+            toggleSort('status')
+        } else if (key.shift && key.name === 'd') {
+            toggleSort('updatedAt')
+        } else if (key.shift && key.name === 'f') {
+            setFilter((prev) => {
+                const idx = filterCycle.indexOf(prev.status)
+                const next = filterCycle[(idx + 1) % filterCycle.length]
+                return { ...prev, status: next }
+            })
         } else {
             selectRef.current?.handleKeyPress(key)
         }

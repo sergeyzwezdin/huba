@@ -1,3 +1,7 @@
 export { selectedTaskIdAtom } from './model/selected-task.atom'
 export { useSelectedTask, useSelectedTasksBlockedBy, useSelectedTasksBlocks, useTasksQuery } from './model/tasks.query'
+export type { TaskFilter, TaskFilterStatus } from './model/tasks-filter.atom'
+export { taskFilterAtom } from './model/tasks-filter.atom'
+export type { TaskSort, TaskSortDirection, TaskSortField } from './model/tasks-sort.atom'
+export { taskSortAtom } from './model/tasks-sort.atom'
 export { useTasksWatcher } from './model/tasks-watcher'
