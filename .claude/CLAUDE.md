@@ -49,14 +49,43 @@ These skills provide SOLID principles, naming conventions, architectural pattern
 ## Architecture
 
 ### Task File Format
-- Task files are JSON stored in `~/.claude/tasks/{list-id}/{task-id}.json`
+- Task files: `~/.claude/tasks/{list-id}/{task-id}.json`
 - Each task has: id, subject, description, activeForm, status (pending/in_progress/completed), owner, blocks/blockedBy arrays, metadata
+- Task IDs are numbers assigned by Claude Code
+- List entity: `src/entities/claude-list/` (manages list selection, watching, query)
 - Files are managed by Claude Code's internal task manager
 
 ### File System Watching
-- Watches `~/.claude/tasks/{task-id}` for real-time updates
+- Task files watched via `src/entities/task/model/tasks-watcher.ts`
+- List directories watched via `src/entities/claude-list/model/claude-lists-watcher.ts`
 - UI auto-refreshes when Claude Code modifies tasks
 - Use TanStack Query for efficient cache invalidation
+
+### Keyboard Handling Pattern
+- Each widget has its own `model/use-hotkeys.ts`; page-level in `pages/*/model/use-hotkeys.ts`
+- Use `useKeyboard` from `@/shared/keyboard` (respects global enable/disable state)
+- Use `useFocusManager` from `@/shared/focus-manager` for programmatic widget focus
+
+### Toast Notifications
+- Import `toast` from `@opentui-ui/toast`; themed `<Toaster>` registered in `src/app/toaster.tsx`
+- Types: `toast.info()`, `toast.success()`, `toast.error()`, `toast.warning()`
+
+### Theme System
+- Built-in themes in `src/shared/theme/` (claude, catppuccin, github, contrast, grayed)
+- Custom theme loadable from `~/.claude-tasks` (JSON)
+- Access via `useTheme()` from `@/shared/settings`; use `theme.*` color tokens with `rgbToHex()`
+
+### Persistent State
+- Use `atomWithStorage` from `@/shared/state` for atoms that should survive navigation
+- Example: `taskFilterAtom`, `taskSortAtom` in `src/entities/task/model/`
+
+### Generic Select Component
+- `BaseSelectRenderable` from `@/shared/ui/select` is the base for all list-style selectors
+- Item type must extend `BaseSelectOption` (`{ id: string }`)
+
+### Task Status Notes
+- `blocked` status remains in schema for backward compatibility but is treated as `pending` for filtering
+- Task filter `'pending'` matches both `pending` and `blocked` statuses
 
 ### Key Design Principles
 - Reactive UI: File watcher triggers re-renders when tasks change
@@ -89,7 +118,7 @@ These skills provide SOLID principles, naming conventions, architectural pattern
 
 - Must handle concurrent access to task files (Claude Code may be writing)
 - File watcher must debounce rapid changes
-- Task IDs can be UUIDs or human-readable names
+- Task IDs are numbers (assigned by Claude Code)
 - Project paths use hash of project directory path
 - JSON parsing must be lenient (handle missing optional fields)
 - OpenTUI uses React reconciliation; avoid expensive re-renders
