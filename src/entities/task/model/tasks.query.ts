@@ -3,16 +3,11 @@ import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
 
-import { getTaskList } from '@/shared/api'
+import { getTasks } from '@/shared/api'
 import type { Task } from '@/shared/domain'
 import { queryKeys } from '@/shared/query'
 
 import { selectedTaskIdAtom } from './selected-task.atom'
-
-type TasksQueryData = {
-    list: Task[]
-    map: Record<string, Task>
-}
 
 /**
  * Hook to load all tasks from the file system
@@ -23,12 +18,7 @@ type TasksQueryData = {
 export const useTasksQuery = (listId?: string) => {
     return useQuery({
         queryKey: queryKeys.tasks.list(listId),
-        queryFn: async (): Promise<TasksQueryData> => {
-            const tasks = await getTaskList(listId)
-            const list = tasks.sort((a, b) => Number.parseInt(a.id, 10) - Number.parseInt(b.id, 10))
-            const map = Object.fromEntries(list.map((task) => [task.id, task]))
-            return { list, map } as const
-        },
+        queryFn: () => getTasks(listId),
     })
 }
 
