@@ -1,5 +1,6 @@
 import { type ComponentProps, type FC, useEffect, useRef } from 'react'
 
+import { useTerminalDimensions } from '@opentui/react'
 import { useAtom, useAtomValue } from 'jotai'
 
 import { type ClaudeListSelectRenderable, selectedListAtom } from '@/entities/claude-list'
@@ -13,6 +14,7 @@ type ClaudeListProps = Pick<ComponentProps<typeof Panel>, 'style'>
 
 const ClaudeList: FC<ClaudeListProps> = (props) => {
     const { theme } = useTheme()
+    const { width: columns } = useTerminalDimensions()
 
     const { isFocused, ref } = useFocus({ id: 'lists-table' })
     const { focus, disableTabButton, enableTabButton } = useFocusManager()
@@ -34,7 +36,7 @@ const ClaudeList: FC<ClaudeListProps> = (props) => {
             focusable
             focused={isFocused}
             ref={ref}
-            title={!fullScreen ? ['[L]', 'Claude List'] : 'Claude List'}
+            title={!fullScreen ? (columns > 90 ? ['[L]', 'Claude List'] : ['[L]']) : 'Claude List'}
             {...props}
             onMouseUp={() => focus('lists-table')}>
             {fullScreen === 'lists' ? (

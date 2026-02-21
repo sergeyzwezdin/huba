@@ -12,6 +12,7 @@ import { TasksSearch } from '@/widgets/tasks-search'
 
 import '@/entities/task/ui/task-select'
 
+import { useTerminalDimensions } from '@opentui/react'
 import { useAtom, useAtomValue } from 'jotai'
 
 import { selectedListAtom } from '@/entities/claude-list'
@@ -22,13 +23,15 @@ import { NoTaskSelected } from '@/shared/ui/placeholders'
 const TaskListPage: FC = () => {
     const fullScreen = useAtomValue(fullScreenAtom)
     const showDetails = useAtomValue(showTaskDetailsAtom)
-    const layout = useAtomValue(taskDetailsLayoutAtom)
+    const layoutAtom = useAtomValue(taskDetailsLayoutAtom)
+    const { width: columns, height: rows } = useTerminalDimensions()
+    const layout = columns < 90 ? 'vertical' : layoutAtom
 
     const [selectedList] = useAtom(selectedListAtom)
     const selectedTask = useSelectedTask(selectedList)
 
     return (
-        <RequiredWindowSize minWidth={70} minHeight={5}>
+        <RequiredWindowSize minWidth={40} minHeight={28}>
             <box style={{ flexDirection: 'column', paddingLeft: 1, paddingRight: 1, paddingTop: 0, flexGrow: 1 }}>
                 <box
                     style={{
@@ -39,7 +42,7 @@ const TaskListPage: FC = () => {
                     <TasksSearch style={{ flexGrow: 1, visible: !fullScreen }} />
                     <ClaudeList
                         style={{
-                            width: !fullScreen ? 40 : undefined,
+                            width: !fullScreen ? (columns > 90 ? 40 : 15) : undefined,
                             flexGrow: fullScreen === 'lists' ? 1 : undefined,
                             paddingLeft: 1,
                         }}
@@ -54,8 +57,8 @@ const TaskListPage: FC = () => {
                     <TaskTable style={{ flexGrow: 1, flexBasis: 1, visible: !fullScreen }} />
                     {showDetails && !!selectedTask && <TaskListDetails />}
                 </box>
-                {fullScreen !== 'lists' && <TaskProgress />}
-                <Footer />
+                {fullScreen !== 'lists' && rows > 35 && <TaskProgress />}
+                {rows > 40 && <Footer />}
             </box>
         </RequiredWindowSize>
     )
