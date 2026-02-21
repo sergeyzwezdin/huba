@@ -1,8 +1,7 @@
 import type { FC } from 'react'
 
-import { TextAttributes } from '@opentui/core'
-
 import { RequiredWindowSize } from '@/shared/ui/required-window-size'
+import { Footer } from '@/widgets/footer'
 import { ListsTable } from '@/widgets/lists-table'
 import { Progress } from '@/widgets/progress'
 import { TaskBlockedBy } from '@/widgets/task-blocked-by'
@@ -15,10 +14,11 @@ import '@/shared/ui/task-select'
 
 import { useAtomValue } from 'jotai'
 
-import { detailsExpandedAtom, detailsVisibleAtom, layoutAtom, useTheme } from '@/shared/settings'
+import { selectedTaskIdAtom } from '@/entities/task'
+import { detailsExpandedAtom, detailsVisibleAtom, layoutAtom } from '@/shared/settings'
+import { NoTaskSelected } from '@/shared/ui/no-task-selected'
 
 const TaskListPage: FC = () => {
-    const { theme } = useTheme()
     const showDetails = useAtomValue(detailsVisibleAtom)
     const detailsExpanded = useAtomValue(detailsExpandedAtom)
     const layout = useAtomValue(layoutAtom)
@@ -32,30 +32,27 @@ const TaskListPage: FC = () => {
                 </box>
                 <box style={{ flexGrow: 1, flexDirection: layout === 'horizontal' ? 'row' : 'column' }}>
                     <TaskTable style={{ flexGrow: 1, flexBasis: 1, visible: !detailsExpanded }} />
-                    {showDetails && (
-                        <box style={{ flexDirection: 'column', flexGrow: 1, flexBasis: 1 }}>
-                            <TaskDetails style={{ flexGrow: 1 }} />
-                            <TaskBlockedBy style={{ visible: !detailsExpanded }} />
-                            <TaskBlocks style={{ visible: !detailsExpanded }} />
-                        </box>
-                    )}
+                    {showDetails && <TaskListDetails />}
                 </box>
                 <Progress />
-                <box style={{ flexDirection: 'row', gap: 2, paddingLeft: 1 }}>
-                    <text fg={theme.colors.hint} attributes={TextAttributes.BOLD}>
-                        Claude Tasks v.1.5.0
-                    </text>
-
-                    <text
-                        style={{ fg: theme.colors.hint }}
-                        attributes={TextAttributes.ITALIC | TextAttributes.UNDERLINE | TextAttributes.DIM}>
-                        <a href="https://github.com/sergeyzwezdin/claude-tasks">
-                            https://github.com/sergeyzwezdin/claude-tasks
-                        </a>
-                    </text>
-                </box>
+                <Footer />
             </box>
         </RequiredWindowSize>
+    )
+}
+
+const TaskListDetails: FC = () => {
+    const selectedTaskId = useAtomValue(selectedTaskIdAtom)
+    const detailsExpanded = useAtomValue(detailsExpandedAtom)
+
+    return selectedTaskId ? (
+        <box style={{ flexDirection: 'column', flexGrow: 1, flexBasis: 1 }}>
+            <TaskDetails style={{ flexGrow: 1 }} />
+            <TaskBlockedBy style={{ visible: !detailsExpanded }} />
+            <TaskBlocks style={{ visible: !detailsExpanded }} />
+        </box>
+    ) : (
+        <NoTaskSelected />
     )
 }
 
