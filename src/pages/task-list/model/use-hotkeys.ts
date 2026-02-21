@@ -16,7 +16,7 @@ import {
  * - `w` cycles themes forward
  * - `W` cycles themes backward
  */
-export const useSettings = (): void => {
+export const useHotkeys = () => {
     const setLayout = useSetAtom(taskDetailsLayoutAtom)
     const setShowDetails = useSetAtom(showTaskDetailsAtom)
     const setShowProgress = useSetAtom(showProgressAtom)

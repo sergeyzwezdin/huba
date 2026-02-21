@@ -20,6 +20,8 @@ import { selectedTaskIdAtom, useSelectedTask } from '@/entities/task'
 import { fullScreenAtom, showProgressAtom, showTaskDetailsAtom, taskDetailsLayoutAtom } from '@/shared/settings'
 import { NoTaskSelected } from '@/shared/ui/placeholders'
 
+import { useHotkeys } from '../model/use-hotkeys'
+
 const TaskListPage: FC = () => {
     const fullScreen = useAtomValue(fullScreenAtom)
     const showDetails = useAtomValue(showTaskDetailsAtom)
@@ -30,6 +32,8 @@ const TaskListPage: FC = () => {
 
     const [selectedList] = useAtom(selectedListAtom)
     const selectedTask = useSelectedTask(selectedList)
+
+    useHotkeys()
 
     return (
         <RequiredWindowSize minWidth={40} minHeight={28}>
