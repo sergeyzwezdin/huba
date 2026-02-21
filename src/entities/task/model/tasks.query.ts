@@ -5,7 +5,7 @@ import { useAtomValue, useSetAtom } from 'jotai'
 
 import { getTasks } from '@/shared/api'
 import type { Task, TaskStatus } from '@/shared/domain'
-import { queryKeys } from '@/shared/query'
+import { queryKeys } from '@/shared/state'
 
 import { selectedTaskIdAtom } from './selected-task.atom'
 import { taskFilterAtom } from './tasks-filter.atom'

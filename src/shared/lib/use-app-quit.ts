@@ -1,6 +1,6 @@
 import { useKeyboard, useRenderer } from '@opentui/react'
 
-import { queryClient } from '@/shared/query'
+import { queryClient } from '@/shared/state'
 
 /**
  * Enables graceful application exit on `q` key press.

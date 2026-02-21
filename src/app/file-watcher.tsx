@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query'
 
 import { useListsWatcher } from '@/entities/claude-list'
 import { useTasksWatcher } from '@/entities/task'
-import { queryKeys } from '@/shared/query'
+import { queryKeys } from '@/shared/state'
 
 const FileWatcher: FC<PropsWithChildren> = ({ children }) => {
     const queryClient = useQueryClient()

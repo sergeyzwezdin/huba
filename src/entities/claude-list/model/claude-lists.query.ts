@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { getTaskLists } from '@/shared/api'
 import type { TaskList } from '@/shared/domain'
-import { queryKeys } from '@/shared/query'
+import { queryKeys } from '@/shared/state'
 
 /**
  * Hook to fetch all available task lists

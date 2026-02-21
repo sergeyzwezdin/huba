@@ -1,6 +1,5 @@
-import { atom } from 'jotai'
-
 import type { TaskStatus } from '@/shared/domain'
+import { atomWithStorage } from '@/shared/state'
 
 /** Filter value: a specific status or 'all' */
 export type TaskFilterStatus = TaskStatus | 'all'
@@ -12,4 +11,4 @@ export type TaskFilter = {
 }
 
 /** Atom holding the current task filter configuration */
-export const taskFilterAtom = atom<TaskFilter>({ status: 'all', search: '' })
+export const taskFilterAtom = atomWithStorage<TaskFilter>('filter', { status: 'all', search: '' })

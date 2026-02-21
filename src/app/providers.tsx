@@ -5,7 +5,7 @@ import { Toaster } from '@opentui-ui/toast/react'
 import { QueryClientProvider } from '@tanstack/react-query'
 
 import { FocusProvider } from '@/shared/focus-manager'
-import { queryClient } from '@/shared/query'
+import { queryClient } from '@/shared/state'
 
 const Providers: FC<PropsWithChildren> = ({ children }) => (
     <QueryClientProvider client={queryClient}>

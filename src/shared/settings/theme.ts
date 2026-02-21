@@ -1,9 +1,10 @@
 import { atom, useAtom } from 'jotai'
 
+import { atomWithStorage } from '@/shared/state/atom-with-storage'
 import type { Theme, ThemeName } from '@/shared/theme'
 import { themes } from '@/shared/theme'
 
-export const activeThemeAtom = atom<ThemeName>('claude')
+export const activeThemeAtom = atomWithStorage<ThemeName>('theme', 'claude')
 
 export const themeAtom = atom<Theme>((get) => themes[get(activeThemeAtom)])
 

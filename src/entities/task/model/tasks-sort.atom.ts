@@ -1,4 +1,4 @@
-import { atom } from 'jotai'
+import { atomWithStorage } from '@/shared/state'
 
 /** Field by which tasks can be sorted */
 export type TaskSortField = 'id' | 'subject' | 'status' | 'updatedAt'
@@ -13,4 +13,4 @@ export type TaskSort = {
 }
 
 /** Atom holding the current task sort configuration */
-export const taskSortAtom = atom<TaskSort>({ field: 'id', direction: 'asc' })
+export const taskSortAtom = atomWithStorage<TaskSort>('sort', { field: 'id', direction: 'asc' })
