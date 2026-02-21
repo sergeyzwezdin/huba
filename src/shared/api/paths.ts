@@ -17,9 +17,7 @@ export const getTasksBaseDir = (): string => {
 
 /**
  * Get the tasks directory path for a specific list ID
- * If no listId provided, uses environment variable CLAUDE_CODE_TASK_LIST_ID
  */
-export const getTasksDir = (listId?: string): string => {
-    const id = listId ?? process.env.CLAUDE_CODE_TASK_LIST_ID ?? 'default'
-    return join(getTasksBaseDir(), id)
+export const getTasksDir = (listId: string): string => {
+    return join(getTasksBaseDir(), listId)
 }

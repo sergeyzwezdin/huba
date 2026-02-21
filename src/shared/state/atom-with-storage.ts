@@ -21,7 +21,6 @@ const updateSetting = <T>(key: string, value: T): void => {
     mkdirSync(SETTINGS_DIR, { recursive: true })
     const settings = readSettings()
     settings[key] = value
-    console.log('updateSetting', key, SETTINGS_FILE)
     writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 2))
 }
 
@@ -33,16 +32,13 @@ const getSetting = <T>(key: string): T | undefined => {
 const createSyncStorage = <T>() =>
     createJSONStorage<T>(() => ({
         getItem: (key: string) => {
-            console.log('getItem', key)
             const value = getSetting<T>(key)
             return value !== undefined ? JSON.stringify(value) : null
         },
         setItem: (key: string, value: string) => {
-            console.log('setItem', key, value)
             updateSetting(key, JSON.parse(value) as T)
         },
         removeItem: (key: string) => {
-            console.log('removeItem', key)
             updateSetting(key, undefined)
         },
     }))

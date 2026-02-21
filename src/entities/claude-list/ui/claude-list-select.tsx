@@ -10,6 +10,7 @@ import { BaseSelectRenderable, type BaseSelectRenderableOptions, useListData } f
 export type ClaudeListSelectOption = {
     id: string
     createdAt: Date
+    tasksCount: number
 }
 
 type ClaudeListSelectRenderableOptions = BaseSelectRenderableOptions<ClaudeListSelectOption>
@@ -21,6 +22,7 @@ export class ClaudeListSelectRenderable extends BaseSelectRenderable<ClaudeListS
         return {
             id: parseColor(t.colors.primary),
             date: parseColor(t.colors.date),
+            count: parseColor(t.colors.hint),
         }
     }
 
@@ -28,6 +30,7 @@ export class ClaudeListSelectRenderable extends BaseSelectRenderable<ClaudeListS
 
     private _showDateComputed = false
     private _dateReserved = 0
+    private _countReserved = 0
     private _idWidth = 0
 
     constructor(ctx: RenderContext, options: ClaudeListSelectRenderableOptions) {
@@ -48,7 +51,11 @@ export class ClaudeListSelectRenderable extends BaseSelectRenderable<ClaudeListS
               }, 0)
             : 0
         this._dateReserved = showDate ? maxDateLen + DATE_PADDING_RIGHT + 1 : 0
-        this._idWidth = Math.max(0, width - this._dateReserved)
+
+        const maxCountLen = items.reduce((max, item) => Math.max(max, String(item.tasksCount).length), 0)
+        this._countReserved = maxCountLen + 2
+
+        this._idWidth = Math.max(0, width - this._dateReserved - this._countReserved)
         this._showDateComputed = showDate
 
         return items.map(() => 1)
@@ -63,6 +70,10 @@ export class ClaudeListSelectRenderable extends BaseSelectRenderable<ClaudeListS
     ): void {
         const idText = item.id.length > this._idWidth ? `${item.id.slice(0, this._idWidth - 1)}…` : item.id
         fb.drawText(idText, 0, y, this._colors.id)
+
+        const countStr = String(item.tasksCount)
+        const countX = this._idWidth + this._countReserved - 1 - countStr.length
+        fb.drawText(countStr, countX, y, this._colors.count, undefined, TextAttributes.DIM)
 
         if (this._showDateComputed && item.createdAt) {
             const dateStr = this.formatDate(item.createdAt)

@@ -19,6 +19,11 @@ export const taskListSchema = z.object({
      * Directory creation date
      */
     createdAt: z.date(),
+
+    /**
+     * Number of task JSON files in the list directory
+     */
+    tasksCount: z.number().int().nonnegative(),
 })
 
 /**

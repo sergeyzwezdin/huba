@@ -8,15 +8,21 @@ import { FocusProvider } from '@/shared/focus-manager'
 import { queryClient } from '@/shared/state'
 import { store as jotaiStore } from '@/shared/state/jotai'
 
+import { FileWatcher } from './file-watcher'
+import { ListSelector } from './list-selector'
 import { Toaster } from './toaster'
 
 const Providers: FC<PropsWithChildren> = ({ children }) => (
     <QueryClientProvider client={queryClient}>
         <JotaiProvider store={jotaiStore}>
-            <FocusProvider>
-                <DialogProvider size="medium">{children}</DialogProvider>
-                <Toaster />
-            </FocusProvider>
+            <ListSelector>
+                <FileWatcher>
+                    <FocusProvider>
+                        <DialogProvider size="medium">{children}</DialogProvider>
+                        <Toaster />
+                    </FocusProvider>
+                </FileWatcher>
+            </ListSelector>
         </JotaiProvider>
     </QueryClientProvider>
 )

@@ -14,10 +14,12 @@ export type TasksData = {
 /**
  * Read all task files for a given list ID
  *
- * @param listId - Optional list ID (defaults to CLAUDE_CODE_TASK_LIST_ID env var or 'default')
+ * @param listId - Optional list ID
  * @returns Object with `list` (sorted array) and `map` (tasks indexed by id)
  */
 export const getTasks = async (listId?: string): Promise<TasksData> => {
+    if (!listId) return { list: [], map: {} }
+
     const dirPath = getTasksDir(listId)
 
     if (!existsSync(dirPath)) return { list: [], map: {} }

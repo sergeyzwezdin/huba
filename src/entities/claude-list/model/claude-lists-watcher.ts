@@ -9,7 +9,7 @@ import chokidar from 'chokidar'
 import { getTasksBaseDir } from '@/shared/api/paths'
 
 const WATCHER_OPTIONS = {
-    depth: 0,
+    depth: 1,
     ignoreInitial: true,
     persistent: true,
 } as const
@@ -37,6 +37,10 @@ export const useListsWatcher = (onChanged: () => void | Promise<void>): void => 
         if (path !== basePath) void onChangedRef.current()
     }, [])
 
+    const onFilesChange = useCallback((changedPath: string) => {
+        if (changedPath.endsWith('.json')) void onChangedRef.current()
+    }, [])
+
     useEffect(() => {
         mkdirSync(basePath, { recursive: true })
 
@@ -44,10 +48,12 @@ export const useListsWatcher = (onChanged: () => void | Promise<void>): void => 
 
         watcher.on('addDir', onAddDir)
         watcher.on('unlinkDir', onRemoveDir)
+        watcher.on('add', onFilesChange)
+        watcher.on('unlink', onFilesChange)
         watcher.on('error', () => {})
 
         return () => {
             watcher.close()
         }
-    }, [onAddDir, onRemoveDir])
+    }, [onAddDir, onRemoveDir, onFilesChange])
 }

@@ -20,7 +20,10 @@ const ListSelect = forwardRef<ClaudeListSelectRenderable, ListSelectProps>(({ st
     const setTaskFilter = useSetAtom(taskFilterAtom)
     const setSelectedTaskId = useSetAtom(selectedTaskIdAtom)
 
-    const options = useMemo(() => (lists ?? []).map((list) => ({ id: list.id, createdAt: list.createdAt })), [lists])
+    const options = useMemo(
+        () => (lists ?? []).map((list) => ({ id: list.id, createdAt: list.createdAt, tasksCount: list.tasksCount })),
+        [lists],
+    )
 
     const [selected, setSelected] = useState(selectedList)
 

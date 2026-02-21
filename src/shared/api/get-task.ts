@@ -12,9 +12,11 @@ import { getTasksDir } from './paths'
  * Returns undefined if file doesn't exist or is invalid
  *
  * @param taskId - Task identifier (filename without .json extension)
- * @param listId - Optional list ID (defaults to CLAUDE_CODE_TASK_LIST_ID env var or 'default')
+ * @param listId - Optional list ID
  */
 export const getTask = async (taskId: string, listId?: string): Promise<Task | undefined> => {
+    if (!listId) return undefined
+
     const dirPath = getTasksDir(listId)
     const filePath = join(dirPath, `${taskId}.json`)
 

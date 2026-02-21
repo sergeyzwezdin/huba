@@ -28,10 +28,14 @@ export const getTaskLists = async (): Promise<TaskList[]> => {
                 const listPath = join(tasksBaseDir, entry.name)
                 const stats = await stat(listPath)
 
+                const listEntries = await readdir(listPath)
+                const tasksCount = listEntries.filter((name) => name.endsWith('.json')).length
+
                 const rawData = {
                     id: entry.name,
                     path: listPath,
                     createdAt: stats.birthtime,
+                    tasksCount,
                 }
 
                 // Validate using Zod schema
