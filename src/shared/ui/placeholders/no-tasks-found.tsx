@@ -25,7 +25,7 @@ const NoTasksFound: FC = () => {
  > ^ <`}>
                 {}
             </text>
-            <text style={{ fg: theme.colors.hint }}>There are no tasks created yet</text>
+            <text style={{ fg: theme.colors.hint }}>All done</text>
         </box>
     )
 }
