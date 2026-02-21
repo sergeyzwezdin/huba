@@ -27,20 +27,30 @@ const ListSelect = forwardRef<ClaudeListSelectRenderable, ListSelectProps>(({ st
 
     const [selected, setSelected] = useState(selectedList)
 
+    const handleConfirm = (id: string) => {
+        setSelectedList(id)
+        setTaskFilter({ status: 'all', search: '' })
+        setSelectedTaskId(undefined)
+        onSelect?.(id)
+    }
+
     useKeyboard((key) => {
         if (!focused) return
 
         if (key.name === 'return') {
-            setSelectedList(selected)
-            setTaskFilter({ status: 'all', search: '' })
-            setSelectedTaskId(undefined)
-
-            onSelect?.(selected ?? '')
+            handleConfirm(selected ?? '')
         }
     })
 
     return (
-        <ListSelectControl ref={ref} options={options} selectedItem={selected} style={style} onSelect={setSelected} />
+        <ListSelectControl
+            ref={ref}
+            options={options}
+            selectedItem={selected}
+            style={style}
+            onSelect={setSelected}
+            onConfirm={handleConfirm}
+        />
     )
 })
 

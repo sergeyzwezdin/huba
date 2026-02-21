@@ -59,6 +59,7 @@ const TaskBlockers: FC<TaskBlockersProps> = ({ items, isFocused, style, onSelect
             options={options}
             selectedItem={selectedId}
             onSelect={setSelectedId}
+            onConfirm={onSelect}
         />
     )
 }

@@ -24,6 +24,7 @@ export type BaseSelectRenderableOptions<T extends BaseSelectOption> = Omit<Selec
     optionsById?: Record<string, T>
     indexById?: Record<string, number>
     onSelect?: (id: string) => void
+    onConfirm?: (id: string) => void
 }
 
 const TRANSPARENT = parseColor('transparent')
@@ -44,6 +45,10 @@ export abstract class BaseSelectRenderable<T extends BaseSelectOption> extends S
     private _theme: Theme
     private _dateTimer: ReturnType<typeof setInterval> | null = null
     private _onSelect: ((id: string) => void) | undefined
+    private _onConfirm: ((id: string) => void) | undefined
+    private _lastClickTime = 0
+    private _lastClickIndex = -1
+    private static readonly DOUBLE_CLICK_THRESHOLD = 400
     private _selectedId: string | undefined = undefined
     private _controlledIndex = 0
     private _optionsById: Record<string, T> = {}
@@ -88,6 +93,7 @@ export abstract class BaseSelectRenderable<T extends BaseSelectOption> extends S
         this._scrollbarThumbColor = parseColor(this._theme.surface.scrollbarThumb)
         this._dateTimer = setInterval(() => this.requestRender(), 60_000)
         this._onSelect = options.onSelect
+        this._onConfirm = options.onConfirm
         this._selectedId = options.selectedId
         this._optionsById = options.optionsById ?? {}
         this._indexById = options.indexById ?? {}
@@ -208,6 +214,14 @@ export abstract class BaseSelectRenderable<T extends BaseSelectOption> extends S
         this._onSelect = value
     }
 
+    get onConfirm(): ((id: string) => void) | undefined {
+        return this._onConfirm
+    }
+
+    set onConfirm(value: ((id: string) => void) | undefined) {
+        this._onConfirm = value
+    }
+
     // ── Keyboard / mouse ────────────────────────────────────────────────
 
     override handleKeyPress(key: KeyEvent): boolean {
@@ -252,7 +266,17 @@ export abstract class BaseSelectRenderable<T extends BaseSelectOption> extends S
                 const actualIndex = this._lastScrollOffset + i
                 const itemHeight = this._lastCumLines[actualIndex + 1] - this._lastCumLines[actualIndex]
                 if (localY >= y && localY < y + itemHeight) {
+                    const now = Date.now()
+                    const isDoubleClick =
+                        now - this._lastClickTime < BaseSelectRenderable.DOUBLE_CLICK_THRESHOLD &&
+                        actualIndex === this._lastClickIndex
+                    this._lastClickTime = now
+                    this._lastClickIndex = actualIndex
                     this.selectedIndex = actualIndex
+                    if (isDoubleClick) {
+                        const item = this.options[actualIndex]?.value as T | undefined
+                        if (item) this._onConfirm?.(item.id)
+                    }
                     break
                 }
                 y += itemHeight
