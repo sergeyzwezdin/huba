@@ -1,22 +1,16 @@
 import type { ComponentProps, FC } from 'react'
 
+import { useFocus } from '@/shared/focus-manager'
 import { Panel } from '@/shared/ui/panel'
 
-type ListsTableProps = Pick<
-    ComponentProps<typeof Panel>,
-    'flexGrow' | 'flexShrink' | 'flexBasis' | 'width' | 'height' | 'minWidth' | 'minHeight'
->
+type ListsTableProps = Pick<ComponentProps<typeof Panel>, 'style'>
 
 const ListsTable: FC<ListsTableProps> = (props) => {
+    const { isFocused, ref } = useFocus({ id: 'lists-table' })
+
     return (
-        <Panel
-            focusable
-            panelId="lists-table"
-            borderStyle="round"
-            borderColor={undefined}
-            titles={['Active List']}
-            {...props}>
-            {null}
+        <Panel focusable focused={isFocused} ref={ref} title="Active List" {...props}>
+            <text></text>
         </Panel>
     )
 }

@@ -1,20 +1,25 @@
 import type { FC } from 'react'
 
-import dedent from 'dedent'
-import { Text } from 'ink'
-import { type MarkedOptions, parse, setOptions } from 'marked'
-import type TerminalRendererType from 'marked-terminal'
-import TerminalRenderer from 'marked-terminal'
+import { SyntaxStyle } from '@opentui/core'
 
-type TerminalRendererOptions = TerminalRendererType.TerminalRendererOptions
+import { useTheme } from '@/shared/settings'
 
-export type MarkdownProps = TerminalRendererOptions & {
+export type MarkdownProps = {
     children: string
 }
 
-const Markdown: FC<MarkdownProps> = ({ children, ...options }) => {
-    setOptions({ renderer: new TerminalRenderer(options) as unknown as MarkedOptions['renderer'] })
-    return <Text>{(parse(dedent(children)) as string).trim()}</Text>
+const Markdown: FC<MarkdownProps> = ({ children }) => {
+    const { theme } = useTheme()
+
+    const style = SyntaxStyle.fromStyles({
+        'markup.heading.1': { fg: theme.markdown.heading, bold: true },
+        'markup.heading.2': { fg: theme.markdown.heading, bold: true },
+        'markup.list': { fg: theme.markdown.list },
+        'markup.raw': { fg: theme.markdown.code },
+        default: { fg: theme.markdown.default },
+    })
+
+    return <markdown content={children} syntaxStyle={style} />
 }
 
 export { Markdown }

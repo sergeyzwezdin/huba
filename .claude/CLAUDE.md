@@ -8,7 +8,7 @@ TUI application for managing Claude Code tasks. Provides search, view, create, e
 
 - **Runtime**: Bun (package management, bundling, execution)
 - **Language**: TypeScript (100% typed)
-- **UI Framework**: Ink (React for CLI/TUI)
+- **UI Framework**: OpenTUI (React for CLI/TUI)
 - **State Management**: Jotai (internal state)
 - **Data Fetching**: TanStack Query (file system queries)
 - **Validation**: Zod (schema validation and type inference)
@@ -31,13 +31,18 @@ TUI application for managing Claude Code tasks. Provides search, view, create, e
   - Setting up Zod validation schemas
   - Any TypeScript code that requires type safety and quality guidance
 
-- **`react-developer`**: Use for ALL React/Ink work including:
+- **`react-developer`**: Use for ALL React work including:
   - Creating or modifying any .tsx files
   - Building UI components (pages, widgets, features, entities)
   - Writing custom hooks
   - Managing state with Jotai or TanStack Query
   - Organizing code into FSD layers (app/pages/widgets/features/entities/shared)
-  - Any React/Ink TUI development
+  - Any React development
+
+- **`opentui-developer`**: Use for ALL React/OpenTUI work including:
+  - Creating or modifying any .tsx files
+  - Building UI components (pages, widgets, features, entities)
+  - Any React/OpenTUI TUI development
 
 These skills provide SOLID principles, naming conventions, architectural patterns, and best practices that ensure code consistency across the project.
 
@@ -87,4 +92,4 @@ These skills provide SOLID principles, naming conventions, architectural pattern
 - Task IDs can be UUIDs or human-readable names
 - Project paths use hash of project directory path
 - JSON parsing must be lenient (handle missing optional fields)
-- Ink uses React reconciliation; avoid expensive re-renders
+- OpenTUI uses React reconciliation; avoid expensive re-renders

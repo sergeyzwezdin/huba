@@ -2,6 +2,16 @@
 
 Zod-first validation patterns for type-safe data handling.
 
+## Contents
+
+- [Schema-First Type Definition](#schema-first-type-definition)
+- [Enum Schemas](#enum-schemas)
+- [Safe Parsing with Error Handling](#safe-parsing-with-error-handling)
+- [Optional Fields](#optional-fields)
+- [Array Validation with Type Guards](#array-validation-with-type-guards)
+- [Zod Error Context](#zod-error-context)
+- [Deprecated Methods to Avoid](#deprecated-methods-to-avoid)
+
 ## Schema-First Type Definition
 
 ```typescript

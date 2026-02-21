@@ -41,28 +41,11 @@ Write clean, maintainable, type-safe TypeScript code following SOLID principles.
 
 ## Reference Documentation
 
-### Validation & Schemas
-See [validation.md](references/validation.md)
-- Zod schema patterns and type inference
-- Safe parsing with error handling
-- Enum schemas and optional fields
-- Type guards and array validation
+Read the relevant reference when working on specific tasks:
 
-### Functions & Types
-See [functions-types.md](references/functions-types.md)
-- Function patterns with explicit types
-- Type-only imports and exports
-- Props types and parameter objects (RO-RO pattern)
-- Import organization and barrel exports
-
-### Error Handling
-See [error-handling.md](references/error-handling.md)
-- Type guard filtering
-- When to throw vs return `undefined`
-- Context requirement validation
-
-### Documentation
-See [jsdoc.md](references/jsdoc.md)
-- JSDoc standards for functions, types, and components
-- TypeDoc-compatible tags
-- Documentation coverage requirements
+- **Types & interfaces**: [types.md](references/types.md) — type-only imports, props types, RO-RO parameter pattern
+- **Function patterns**: [functions.md](references/functions.md) — arrow functions, async patterns, React hooks with stable refs
+- **Imports & exports**: [imports-exports.md](references/imports-exports.md) — barrel exports, absolute paths, import organization
+- **Validation & Zod**: [validation.md](references/validation.md) — schema-first definitions, safe parsing, enum schemas, deprecated methods
+- **Error handling**: [error-handling.md](references/error-handling.md) — throw vs `undefined`, type guard filtering, context checks
+- **JSDoc**: [jsdoc.md](references/jsdoc.md) — documentation standards, TypeDoc tags, coverage requirements

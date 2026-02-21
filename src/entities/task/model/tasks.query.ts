@@ -13,7 +13,8 @@ export const useTasksQuery = (listId?: string) => {
     return useQuery({
         queryKey: queryKeys.tasks.list(listId),
         queryFn: async (): Promise<Task[]> => {
-            return getTaskList(listId)
+            const tasks = await getTaskList(listId)
+            return tasks.sort((a, b) => Number.parseInt(a.id, 10) - Number.parseInt(b.id, 10))
         },
     })
 }

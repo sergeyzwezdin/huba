@@ -1,4 +1,4 @@
-import { useApp, useInput } from 'ink'
+import { useKeyboard, useRenderer } from '@opentui/react'
 
 import { queryClient } from '@/shared/query'
 
@@ -6,19 +6,15 @@ import { queryClient } from '@/shared/query'
  * Enables graceful application exit on `q` key press.
  *
  * Before exiting, clears the TanStack Query cache to avoid
- * any dangling async work. Ctrl+C (SIGINT) is handled automatically by Ink.
+ * any dangling async work. Ctrl+C is handled automatically by OpenTUI.
  */
 const useAppQuit = (): void => {
-    const { exit } = useApp()
+    const renderer = useRenderer()
 
-    useInput((input, key) => {
-        // Handle 'q' key press
-        if (input === 'q' && !key.ctrl && !key.meta) {
-            // Clear query cache
+    useKeyboard((key) => {
+        if (key.name === 'q' && !key.ctrl && !key.meta) {
             queryClient.clear()
-
-            // Exit application
-            exit()
+            renderer.destroy()
         }
     })
 }

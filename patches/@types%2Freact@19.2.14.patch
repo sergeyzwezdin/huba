@@ -1,0 +1,13 @@
+diff --git a/index.d.ts b/index.d.ts
+index 750b493498ad1d7c1f59e55a4a737dfe71d05bd5..725d5e8e89c1d112d59456dfb8ab826527750fad 100644
+--- a/index.d.ts
++++ b/index.d.ts
+@@ -1058,7 +1058,7 @@ declare namespace React {
+      * ```
+      */
+     interface FunctionComponent<P = {}> {
+-        (props: P): ReactNode | Promise<ReactNode>;
++        (props: P): ReactNode;
+         /**
+          * Ignored by React.
+          * @deprecated Only kept in types for backwards compatibility. Will be removed in a future major release.

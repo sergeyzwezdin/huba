@@ -11,33 +11,29 @@
     "url": "git+https://github.com/sergeyzwezdin/claude-tasks.git"
   },
   "scripts": {
-    "dev": "bun run index.tsx",
+    "dev": "bun run --watch index.tsx",
     "typecheck": "tsc --noEmit",
     "format": "biome check",
     "format:file": "biome check --write --log-level=warn",
-    "lint": "biome lint",
-    "test": "bun test"
+    "lint": "biome lint"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.15",
     "@types/bun": "latest",
-    "@types/react": "^19.2.14"
+    "@types/react": "^19"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
-    "@mishieck/ink-titled-box": "^0.4.2",
-    "@pppp606/ink-chart": "^0.2.4",
+    "@opentui/core": "^0.1.79",
+    "@opentui/react": "^0.1.79",
     "@tanstack/react-query": "^5.90.21",
-    "dedent": "^1.7.1",
-    "ink": "6.7.0",
-    "ink-link": "^5.0.0",
-    "ink-scroll-view": "^0.3.6",
     "jotai": "^2.17.1",
-    "marked": "^17.0.2",
-    "marked-terminal": "^7.3.0",
-    "react": "19.2.4",
+    "react": "^19",
     "zod": "^4.3.6"
+  },
+  "patchedDependencies": {
+    "@types/react@19.2.14": "patches/@types%2Freact@19.2.14.patch"
   }
 }

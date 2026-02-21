@@ -1,18 +1,23 @@
 #!/usr/bin/env bun
 
-import { render } from 'ink'
+import { ConsolePosition, createCliRenderer } from '@opentui/core'
+import { createRoot } from '@opentui/react'
 
 import { TaskListPage } from '@/pages/task-list'
-import { enterAltScreen } from '@/shared/lib'
 
 import { App } from './src/app'
 
-enterAltScreen()
-
-const { waitUntilExit } = render(
+const renderer = await createCliRenderer({
+    exitOnCtrlC: true,
+    // autoFocus: true,
+    useMouse: true,
+    consoleOptions: {
+        position: ConsolePosition.BOTTOM,
+        sizePercent: 30,
+    },
+})
+createRoot(renderer).render(
     <App>
         <TaskListPage />
     </App>,
 )
-
-await waitUntilExit()

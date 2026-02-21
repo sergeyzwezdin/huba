@@ -2,6 +2,16 @@
 
 TypeDoc-compatible documentation standards.
 
+## Contents
+
+- [Function Documentation](#function-documentation)
+- [Schema Documentation](#schema-documentation)
+- [Type Documentation](#type-documentation)
+- [Component Documentation](#component-documentation)
+- [Hook Documentation](#hook-documentation)
+- [Required Tags](#required-tags-typedoc-compatible-only)
+- [Documentation Coverage](#documentation-coverage)
+
 ## Function Documentation
 
 ```typescript

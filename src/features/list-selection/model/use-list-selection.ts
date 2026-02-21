@@ -1,4 +1,4 @@
-import { useInput } from 'ink'
+import { useKeyboard } from '@opentui/react'
 
 import { useSelectedListId } from './selected-list.atom'
 
@@ -12,8 +12,8 @@ import { useSelectedListId } from './selected-list.atom'
 export const useListSelection = (listId: string | null, onSelect?: () => void): void => {
     const [, setSelectedListId] = useSelectedListId()
 
-    useInput((_input, key) => {
-        if (key.return && listId) {
+    useKeyboard((key) => {
+        if (key.name === 'enter' && listId) {
             setSelectedListId(listId)
             onSelect?.()
         }

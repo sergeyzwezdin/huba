@@ -1,18 +1,16 @@
 import type { ComponentProps, FC } from 'react'
 
-import { Text } from 'ink'
-
+import { useFocus } from '@/shared/focus-manager'
 import { Panel } from '@/shared/ui/panel'
 
-type TasksSearchProps = Pick<
-    ComponentProps<typeof Panel>,
-    'flexGrow' | 'flexShrink' | 'flexBasis' | 'width' | 'height' | 'minWidth' | 'minHeight'
->
+type TasksSearchProps = Pick<ComponentProps<typeof Panel>, 'style'>
 
 const TasksSearch: FC<TasksSearchProps> = (props) => {
+    const { isFocused, ref } = useFocus({ id: 'tasks-search' })
+
     return (
-        <Panel focusable panelId="tasks-search" borderStyle="round" titles={['Search']} {...props}>
-            <Text>Search</Text>
+        <Panel focusable focused={isFocused} ref={ref} title="Search" {...props}>
+            <text> Search</text>
         </Panel>
     )
 }

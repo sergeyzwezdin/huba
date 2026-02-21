@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-import { useInput } from 'ink'
+import { useKeyboard } from '@opentui/react'
 
 import { useSelectedTaskIndex } from './selection.atom'
 
@@ -23,10 +23,10 @@ export const useTaskNavigation = (taskCount: number): void => {
         }
     }, [taskCount, selectedIndex, setSelectedIndex])
 
-    useInput((_input, key) => {
-        if (key.upArrow) {
+    useKeyboard((key) => {
+        if (key.name === 'up') {
             setSelectedIndex((prev) => Math.max(0, prev - 1))
-        } else if (key.downArrow) {
+        } else if (key.name === 'down') {
             setSelectedIndex((prev) => Math.min(taskCount - 1, prev + 1))
         }
     })
