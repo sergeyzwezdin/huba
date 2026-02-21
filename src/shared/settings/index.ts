@@ -1,4 +1,2 @@
-export { detailsExpandedAtom, detailsVisibleAtom } from './details-panel'
-export type { Layout } from './layout'
-export { layoutAtom } from './layout'
+export { fullScreenAtom, showTaskDetailsAtom, type TaskDetailsLayout, taskDetailsLayoutAtom } from './screen-layout'
 export { activeThemeAtom, useTheme } from './theme'

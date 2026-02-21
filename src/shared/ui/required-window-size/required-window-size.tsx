@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react'
 
 import { useTerminalDimensions } from '@opentui/react'
 
-import { WindowTooSmall } from './window-too-small'
+import { WindowTooSmall } from '@/shared/ui/placeholders'
 
 type RequiredWindowSizeProps = {
     minWidth: number

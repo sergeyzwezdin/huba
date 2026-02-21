@@ -5,7 +5,7 @@ import { mkdirSync } from 'node:fs'
 import chokidar from 'chokidar'
 import { useAtomValue } from 'jotai'
 
-import { selectedListAtom } from '@/entities/task-list'
+import { selectedListAtom } from '@/entities/claude-list'
 import { getTasksDir } from '@/shared/api/paths'
 
 const WATCHER_OPTIONS = {

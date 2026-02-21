@@ -1,49 +1,32 @@
 import type { ComponentProps, FC } from 'react'
 import { useEffect, useRef } from 'react'
 
-import { type ScrollBoxRenderable, TextAttributes } from '@opentui/core'
-import { useKeyboard } from '@opentui/react'
+import type { ScrollBoxRenderable } from '@opentui/core'
+import { TextAttributes } from '@opentui/core'
 import { useAtom } from 'jotai'
 
+import { selectedListAtom } from '@/entities/claude-list'
 import { useSelectedTask } from '@/entities/task'
-import { selectedListAtom } from '@/entities/task-list'
 import { useFocus, useFocusManager } from '@/shared/focus-manager'
-import { detailsExpandedAtom, useTheme } from '@/shared/settings'
+import { fullScreenAtom, useTheme } from '@/shared/settings'
 import { Markdown } from '@/shared/ui/markdown'
 import { Panel } from '@/shared/ui/panel'
+import { useHotkeys } from '@/widgets/task-details/model/use-hotkeys'
 
 type TaskDetailsProps = Pick<ComponentProps<typeof Panel>, 'style'>
 
 const TaskDetails: FC<TaskDetailsProps> = (props) => {
     const { theme } = useTheme()
     const { isFocused, ref } = useFocus({ id: 'task-details' })
-    const { focus } = useFocusManager()
     const scrollRef = useRef<ScrollBoxRenderable>(null)
-    const [expanded, toggleExpanded] = useAtom(detailsExpandedAtom)
+    const [expanded, toggleExpanded] = useAtom(fullScreenAtom)
 
     const [selectedList] = useAtom(selectedListAtom)
     const selectedTask = useSelectedTask(selectedList)
 
     const { disableTabButton, enableTabButton } = useFocusManager()
 
-    useKeyboard((key) => {
-        if (!isFocused) return
-        if (key.name === 'return') {
-            toggleExpanded((prev) => !prev)
-        } else if (key.name === 'escape') {
-            if (expanded) {
-                toggleExpanded(false)
-            } else {
-                focus('task-table')
-            }
-        } else if (key.name === 'up' || key.name === 'k') {
-            scrollRef.current?.scrollBy(-1)
-        } else if (key.name === 'down' || key.name === 'j') {
-            scrollRef.current?.scrollBy(1)
-        } else {
-            scrollRef.current?.handleKeyPress(key)
-        }
-    })
+    useHotkeys(isFocused, expanded, toggleExpanded, scrollRef)
 
     useEffect(() => {
         if (isFocused && expanded) disableTabButton()
@@ -57,7 +40,6 @@ const TaskDetails: FC<TaskDetailsProps> = (props) => {
             focusable
             focused={isFocused}
             ref={ref}
-            // title={['[123]', 'Implement task details scrollable panel that renders the task description as markdown.']}
             title={['[2]', 'Task Details']}
             {...props}
             style={{
