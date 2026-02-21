@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs'
 import { readdir } from 'node:fs/promises'
 
 import type { Task, TaskStatus } from '@/shared/domain'
@@ -19,6 +20,8 @@ export type TasksData = {
 export const getTasks = async (listId?: string): Promise<TasksData> => {
     const dirPath = getTasksDir(listId)
 
+    if (!existsSync(dirPath)) return { list: [], map: {} }
+
     try {
         const files = await readdir(dirPath)
         const jsonFiles = files.filter((file) => file.endsWith('.json'))
@@ -26,7 +29,7 @@ export const getTasks = async (listId?: string): Promise<TasksData> => {
         const taskIds = jsonFiles.map((file) => file.replace(/\.json$/, ''))
         const result = await Promise.all(taskIds.map((taskId) => getTask(taskId, listId)))
 
-        const rawList: Task[] = result.filter((task): task is Task => !!task)
+        const rawList: Task[] = result.filter((task): task is Task => task !== undefined)
         const list = resolveBlockedStatuses(rawList)
 
         const map: Record<string, Task> = Object.fromEntries(list.map((task) => [task.id, task]))

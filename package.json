@@ -29,6 +29,7 @@
     "@opentui/core": "^0.1.79",
     "@opentui/react": "^0.1.79",
     "@tanstack/react-query": "^5.90.21",
+    "chokidar": "^5.0.0",
     "jotai": "^2.17.1",
     "react": "^19",
     "zod": "^4.3.6"

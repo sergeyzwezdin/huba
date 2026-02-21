@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs'
 import { readdir, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 
@@ -14,41 +15,35 @@ import { getTasksBaseDir } from './paths'
 export const getTaskLists = async (): Promise<TaskList[]> => {
     const tasksBaseDir = getTasksBaseDir()
 
-    try {
-        // Read all entries in the tasks directory
-        const entries = await readdir(tasksBaseDir, { withFileTypes: true })
+    if (!existsSync(tasksBaseDir)) return []
 
-        // Filter directories only and get their metadata
-        const lists = await Promise.all(
-            entries
-                .filter((entry) => entry.isDirectory())
-                .map(async (entry) => {
-                    const listPath = join(tasksBaseDir, entry.name)
-                    const stats = await stat(listPath)
+    // Read all entries in the tasks directory
+    const entries = await readdir(tasksBaseDir, { withFileTypes: true })
 
-                    const rawData = {
-                        id: entry.name,
-                        path: listPath,
-                        createdAt: stats.birthtime,
-                    }
+    // Filter directories only and get their metadata
+    const lists = await Promise.all(
+        entries
+            .filter((entry) => entry.isDirectory())
+            .map(async (entry) => {
+                const listPath = join(tasksBaseDir, entry.name)
+                const stats = await stat(listPath)
 
-                    // Validate using Zod schema
-                    const result = taskListSchema.safeParse(rawData)
-                    if (!result.success) {
-                        throw new Error(`Invalid task list data for ${entry.name}: ${result.error.message}`)
-                    }
+                const rawData = {
+                    id: entry.name,
+                    path: listPath,
+                    createdAt: stats.birthtime,
+                }
 
-                    return result.data
-                }),
-        )
+                // Validate using Zod schema
+                const result = taskListSchema.safeParse(rawData)
+                if (!result.success) {
+                    throw new Error(`Invalid task list data for ${entry.name}: ${result.error.message}`)
+                }
 
-        // Sort by creation date (newest first)
-        return lists.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-    } catch (error) {
-        // If directory doesn't exist or can't be read, return empty array
-        if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-            return []
-        }
-        throw error
-    }
+                return result.data
+            }),
+    )
+
+    // Sort by creation date (newest first)
+    return lists.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 }

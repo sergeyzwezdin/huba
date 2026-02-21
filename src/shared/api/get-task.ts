@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs'
 import { readFile, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 
@@ -8,14 +9,16 @@ import { getTasksDir } from './paths'
 
 /**
  * Read and parse a single task file
- * Returns null if file is invalid or doesn't exist
+ * Returns undefined if file doesn't exist or is invalid
  *
  * @param taskId - Task identifier (filename without .json extension)
  * @param listId - Optional list ID (defaults to CLAUDE_CODE_TASK_LIST_ID env var or 'default')
  */
-export const getTask = async (taskId: string, listId?: string): Promise<Task | null> => {
+export const getTask = async (taskId: string, listId?: string): Promise<Task | undefined> => {
     const dirPath = getTasksDir(listId)
     const filePath = join(dirPath, `${taskId}.json`)
+
+    if (!existsSync(filePath)) return undefined
 
     try {
         const [content, fileStat] = await Promise.all([readFile(filePath, 'utf-8'), stat(filePath)])
@@ -25,12 +28,12 @@ export const getTask = async (taskId: string, listId?: string): Promise<Task | n
 
         if (!result.success) {
             console.error(`Invalid task data in ${filePath}:`, result.error)
-            return null
+            return undefined
         }
 
         return result.data
     } catch (error) {
         console.error(`Error reading task file ${filePath}:`, error)
-        return null
+        return undefined
     }
 }
