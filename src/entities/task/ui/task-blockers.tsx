@@ -1,8 +1,7 @@
 import { type ComponentProps, type FC, useEffect, useMemo, useRef, useState } from 'react'
 
-import { useKeyboard } from '@opentui/react'
-
 import type { Task } from '@/shared/domain'
+import { useKeyboard } from '@/shared/keyboard'
 
 import { TaskSelect, type TaskSelectRenderable } from './task-select'
 

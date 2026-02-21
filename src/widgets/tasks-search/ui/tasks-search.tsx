@@ -18,13 +18,15 @@ const TasksSearch: FC<TasksSearchProps> = (props) => {
     const setSelectedTaskId = useSetAtom(selectedTaskIdAtom)
     const inputRef = useRef<InputRenderable>(null)
 
+    const { disableGlobalHotkeys, enableGlobalHotkeys } = useHotkeys(isFocused)
     useEffect(() => {
         if (isFocused) {
             inputRef.current?.focus()
+            disableGlobalHotkeys()
+        } else {
+            enableGlobalHotkeys()
         }
-    }, [isFocused])
-
-    useHotkeys(isFocused)
+    }, [isFocused, disableGlobalHotkeys, enableGlobalHotkeys])
 
     return (
         <Panel focusable focused={isFocused} ref={ref} title={['[:]', 'Search']} style={{ paddingLeft: 2 }} {...props}>

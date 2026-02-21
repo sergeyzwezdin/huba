@@ -1,9 +1,8 @@
 import type { RefObject } from 'react'
 
-import { useKeyboard } from '@opentui/react'
-
 import type { ClaudeListSelectRenderable } from '@/entities/claude-list'
 import { useFocusManager } from '@/shared/focus-manager'
+import { useKeyboard } from '@/shared/keyboard'
 
 const useHotkeys = (
     enabled: boolean,

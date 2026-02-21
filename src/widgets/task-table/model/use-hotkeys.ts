@@ -1,11 +1,11 @@
 import type { RefObject } from 'react'
 
-import { useKeyboard } from '@opentui/react'
 import { useSetAtom } from 'jotai'
 
 import type { TaskFilterStatus, TaskSelectRenderable, TaskSortField } from '@/entities/task'
 import { taskFilterAtom, taskSortAtom } from '@/entities/task'
 import { useFocusManager } from '@/shared/focus-manager'
+import { useKeyboard } from '@/shared/keyboard'
 import { showTaskDetailsAtom } from '@/shared/settings'
 
 const filterCycle: TaskFilterStatus[] = ['all', 'pending', 'in_progress', 'completed']

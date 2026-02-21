@@ -1,7 +1,6 @@
 import type { ComponentProps } from 'react'
 import { forwardRef, useMemo, useState } from 'react'
 
-import { useKeyboard } from '@opentui/react'
 import { useAtom, useSetAtom } from 'jotai'
 
 import {
@@ -11,6 +10,7 @@ import {
     useListsQuery,
 } from '@/entities/claude-list'
 import { selectedTaskIdAtom, taskFilterAtom } from '@/entities/task'
+import { useKeyboard } from '@/shared/keyboard'
 
 type ListSelectProps = Pick<ComponentProps<typeof ListSelectControl>, 'onSelect' | 'style' | 'focused'>
 

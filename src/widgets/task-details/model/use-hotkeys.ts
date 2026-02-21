@@ -1,9 +1,9 @@
 import type { RefObject } from 'react'
 
 import type { ScrollBoxRenderable } from '@opentui/core'
-import { useKeyboard } from '@opentui/react'
 
 import { useFocusManager } from '@/shared/focus-manager'
+import { useKeyboard } from '@/shared/keyboard'
 
 const useHotkeys = (
     visible: boolean,

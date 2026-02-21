@@ -1,10 +1,10 @@
-import { useKeyboard } from '@opentui/react'
 import { toast } from '@opentui-ui/toast'
 import { useAtom, useSetAtom } from 'jotai'
 
 import { selectedListAtom, useListsQuery } from '@/entities/claude-list'
 import { selectedTaskIdAtom, taskFilterAtom } from '@/entities/task'
 import { useFocusManager } from '@/shared/focus-manager'
+import { useKeyboard } from '@/shared/keyboard'
 import {
     fullScreenAtom,
     showProgressAtom,

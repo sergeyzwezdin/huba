@@ -1,5 +1,6 @@
-import { useKeyboard, useRenderer } from '@opentui/react'
+import { useRenderer } from '@opentui/react'
 
+import { useKeyboard } from '@/shared/keyboard'
 import { queryClient } from '@/shared/state'
 
 /**

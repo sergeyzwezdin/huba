@@ -5,6 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { Provider as JotaiProvider } from 'jotai'
 
 import { FocusProvider } from '@/shared/focus-manager'
+import { KeyboardProvider } from '@/shared/keyboard'
 import { queryClient } from '@/shared/state'
 import { store as jotaiStore } from '@/shared/state/jotai'
 
@@ -17,10 +18,12 @@ const Providers: FC<PropsWithChildren> = ({ children }) => (
         <JotaiProvider store={jotaiStore}>
             <ListSelector>
                 <FileWatcher>
-                    <FocusProvider>
-                        <DialogProvider size="medium">{children}</DialogProvider>
-                        <Toaster />
-                    </FocusProvider>
+                    <KeyboardProvider>
+                        <FocusProvider>
+                            <DialogProvider size="medium">{children}</DialogProvider>
+                            <Toaster />
+                        </FocusProvider>
+                    </KeyboardProvider>
                 </FileWatcher>
             </ListSelector>
         </JotaiProvider>
