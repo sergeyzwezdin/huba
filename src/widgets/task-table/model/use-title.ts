@@ -13,7 +13,6 @@ const sortLabel: Record<TaskSortField, string> = {
 const filterLabel: Record<Exclude<TaskFilterStatus, 'all'>, string> = {
     pending: 'Pending',
     in_progress: 'In Progress',
-    blocked: 'Blocked',
     completed: 'Completed',
 }
 

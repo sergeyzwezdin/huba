@@ -53,7 +53,10 @@ export const useTasks = (listId?: string): Omit<ReturnType<typeof useTasksQuery>
     const filteredTasks = useMemo(() => {
         const query = filter.search.toLowerCase().trim()
         return tasks.filter((task) => {
-            const statusMatch = filter.status === 'all' || task.status === filter.status
+            const statusMatch =
+                filter.status === 'all' ||
+                task.status === filter.status ||
+                (filter.status === 'pending' && task.status === 'blocked')
             const searchMatch =
                 !query ||
                 task.subject.toLowerCase().includes(query) ||

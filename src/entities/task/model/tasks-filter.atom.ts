@@ -1,8 +1,7 @@
-import type { TaskStatus } from '@/shared/domain'
 import { atomWithStorage } from '@/shared/state'
 
 /** Filter value: a specific status or 'all' */
-export type TaskFilterStatus = TaskStatus | 'all'
+export type TaskFilterStatus = 'all' | 'pending' | 'in_progress' | 'completed'
 
 /** Filter state */
 export type TaskFilter = {

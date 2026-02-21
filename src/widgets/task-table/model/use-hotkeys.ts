@@ -8,7 +8,7 @@ import { taskFilterAtom, taskSortAtom } from '@/entities/task'
 import { useFocusManager } from '@/shared/focus-manager'
 import { showTaskDetailsAtom } from '@/shared/settings'
 
-const filterCycle: TaskFilterStatus[] = ['all', 'pending', 'in_progress', 'blocked', 'completed']
+const filterCycle: TaskFilterStatus[] = ['all', 'pending', 'in_progress', 'completed']
 
 const useHotkeys = (enabled: boolean, selectRef: RefObject<TaskSelectRenderable | null>): void => {
     const { focus } = useFocusManager()
