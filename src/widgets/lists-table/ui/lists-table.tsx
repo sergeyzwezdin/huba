@@ -9,7 +9,7 @@ const ListsTable: FC<ListsTableProps> = (props) => {
     const { isFocused, ref } = useFocus({ id: 'lists-table' })
 
     return (
-        <Panel focusable focused={isFocused} ref={ref} title="Active List" {...props}>
+        <Panel focusable focused={isFocused} ref={ref} title={['[L]', 'Active List']} {...props}>
             <text></text>
         </Panel>
     )

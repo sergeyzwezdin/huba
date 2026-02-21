@@ -8,7 +8,8 @@ export type TaskFilterStatus = TaskStatus | 'all'
 /** Filter state */
 export type TaskFilter = {
     status: TaskFilterStatus
+    search: string
 }
 
 /** Atom holding the current task filter configuration */
-export const taskFilterAtom = atom<TaskFilter>({ status: 'all' })
+export const taskFilterAtom = atom<TaskFilter>({ status: 'all', search: '' })

@@ -26,6 +26,8 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@opentui-ui/dialog": "^0.1.2",
+    "@opentui-ui/toast": "^0.0.5",
     "@opentui/core": "^0.1.79",
     "@opentui/react": "^0.1.79",
     "@tanstack/react-query": "^5.90.21",

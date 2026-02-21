@@ -1,7 +1,5 @@
 import type { FC } from 'react'
 
-import { TextAttributes } from '@opentui/core'
-
 import { useTheme } from '@/shared/settings'
 import { Panel } from '@/shared/ui/panel'
 
@@ -18,10 +16,7 @@ const NoTaskSelected: FC = () => {
                 alignItems: 'center',
                 gap: 2,
             }}>
-            <ascii-font text="=" font="slick" color={theme.colors.hint} />
-            <text fg={theme.colors.hint} attributes={TextAttributes.DIM}>
-                No task selected
-            </text>
+            <ascii-font text="---" font="slick" color={theme.colors.hint} />
         </Panel>
     )
 }

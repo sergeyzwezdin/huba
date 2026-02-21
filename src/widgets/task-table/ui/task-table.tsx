@@ -1,7 +1,8 @@
 import type { ComponentProps, FC } from 'react'
-import { useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 
 import { useKeyboard } from '@opentui/react'
+import { useDialog } from '@opentui-ui/dialog/react'
 import { useAtom } from 'jotai'
 
 import type { TaskFilterStatus, TaskSortField } from '@/entities/task'
@@ -47,10 +48,17 @@ const TaskTable: FC<TaskTableProps> = (props) => {
     const subTitle = `${sortLabel[sort.field].toUpperCase()} ${sort.direction === 'asc' ? '↑' : '↓'}`
     const footer = filter.status !== 'all' ? filterLabel[filter.status].toUpperCase() : undefined
 
-    const filteredTasks = useMemo(
-        () => (filter.status === 'all' ? tasks : tasks.filter((task) => task.status === filter.status)),
-        [tasks, filter.status],
-    )
+    const filteredTasks = useMemo(() => {
+        const query = filter.search?.toLowerCase().trim() ?? ''
+        return tasks.filter((task) => {
+            const statusMatch = filter.status === 'all' || task.status === filter.status
+            const searchMatch =
+                !query ||
+                task.subject.toLowerCase().includes(query) ||
+                (task.description ?? '').toLowerCase().includes(query)
+            return statusMatch && searchMatch
+        })
+    }, [tasks, filter.status, filter.search])
 
     const sortedTasks = useSorted(filteredTasks)
 
@@ -117,7 +125,7 @@ const TaskTable: FC<TaskTableProps> = (props) => {
             subTitle={subTitle}
             footer={footer}
             subFooter={
-                selectedTaskIndex !== undefined ? `${selectedTaskIndex + 1}/${tasks.length}` : String(tasks.length)
+                selectedTaskIndex !== undefined ? `${selectedTaskIndex + 1}/${options.length}` : String(options.length)
             }
             {...props}
             style={props.style}>
