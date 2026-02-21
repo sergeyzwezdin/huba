@@ -22,6 +22,31 @@ export { TaskList };
 - Props type named `{ComponentName}Props` — never generic `Props`
 - Order within file: props type → component → sub-components → co-located hooks → exports
 
+## forwardRef — Renderer Refs
+
+Use when a parent needs direct access to a renderable (e.g., to call `handleKeyPress`):
+
+```typescript
+type TaskSelectProps = { options: TaskSelectOption[]; selectedItem?: string }
+
+const TaskSelect = forwardRef<TaskSelectRenderable, TaskSelectProps>((props, ref) => {
+    const { theme } = useTheme()
+    return <task-select {...props} theme={theme} ref={ref} />
+})
+TaskSelect.displayName = 'TaskSelect'
+
+export { TaskSelect }
+```
+
+Parent usage:
+```typescript
+const selectRef = useRef<TaskSelectRenderable>(null)
+// ...
+selectRef.current?.handleKeyPress(key)
+// ...
+<TaskSelect ref={selectRef} options={options} />
+```
+
 ## Custom Hooks
 
 - Extract when logic is used 3+ times, or when stateful logic is complex (even if used once)
@@ -52,15 +77,26 @@ const useTaskFilter = (tasks: Task[]) => {
 | State type | Tool | Location |
 |-----------|------|----------|
 | Component-local | `useState` | Inside component |
-| Shared cross-component | Jotai atom | `model/*.atom.ts` |
+| Shared (read-only) | `useAtomValue(atom)` | `model/*.atom.ts` |
+| Shared (write-only) | `useSetAtom(atom)` | `model/*.atom.ts` |
+| Shared (read+write) | `useAtom(atom)` | `model/*.atom.ts` |
+| Persistent across sessions | `atomWithStorage` from `@/shared/state` | `model/*.atom.ts` |
 | Server/async data | TanStack Query | `model/*.query.ts` or `shared/api/` |
 | Derived | Compute in render or `useMemo` if expensive | — |
 
 ```typescript
-const [selected, setSelected] = useState<string | undefined>(undefined);  // local
-const [tasks] = useAtom(tasksAtom);                                        // shared
-const { data, isLoading } = useQuery({ ... });                             // server
-const filteredTasks = tasks.filter(t => t.status === 'pending');           // derived
+// Local
+const [selected, setSelected] = useState<string | undefined>(undefined)
+// Shared — prefer specific hooks over useAtom when possible
+const fullScreen = useAtomValue(fullScreenAtom)          // read-only
+const setShowDetails = useSetAtom(showDetailsAtom)       // write-only
+const [filter, setFilter] = useAtom(filterAtom)          // read+write
+// Persistent atom (survives navigation, written to settings.json)
+export const taskFilterAtom = atomWithStorage<TaskFilter>('filter', { status: 'all', search: '' })
+// Server
+const { data, isLoading } = useQuery({ queryKey: ['tasks', listId], queryFn: () => getTasks(listId) })
+// Derived (in render or useMemo)
+const filteredTasks = tasks.filter(t => t.status === 'pending')
 ```
 
 ## Prohibited Patterns

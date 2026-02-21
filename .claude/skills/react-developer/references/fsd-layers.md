@@ -34,47 +34,77 @@ import { TaskTableInternal } from '@/widgets/task-table/ui/task-table-internal';
 ### `app/` — Application Layer
 - Setup, global providers, entry point, app-level hooks
 - Can import from all layers; no business logic; minimal UI
+- Providers nested in dependency order: QueryClient → Jotai → watchers → KeyboardProvider → FocusProvider → DialogProvider
 
 ```typescript
-// src/app/index.tsx
-const App: FC = () => (
-  <QueryClientProvider client={queryClient}>
-    <TaskListPage />
-  </QueryClientProvider>
-);
+// src/app/providers.tsx
+const Providers: FC<PropsWithChildren> = ({ children }) => (
+    <QueryClientProvider client={queryClient}>
+        <JotaiProvider store={jotaiStore}>
+            <FileWatcher>
+                <KeyboardProvider>
+                    <FocusProvider>
+                        {children}
+                    </FocusProvider>
+                </KeyboardProvider>
+            </FileWatcher>
+        </JotaiProvider>
+    </QueryClientProvider>
+)
 ```
 
 ### `pages/` — Page Layer
 - Complete screens; orchestrate widgets
 - One page per route; compose widgets/features; minimal logic; no reusable UI
+- Call page-level `useHotkeys()` (no args) to register page-wide keyboard shortcuts
 
 ```typescript
 // src/pages/task-list/ui/task-list-page.tsx
-const TaskListPage: FC = () => (
-  <box style={{ flexDirection: 'column' }}>
-    <TaskFilter />
-    <TaskTable />
-  </box>
-);
+const TaskListPage: FC = () => {
+    const { width: columns, height: rows } = useTerminalDimensions()
+    const showDetails = useAtomValue(showTaskDetailsAtom)
+
+    useHotkeys() // page-level keyboard handler
+
+    return (
+        <RequiredWindowSize minWidth={80} minHeight={24}>
+            <box style={{ flexDirection: 'row', flexGrow: 1 }}>
+                <TaskTable />
+                {showDetails && <TaskDetails />}
+            </box>
+        </RequiredWindowSize>
+    )
+}
 ```
 
 ### `widgets/` — Widget Layer
 - Composite UI blocks; autonomous page sections
 - Self-contained; compose features + entities; reusable across pages
+- Each widget registers focus with `useFocus({ id })` and calls `useHotkeys(isFocused, ref)`
 
 ```typescript
 // src/widgets/task-table/ui/task-table.tsx
-const TaskTable: FC = () => {
-  const { selected, select } = useTaskSelection();
-  const { data: tasks } = useTasksQuery();
-  return (
-    <box style={{ flexDirection: 'column' }}>
-      {tasks?.map(task => (
-        <TaskRow key={task.id} task={task} selected={selected === task.id} onSelect={select} />
-      ))}
-    </box>
-  );
-};
+const TaskTable: FC<TaskTableProps> = (props) => {
+    const { isFocused, ref } = useFocus({ id: 'task-table', autoFocus: true })
+    const { focus } = useFocusManager()
+    const selectRef = useRef<TaskSelectRenderable>(null)
+    const [selectedList] = useAtom(selectedListAtom)
+    const { data: tasks } = useTasks(selectedList)
+
+    useHotkeys(isFocused, selectRef) // widget-level keyboard handler
+
+    return (
+        <Panel
+            focusable
+            focused={isFocused}
+            ref={ref}
+            title={['[1]', 'Task List']}
+            {...props}
+            onMouseUp={() => focus('task-table')}>
+            <TaskSelect ref={selectRef} options={tasks} />
+        </Panel>
+    )
+}
 ```
 
 ### `features/` — Feature Layer
@@ -82,29 +112,30 @@ const TaskTable: FC = () => {
 - Focused on single feature; stateful logic lives here; features should be independent
 
 ```typescript
-// src/features/task-filtering/model/use-task-filter.ts
-export const useTaskFilter = (tasks: Task[]) => {
-  const [filter, setFilter] = useState('');
-  const filtered = useMemo(
-    () => tasks.filter(t => t.subject.toLowerCase().includes(filter.toLowerCase())),
-    [tasks, filter]
-  );
-  return { filtered, filter, setFilter };
-};
+// src/features/settings/ui/settings-panel.tsx
+const SettingsPanel: FC = () => {
+    const { theme, themeName, toggleTheme } = useTheme()
+    return (
+        <Panel title="Settings" style={{ width: 40 }}>
+            <text fg={rgbToHex(theme.colors.primary)}>Theme: {themeName}</text>
+        </Panel>
+    )
+}
 ```
 
 ### `entities/` — Entity Layer
-- Domain types, entity-specific UI, entity utilities
+- Domain types, entity-specific UI, entity utilities, entity-scoped queries/atoms
 - Represents business domain; no feature logic; pure functions preferred
+- Domain Zod schemas live in `shared/domain/`, entity-specific queries/atoms live in `entities/*/model/`
 
 ```typescript
-// src/entities/task/model/types.ts
-export type TaskStatus = 'pending' | 'in_progress' | 'completed';
-export type Task = {
-  id: string; subject: string; description: string; status: TaskStatus;
-  owner?: string; blocks: string[]; blockedBy: string[];
-  metadata: Record<string, unknown>;
-};
+// src/entities/task/model/tasks.query.ts
+export const useTasks = (listId?: string) => {
+    const query = useTasksQuery(listId)
+    const filter = useAtomValue(taskFilterAtom)
+    const sort = useAtomValue(taskSortAtom)
+    // filter + sort applied here, returns { ...query, data: sortedTasks }
+}
 ```
 
 ### `shared/` — Shared Layer
@@ -112,12 +143,15 @@ export type Task = {
 - No knowledge of entities/features; could be extracted to a package
 
 **Shared segments:**
-- `shared/ui/` — Base components (Panel, Spinner, ErrorMessage)
-- `shared/lib/` — Utilities (formatDate, debounce, file I/O)
-- `shared/api/` — API setup (queryClient, file system watchers)
-- `shared/types/` — Common types
-- `shared/config/` — Configuration (paths, env vars)
-- `shared/domain/` — Domain models (Zod schemas and types)
+- `shared/ui/` — Base components (Panel, Spinner, RequiredWindowSize); each in its own sub-folder
+- `shared/api/` — File system API functions (getTasks, getLists)
+- `shared/state/` — `atomWithStorage` utility
+- `shared/keyboard/` — `useKeyboard` wrapper (respects global enable/disable)
+- `shared/focus-manager/` — `useFocus`, `useFocusManager`
+- `shared/settings/` — `useTheme`, theme atoms
+- `shared/theme/` — Theme definitions, `rgbToHex`
+- `shared/domain/` — Zod schemas and inferred types (Task, TaskStatus, etc.)
+- `shared/routing/` — Route atoms and navigation
 
 #### `shared/ui` Structure
 

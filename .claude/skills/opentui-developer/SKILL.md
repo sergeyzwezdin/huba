@@ -40,11 +40,12 @@ Display content?
 
 ```
 User input?
-├─ Single-line text field   -> components/inputs-text.md
-├─ Multi-line text editor   -> components/inputs-text.md (textarea)
-├─ Select from a list       -> components/inputs-select.md
-├─ Tab-based selection      -> components/inputs-select.md (tab-select)
-└─ Custom keyboard handling -> keyboard/REFERENCE.md
+├─ Single-line text field          -> components/inputs-text.md
+├─ Multi-line text editor          -> components/inputs-text.md (textarea)
+├─ Select from a list (built-in)   -> components/inputs-select.md
+├─ Custom-rendered list/select     -> components/inputs-select.md (BaseSelectRenderable)
+├─ Tab-based selection             -> components/inputs-select.md (tab-select)
+└─ Custom keyboard handling        -> keyboard/REFERENCE.md
 ```
 
 ### "I need layout/positioning"
@@ -82,8 +83,16 @@ Keyboard?
 Theming/Settings?
 ├─ Define and implement a theme     -> react/patterns-theming.md
 ├─ Consume theme in a component     -> react/patterns-theming.md
+├─ rgbToHex for imperative APIs     -> react/patterns-theming.md
 ├─ App-wide settings atoms          -> react/patterns-settings.md
 └─ Keyboard shortcuts for settings  -> react/patterns-settings.md
+```
+
+### "I need notifications or feedback"
+
+```
+Notifications?
+└─ Toast messages (info/success/error/warning) -> react/patterns-toast.md
 ```
 
 ### "I need to test my TUI"

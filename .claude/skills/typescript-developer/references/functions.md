@@ -69,3 +69,20 @@ const value = useMemo<RouterContextValue>(
 ```
 
 **Pattern**: Stable callback references use `useCallback()`. Context values use `useMemo()` with explicit type annotations.
+
+## Ref-Based Callback Updates
+
+```typescript
+// Avoid stale closure in long-lived callbacks (e.g. file watchers, event handlers)
+const callbackRef = useRef(onCallback)
+useEffect(() => {
+    callbackRef.current = onCallback
+}, [onCallback])
+
+// Use in long-lived handler to always call the latest version
+const handler = useCallback(() => {
+    callbackRef.current()
+}, []) // stable reference, no closure issue
+```
+
+**Pattern**: Use `useRef` to track the latest callback value when a long-lived handler (watcher, listener) needs to call a callback that changes on each render. Avoids stale closures without adding the callback to `useCallback` deps.

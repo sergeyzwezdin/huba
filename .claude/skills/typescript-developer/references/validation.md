@@ -96,17 +96,17 @@ if (!result.success) {
 
 ```typescript
 // ❌ WRONG - deprecated methods
-z.string().url()       // deprecated
-z.string().email()       // deprecated
+z.string().url()       // deprecated in Zod v4
+z.string().email()     // deprecated in Zod v4
 
-// ✅ CORRECT - use specific methods instead
-z.url()  // for datetime strings (ISO 8601)
-z.email()  // for URL strings
+// ✅ CORRECT - use top-level methods instead
+z.url()    // for URL strings
+z.email()  // for email strings
 
-// ✅ CORRECT - add custom refinement if validation needed
+// ✅ CORRECT - add custom refinement for other validations
 z.string().refine((val) => !isNaN(Date.parse(val)), {
     message: 'Invalid datetime format'
 })
 ```
 
-**Pattern**: Use plain `z.string()` instead of deprecated string validators. Add custom refinements only when validation is required.
+**Pattern**: Prefer top-level `z.url()` and `z.email()` over chained `.url()` / `.email()` string validators. Add custom `.refine()` for other string constraints.

@@ -1,124 +1,155 @@
 # React Patterns — State Management
 
-## Local State
+This project uses **Jotai** for app state and **TanStack Query** for file system data.
+Do not use `useState`/`useReducer` for shared or persistent state.
 
-```tsx
-const Counter: FC = () => {
-  const [count, setCount] = useState(0)
-  return (
-    <box flexDirection="row" gap={2}>
-      <text>Count: {count}</text>
-      <box border onMouseDown={() => setCount(c => c - 1)}><text>-</text></box>
-      <box border onMouseDown={() => setCount(c => c + 1)}><text>+</text></box>
-    </box>
-  )
-}
-```
+## Jotai Atoms
 
-## Complex State with useReducer
+### Persistent Atoms (survive navigation)
 
-```tsx
-type State = { items: string[]; selectedIndex: number }
-type Action =
-  | { type: "ADD_ITEM"; item: string }
-  | { type: "SELECT"; index: number }
+Use `atomWithStorage` from `@/shared/state` for atoms that should persist across sessions:
 
-const reducer = (state: State, action: Action): State => {
-  switch (action.type) {
-    case "ADD_ITEM": return { ...state, items: [...state.items, action.item] }
-    case "SELECT": return { ...state, selectedIndex: action.index }
-  }
+```ts
+// src/entities/task/model/tasks-filter.atom.ts
+import { atomWithStorage } from '@/shared/state'
+
+export type TaskFilter = {
+    status: 'all' | 'pending' | 'in_progress' | 'completed'
+    search: string
 }
 
-const ItemList: FC = () => {
-  const [state, dispatch] = useReducer(reducer, { items: [], selectedIndex: 0 })
-}
-```
-
-## Async Data Loading
-
-```tsx
-const DataDisplay: FC = () => {
-  const [data, setData] = useState<string[] | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const result = await fetchData()
-        setData(result)
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Unknown error")
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    load()
-  }, [])
-
-  if (isLoading) return <text>Loading...</text>
-  if (error) return <text fg="red">Error: {error}</text>
-  return <box flexDirection="column">{data?.map((item, i) => <text key={i}>{item}</text>)}</box>
-}
-```
-
-## Interval-based Updates
-
-```tsx
-const Clock: FC = () => {
-  const [time, setTime] = useState(new Date())
-
-  useEffect(() => {
-    const interval = setInterval(() => setTime(new Date()), 1000)
-    return () => clearInterval(interval)  // Always clean up!
-  }, [])
-
-  return <text>{time.toLocaleTimeString()}</text>
-}
-```
-
-## Animation with useTimeline
-
-```tsx
-const ProgressBar: FC = () => {
-  const [progress, setProgress] = useState(0)
-  const timeline = useTimeline({ duration: 3000 })
-
-  useEffect(() => {
-    timeline.add(
-      { value: 0 },
-      {
-        value: 100,
-        duration: 3000,
-        ease: "linear",
-        onUpdate: (anim) => setProgress(Math.round(anim.targets[0].value)),
-      }
-    )
-  }, [])
-
-  return (
-    <box flexDirection="column" gap={1}>
-      <text>Progress: {progress}%</text>
-      <box width={50} height={1} backgroundColor="#333">
-        <box width={`${progress}%`} height={1} backgroundColor="#00ff00" />
-      </box>
-    </box>
-  )
-}
-```
-
-## Performance
-
-```tsx
-// Prefer direct props over inline style objects
-<box padding={2}>Content</box>          // GOOD
-<box style={{ padding: 2 }}>Content</box>  // New object every render
-
-// Memoize expensive components
-const ExpensiveList = React.memo(function ExpensiveList({ items }: { items: Item[] }) {
-  return <box flexDirection="column">{items.map(item => <text key={item.id}>{item.name}</text>)}</box>
+export const taskFilterAtom = atomWithStorage<TaskFilter>('filter', {
+    status: 'all',
+    search: '',
 })
+```
 
-// Don't update state during render — use useEffect
+Backed by `~/.claude-tasks/settings.json` using a synchronous file store.
+
+### Transient Atoms
+
+For state that resets on navigation, use plain `atom` from `jotai`:
+
+```ts
+import { atom } from 'jotai'
+
+export const selectedTaskIdAtom = atom<string | undefined>(undefined)
+```
+
+### Derived Atoms
+
+```ts
+import { atom } from 'jotai'
+import { themes } from '@/shared/theme'
+
+export const activeThemeAtom = atomWithStorage<ThemeName>('theme', 'claude')
+// Derived: auto-updates when activeThemeAtom changes
+export const themeAtom = atom<Theme>((get) => themes[get(activeThemeAtom)] ?? themes['claude'])
+```
+
+### Consuming Atoms in Components
+
+```tsx
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+
+const MyComponent: FC = () => {
+    const filter = useAtomValue(taskFilterAtom)      // read-only
+    const setFilter = useSetAtom(taskFilterAtom)     // write-only
+    const [sort, setSort] = useAtom(taskSortAtom)    // read + write
+
+    setFilter((prev) => ({ ...prev, search: 'new' })) // functional update
+}
+```
+
+## TanStack Query
+
+### Query Client Setup
+
+```ts
+// src/shared/state/query-client.ts
+export const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            staleTime: 30_000,
+            retry: 1,
+            refetchOnWindowFocus: false,
+        },
+    },
+})
+```
+
+### Query Keys
+
+```ts
+// src/shared/state/query-keys.ts
+export const queryKeys = {
+    tasks: {
+        list: (listId?: string) => ['tasks', listId ?? 'default'] as const,
+    },
+    taskLists: {
+        all: () => ['task-lists'] as const,
+    },
+} as const
+```
+
+### Layered Query Pattern
+
+Queries are layered: base query → filtered/sorted wrapper → derived selectors:
+
+```ts
+// Base query (internal)
+const useTasksQuery = (listId?: string) => {
+    return useQuery({
+        queryKey: queryKeys.tasks.list(listId),
+        queryFn: () => getTasks(listId),
+    })
+}
+
+// Public hook: applies Jotai filter/sort atoms on top of query data
+export const useTasks = (listId?: string) => {
+    const query = useTasksQuery(listId)
+    const sort = useAtomValue(taskSortAtom)
+    const filter = useAtomValue(taskFilterAtom)
+
+    const filtered = useMemo(() => {
+        return (query.data?.list ?? []).filter((task) => {
+            const statusMatch = filter.status === 'all' || task.status === filter.status
+            const searchMatch = !filter.search || task.subject.toLowerCase().includes(filter.search.toLowerCase())
+            return statusMatch && searchMatch
+        })
+    }, [query.data, filter])
+
+    const sorted = useMemo(() => {
+        return [...filtered].sort((a, b) => {
+            const dir = sort.direction === 'asc' ? 1 : -1
+            if (sort.field === 'id') return (Number(a.id) - Number(b.id)) * dir
+            return a.subject.localeCompare(b.subject) * dir
+        })
+    }, [filtered, sort])
+
+    return { ...query, data: sorted }
+}
+
+// Derived selector
+export const useSelectedTask = (listId?: string): Task | undefined => {
+    const selectedId = useAtomValue(selectedTaskIdAtom)
+    const { data } = useTasksQuery(listId)
+    return selectedId !== undefined ? data?.map[selectedId] : undefined
+}
+```
+
+### Cache Invalidation (from file watchers)
+
+```ts
+// Invalidate query cache when file watcher detects changes
+queryClient.invalidateQueries({ queryKey: queryKeys.tasks.list(listId) })
+```
+
+## Local Component State
+
+Use `useState` only for transient UI state that is truly local to one component:
+
+```tsx
+const [isExpanded, setIsExpanded] = useState(false)
+const [inputValue, setInputValue] = useState('')
 ```

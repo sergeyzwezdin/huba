@@ -3,11 +3,19 @@
 ## Import Organization
 
 ```typescript
-import type { FC } from 'react'
-import type { Task } from '@/shared/domain'
-```
+// 1. Node built-ins (node: prefix)
+import { readFile, stat } from 'node:fs/promises'
+import { join } from 'node:path'
 
-**Pattern**: Type imports first, then value imports. Order: React types → libraries → internal types.
+// 2. Third-party libraries
+import { useQuery } from '@tanstack/react-query'
+import type { FC } from 'react'
+
+// 3. Internal — type imports then value imports
+import type { Task } from '@/shared/domain'
+import { taskSchema } from '@/shared/domain'
+import { getTask } from '@/shared/api'
+```
 
 ## Absolute Path Imports
 

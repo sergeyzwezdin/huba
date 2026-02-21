@@ -5,11 +5,12 @@
 | File | Topic |
 |------|-------|
 | [patterns-settings.md](./patterns-settings.md) | Settings atoms, keyboard shortcuts for settings |
-| [patterns-theming.md](./patterns-theming.md) | Theme type, palette, Jotai-based theme state, switching |
-| [patterns-state.md](./patterns-state.md) | useState, useReducer, async loading, animations |
+| [patterns-theming.md](./patterns-theming.md) | Theme type, palette, Jotai-based theme state, switching, rgbToHex |
+| [patterns-state.md](./patterns-state.md) | Jotai atoms, atomWithStorage, TanStack Query, layered queries |
 | [patterns-forms.md](./patterns-forms.md) | Controlled inputs, validation, focus cycling |
-| [patterns-keyboard.md](./patterns-keyboard.md) | Global shortcuts, vim modes, modal escape |
+| [patterns-keyboard.md](./patterns-keyboard.md) | Project-specific useKeyboard from @/shared/keyboard, widget/page hotkey patterns |
 | [patterns-responsive.md](./patterns-responsive.md) | Terminal-size responsive layouts, dynamic grids |
+| [patterns-toast.md](./patterns-toast.md) | Toast notifications: info, success, error, warning |
 
 ## Quick Reference
 

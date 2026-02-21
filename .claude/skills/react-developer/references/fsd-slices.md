@@ -65,7 +65,8 @@ import { Panel } from '@/shared/ui/panel';
 | Files | kebab-case, match export | `task-table.tsx` → `TaskTable` |
 
 **File → export mapping:**
-- `use-task-filter.ts` → `useTaskFilter`
-- `tasks.query.ts` → `useTasksQuery`, `useTaskQuery`
-- `mode.atom.ts` → `modeAtom`, `useModeAtom`
-- `task-table.tsx` → `TaskTable`
+- `use-{name}.ts` → `use{Name}` hook (e.g., `use-hotkeys.ts` → `useHotkeys`)
+- `{name}.atom.ts` → `{name}Atom` (e.g., `tasks-filter.atom.ts` → `taskFilterAtom`)
+- `{name}.query.ts` → `use{Name}Query`, `use{Name}` hooks
+- `{name}-watcher.ts` → `use{Name}Watcher` hook (e.g., `tasks-watcher.ts` → `useTasksWatcher`)
+- `{name}.renderable.ts` → `{Name}Renderable` class (e.g., `task-select.renderable.ts` → `TaskSelectRenderable`)

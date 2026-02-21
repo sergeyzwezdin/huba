@@ -1,99 +1,106 @@
 # React Patterns — Keyboard Navigation
 
-## Global Shortcuts
+## Project-Specific: useKeyboard from @/shared/keyboard
+
+This project wraps OpenTUI's `useKeyboard` with a context that supports global enable/disable.
+Always import from `@/shared/keyboard`, never directly from `@opentui/react`:
 
 ```tsx
-const App: FC = () => {
-  const renderer = useRenderer()
+import { useKeyboard } from '@/shared/keyboard'
+```
 
-  useKeyboard((key) => {
-    // Quit — use renderer.destroy(), never process.exit()
-    if (key.name === "escape" || (key.ctrl && key.name === "c")) {
-      renderer.destroy()
-      return
-    }
-    if (key.name === "?" || (key.shift && key.name === "/")) setShowHelp(h => !h)
-    if (key.name === "j") moveDown()
-    if (key.name === "k") moveUp()
-  })
+This wrapper respects global hotkey enable/disable state (e.g., disabled during text input focus).
+
+## Widget-Level Hotkeys Pattern
+
+Each widget has `model/use-hotkeys.ts`. The hook gates on `visible` and `focused`:
+
+```tsx
+// src/widgets/task-table/model/use-hotkeys.ts
+import { useKeyboard } from '@/shared/keyboard'
+import { useFocusManager } from '@/shared/focus-manager'
+
+const useHotkeys = (
+    visible: boolean,
+    focused: boolean,
+    scrollRef: RefObject<SomeScrollableRenderable | null>,
+): void => {
+    const { focus } = useFocusManager()
+
+    useKeyboard((key) => {
+        if (!visible) return           // Not visible: ignore all
+        if (key.name === '1') focus('task-table')  // Global navigation (no focus gate)
+
+        if (!focused) return           // Not focused: ignore further
+        if (key.name === 'up' || key.name === 'k') scrollRef.current?.scrollBy(-1)
+        if (key.name === 'down' || key.name === 'j') scrollRef.current?.scrollBy(1)
+        if (key.name === 'escape') {
+            // handle escape
+        }
+    })
 }
 ```
 
-## Navigation Menu
+## Page-Level Hotkeys Pattern
+
+Pages register app-wide shortcuts via `pages/*/model/use-hotkeys.ts`:
 
 ```tsx
-const Menu: FC = () => {
-  const [selectedIndex, setSelectedIndex] = useState(0)
-  const items = ["Home", "Settings", "Help", "Quit"]
+// src/pages/task-list/model/use-hotkeys.ts
+import { useKeyboard } from '@/shared/keyboard'
+import { useAtom, useSetAtom } from 'jotai'
 
-  useKeyboard((key) => {
-    switch (key.name) {
-      case "up": case "k": setSelectedIndex(i => Math.max(0, i - 1)); break
-      case "down": case "j": setSelectedIndex(i => Math.min(items.length - 1, i + 1)); break
-      case "enter": handleSelect(items[selectedIndex]); break
-    }
-  })
+const useHotkeys = (): void => {
+    const setShowDetails = useSetAtom(showTaskDetailsAtom)
+    const { toggleTheme } = useTheme()
 
-  return (
-    <box flexDirection="column">
-      {items.map((item, i) => (
-        <text key={item} fg={i === selectedIndex ? "#00FF00" : "#FFFFFF"}>
-          {i === selectedIndex ? "> " : "  "}{item}
-        </text>
-      ))}
-    </box>
-  )
+    useKeyboard((key) => {
+        if (key.name === '/') setShowDetails((prev) => !prev)
+        if (key.name === 'w' && !key.shift) toggleTheme(false)
+        if (key.name === 'w' && key.shift) toggleTheme(true)
+    })
 }
 ```
 
-## Vim-style Modes
+Mount once at page level. Multiple `useKeyboard` hooks all receive events (no blocking).
+
+## Disabling Hotkeys During Input
+
+Use `disableGlobalHotkeys` / `enableGlobalHotkeys` from the same hook when entering text fields:
 
 ```tsx
-const Editor: FC = () => {
-  const [mode, setMode] = useState<"normal" | "insert">("normal")
+import { useKeyboard } from '@/shared/keyboard'
 
-  useKeyboard((key) => {
-    if (mode === "normal") {
-      if (key.name === "i") setMode("insert")
-      if (key.name === "j") moveCursorDown()
-      if (key.name === "k") moveCursorUp()
-    } else {
-      if (key.name === "escape") setMode("normal")
-    }
-  })
+const SearchInput: FC = () => {
+    const { disableGlobalHotkeys, enableGlobalHotkeys } = useKeyboard()
 
-  return (
-    <box>
-      <text>Mode: {mode}</text>
-      <textarea focused={mode === "insert"} />
-    </box>
-  )
+    return (
+        <input
+            onFocus={disableGlobalHotkeys}
+            onBlur={enableGlobalHotkeys}
+            placeholder="Search..."
+        />
+    )
 }
 ```
 
-## Modal Escape
+## Renderer Destroy
+
+To quit the app, use `renderer.destroy()`, never `process.exit()`:
 
 ```tsx
-const Modal: FC<{ onClose: () => void; children: React.ReactNode }> = ({ onClose, children }) => {
-  useKeyboard((key) => {
-    if (key.name === "escape") onClose()
-  })
-  return <box border padding={2}>{children}</box>
-}
+const { destroy } = useRenderer()
+useKeyboard((key) => {
+    if (key.ctrl && key.name === 'c') destroy()
+})
 ```
 
-## Multiple Keyboard Handlers
+## Key Properties
 
-Multiple `useKeyboard` hooks all receive events — they don't block each other. Coordinate to prevent conflicts:
-
-```tsx
-// Gate on focus state to avoid conflicts
-const Widget: FC = () => {
-  const { isFocused } = useFocus({ id: 'widget' })
-
-  useKeyboard((key) => {
-    if (!isFocused) return  // Only handle when focused
-    // handle keys...
-  })
-}
+```typescript
+key.name     // 'up', 'down', 'return', 'escape', 'tab', 'space', 'a'-'z', '0'-'9', etc.
+key.ctrl     // boolean
+key.shift    // boolean
+key.meta     // boolean
+key.sequence // raw terminal sequence
 ```

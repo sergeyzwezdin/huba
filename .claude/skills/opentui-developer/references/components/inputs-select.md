@@ -2,12 +2,111 @@
 
 ## Contents
 
+- [BaseSelectRenderable (custom list)](#baseselectrenderable-custom-list)
 - [Select (list)](#select-list)
 - [Tab Select (horizontal)](#tab-select-horizontal)
 - [Focus Management](#focus-management)
 - [Form Patterns](#form-patterns)
 
 List selection and horizontal tab components for OpenTUI.
+
+---
+
+## BaseSelectRenderable (custom list)
+
+For custom-rendered lists with full control over layout and appearance, extend `BaseSelectRenderable`.
+Use this pattern instead of `<select>` when you need per-row custom rendering (icons, colors, multi-column layout).
+
+### Option Type
+
+Item type must extend `BaseSelectOption`:
+
+```typescript
+import { BaseSelectOption } from '@/shared/ui/select'
+
+export type MyOption = BaseSelectOption & {   // BaseSelectOption requires { id: string }
+    title: string
+    status: 'pending' | 'in_progress' | 'completed'
+    date: Date
+}
+```
+
+### Custom Renderable Class
+
+```typescript
+import { BaseSelectRenderable } from '@/shared/ui/select'
+import type { OptimizedBuffer } from '@opentui/core'
+
+export class MySelectRenderable extends BaseSelectRenderable<MyOption> {
+    private _colors: { title: RGBA; hint: RGBA } = { title: RGBA.fromHex('#fff'), hint: RGBA.fromHex('#888') }
+
+    // Called when theme changes — update cached colors here
+    protected onThemeChanged(theme: Theme): void {
+        this._colors = {
+            title: parseColor(theme.colors.primary),
+            hint: parseColor(theme.colors.hint),
+        }
+    }
+
+    // Return array of row heights (one entry per item)
+    protected prepareLayout(items: MyOption[], width: number): number[] {
+        return items.map(() => 1)  // Each item is 1 row tall
+    }
+
+    // Render a single item at position (x=0, y)
+    protected renderItem(fb: OptimizedBuffer, item: MyOption, index: number, y: number): void {
+        fb.drawText(item.title, 1, y, this._colors.title)
+        fb.drawText(item.status, 40, y, this._colors.hint)
+    }
+}
+```
+
+### React Component Wrapper
+
+```tsx
+import { forwardRef } from 'react'
+import { useTheme } from '@/shared/settings'
+import { useListData } from '@/shared/ui/select'
+
+type MySelectProps = {
+    options: MyOption[]
+    selectedItem?: string
+    onSelect?: (id: string) => void
+    focused?: boolean
+}
+
+export const MySelect = forwardRef<MySelectRenderable, MySelectProps>((props, ref) => {
+    const { selectedItem, options, ...rest } = props
+    const { theme } = useTheme()
+    const { optionsById, indexById } = useListData(options)
+
+    return (
+        <my-select
+            ref={ref}
+            {...rest}
+            options={options}
+            optionsById={optionsById}
+            indexById={indexById}
+            selectedId={selectedItem}
+            theme={theme}
+        />
+    )
+})
+
+MySelect.displayName = 'MySelect'
+```
+
+### useListData Helper
+
+Memoizes options lookup maps — always use it in wrappers:
+
+```ts
+import { useListData } from '@/shared/ui/select'
+
+const { optionsById, indexById } = useListData(options)
+// optionsById: Record<string, MyOption>  (lookup by id)
+// indexById: Record<string, number>      (lookup index by id)
+```
 
 ---
 
