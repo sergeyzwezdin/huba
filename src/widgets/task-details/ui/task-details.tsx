@@ -3,8 +3,10 @@ import { useEffect, useRef } from 'react'
 
 import { type ScrollBoxRenderable, TextAttributes } from '@opentui/core'
 import { useKeyboard } from '@opentui/react'
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtom } from 'jotai'
 
+import { useSelectedTask } from '@/entities/task'
+import { selectedListAtom } from '@/entities/task-list'
 import { useFocus, useFocusManager } from '@/shared/focus-manager'
 import { detailsExpandedAtom, useTheme } from '@/shared/settings'
 import { Markdown } from '@/shared/ui/markdown'
@@ -61,6 +63,9 @@ const TaskDetails: FC<TaskDetailsProps> = (props) => {
     const scrollRef = useRef<ScrollBoxRenderable>(null)
     const [expanded, toggleExpanded] = useAtom(detailsExpandedAtom)
 
+    const [selectedList] = useAtom(selectedListAtom)
+    const selectedTask = useSelectedTask(selectedList)
+
     const { disableTabButton, enableTabButton } = useFocusManager()
 
     useKeyboard((key) => {
@@ -87,6 +92,8 @@ const TaskDetails: FC<TaskDetailsProps> = (props) => {
         else enableTabButton()
     }, [isFocused, expanded, disableTabButton, enableTabButton])
 
+    if (!selectedTask) return undefined
+
     return (
         <Panel
             focusable
@@ -105,12 +112,12 @@ const TaskDetails: FC<TaskDetailsProps> = (props) => {
             <box style={{ flexDirection: 'row', paddingBottom: 1, gap: 1 }}>
                 <box style={{ flexShrink: 0 }}>
                     <text fg={theme.colors.accent} attributes={TextAttributes.DIM}>
-                        <strong>#123</strong>
+                        <strong>#{selectedTask.id}</strong>
                     </text>
                 </box>
                 <box style={{ flexGrow: 1 }}>
                     <text fg={theme.colors.primary}>
-                        <u>Implement task details scrollable panel that renders the task description as markdown.</u>
+                        <u>{selectedTask.subject}</u>
                     </text>
                 </box>
             </box>
@@ -119,7 +126,7 @@ const TaskDetails: FC<TaskDetailsProps> = (props) => {
                     <text fg={theme.colors.secondary}>Status:</text>
                 </box>
                 <box style={{ flexGrow: 1 }}>
-                    <text fg={theme.colors.primary}>In Progress</text>
+                    <text fg={theme.colors.primary}>{selectedTask.status}</text>
                 </box>
             </box>
             <scrollbox
@@ -138,7 +145,7 @@ const TaskDetails: FC<TaskDetailsProps> = (props) => {
                     flexBasis: 0,
                     titleAlignment: 'center',
                 }}>
-                <Markdown>{text}</Markdown>
+                <Markdown>{selectedTask.description}</Markdown>
             </scrollbox>
         </Panel>
     )

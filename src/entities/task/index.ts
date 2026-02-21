@@ -1,1 +1,2 @@
-export { useTasksQuery } from './model/tasks.query'
+export { selectedTaskIdAtom } from './model/selected-task.atom'
+export { useSelectedTask, useSelectedTasksBlockedBy, useSelectedTasksBlocks, useTasksQuery } from './model/tasks.query'

@@ -1,10 +1,10 @@
 import type { ComponentProps, FC } from 'react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef } from 'react'
 
 import { useKeyboard } from '@opentui/react'
 import { useAtom } from 'jotai'
 
-import { useTasksQuery } from '@/entities/task'
+import { selectedTaskIdAtom, useTasksQuery } from '@/entities/task'
 import { selectedListAtom } from '@/entities/task-list'
 import { useFocus, useFocusManager } from '@/shared/focus-manager'
 import { detailsVisibleAtom } from '@/shared/settings'
@@ -19,7 +19,10 @@ const TaskTable: FC<TaskTableProps> = (props) => {
     const [, setShowDetails] = useAtom(detailsVisibleAtom)
     const selectRef = useRef<TaskSelectRenderable>(null)
     const [selectedList] = useAtom(selectedListAtom)
-    const { data: tasks } = useTasksQuery(selectedList)
+    const { data } = useTasksQuery(selectedList)
+    const tasks = data?.list ?? []
+
+    const [selectedTaskId, setSelectedTaskId] = useAtom(selectedTaskIdAtom)
 
     const options = useMemo(() => {
         return tasks?.map((task) => ({
@@ -46,12 +49,6 @@ const TaskTable: FC<TaskTableProps> = (props) => {
         }
     })
 
-    const [selectedItem, setSelectedItem] = useState<string | undefined>('54')
-
-    useEffect(() => {
-        console.log('selectedItem', selectedItem)
-    }, [selectedItem])
-
     return (
         <Panel
             focusable
@@ -68,10 +65,8 @@ const TaskTable: FC<TaskTableProps> = (props) => {
                 showDate={true}
                 maxLines={2}
                 options={options}
-                selectedItem={selectedItem}
-                onSelect={(id) => {
-                    setSelectedItem(id)
-                }}
+                selectedItem={selectedTaskId}
+                onSelect={(id) => setSelectedTaskId(id)}
             />
         </Panel>
     )
