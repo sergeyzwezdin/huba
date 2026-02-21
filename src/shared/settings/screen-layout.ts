@@ -9,3 +9,5 @@ export const fullScreenAtom = atom<false | 'lists' | 'task-details'>(false)
 export const showTaskDetailsAtom = atomWithStorage<boolean>('show-task-details', true)
 
 export const taskDetailsLayoutAtom = atomWithStorage<TaskDetailsLayout>('task-details-layout', 'horizontal')
+
+export const showProgressAtom = atomWithStorage<boolean>('show-progress', true)

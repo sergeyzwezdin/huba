@@ -17,12 +17,13 @@ import { useAtom, useAtomValue } from 'jotai'
 
 import { selectedListAtom } from '@/entities/claude-list'
 import { selectedTaskIdAtom, useSelectedTask } from '@/entities/task'
-import { fullScreenAtom, showTaskDetailsAtom, taskDetailsLayoutAtom } from '@/shared/settings'
+import { fullScreenAtom, showProgressAtom, showTaskDetailsAtom, taskDetailsLayoutAtom } from '@/shared/settings'
 import { NoTaskSelected } from '@/shared/ui/placeholders'
 
 const TaskListPage: FC = () => {
     const fullScreen = useAtomValue(fullScreenAtom)
     const showDetails = useAtomValue(showTaskDetailsAtom)
+    const showProgress = useAtomValue(showProgressAtom)
     const layoutAtom = useAtomValue(taskDetailsLayoutAtom)
     const { width: columns, height: rows } = useTerminalDimensions()
     const layout = columns < 90 ? 'vertical' : layoutAtom
@@ -57,7 +58,7 @@ const TaskListPage: FC = () => {
                     <TaskTable style={{ flexGrow: 1, flexBasis: 1, visible: !fullScreen }} />
                     {showDetails && !!selectedTask && <TaskListDetails />}
                 </box>
-                {fullScreen !== 'lists' && rows > 35 && <TaskProgress />}
+                {showProgress && fullScreen !== 'lists' && rows > 35 && <TaskProgress />}
                 {rows > 40 && <Footer />}
             </box>
         </RequiredWindowSize>

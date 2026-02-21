@@ -1,7 +1,13 @@
 import { useKeyboard } from '@opentui/react'
 import { useSetAtom } from 'jotai'
 
-import { showTaskDetailsAtom, type TaskDetailsLayout, taskDetailsLayoutAtom, useTheme } from '@/shared/settings'
+import {
+    showProgressAtom,
+    showTaskDetailsAtom,
+    type TaskDetailsLayout,
+    taskDetailsLayoutAtom,
+    useTheme,
+} from '@/shared/settings'
 
 /**
  * Hook that manages all settings keyboard shortcuts
@@ -13,6 +19,7 @@ import { showTaskDetailsAtom, type TaskDetailsLayout, taskDetailsLayoutAtom, use
 export const useSettings = (): void => {
     const setLayout = useSetAtom(taskDetailsLayoutAtom)
     const setShowDetails = useSetAtom(showTaskDetailsAtom)
+    const setShowProgress = useSetAtom(showProgressAtom)
     const { toggleTheme } = useTheme()
 
     useKeyboard((key) => {
@@ -20,6 +27,8 @@ export const useSettings = (): void => {
             setShowDetails((prev) => !prev)
         } else if (key.name === 'h') {
             setLayout((prev: TaskDetailsLayout) => (prev === 'horizontal' ? 'vertical' : 'horizontal'))
+        } else if (key.name === 'p') {
+            setShowProgress((prev) => !prev)
         } else if (key.name === 'w' && !key.shift) {
             toggleTheme(false)
         } else if (key.name === 'w' && key.shift) {
