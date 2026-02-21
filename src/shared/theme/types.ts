@@ -6,8 +6,8 @@ export type Theme = {
         focused: RGBA
     }
     status: {
-        pending: { id: RGBA; icon: RGBA; title: RGBA }
         blocked: { id: RGBA; icon: RGBA; title: RGBA }
+        pending: { id: RGBA; icon: RGBA; title: RGBA }
         inProgress: { id: RGBA; icon: RGBA; title: RGBA }
         completed: { id: RGBA; icon: RGBA; title: RGBA }
     }
@@ -25,8 +25,8 @@ export type Theme = {
         scrollbarThumb: RGBA
     }
     progress: {
+        blocked: RGBA
         pending: RGBA
-        neutral: RGBA
         inProgress: RGBA
         completed: RGBA
     }

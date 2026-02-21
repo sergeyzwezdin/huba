@@ -29,15 +29,15 @@ export const claude: Theme = {
         focused: palette.rust,
     },
     status: {
-        pending: {
-            id: palette.smoke,
-            icon: palette.smoke,
-            title: palette.smoke,
-        },
         blocked: {
             id: palette.crimson,
             icon: palette.crimson,
             title: palette.crimson,
+        },
+        pending: {
+            id: palette.smoke,
+            icon: palette.smoke,
+            title: palette.smoke,
         },
         inProgress: {
             id: palette.rust,
@@ -64,8 +64,8 @@ export const claude: Theme = {
         scrollbarThumb: palette.flint,
     },
     progress: {
-        pending: palette.bark,
-        neutral: palette.iron,
+        blocked: palette.bark,
+        pending: palette.iron,
         inProgress: palette.rust,
         completed: palette.emerald,
     },

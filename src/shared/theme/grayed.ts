@@ -61,8 +61,8 @@ export const grayed: Theme = {
         scrollbarThumb: palette.steel,
     },
     progress: {
-        pending: palette.zinc,
-        neutral: palette.graphite,
+        blocked: palette.zinc,
+        pending: palette.graphite,
         inProgress: palette.silver,
         completed: palette.pearl,
     },
