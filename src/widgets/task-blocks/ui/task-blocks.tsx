@@ -19,7 +19,7 @@ const TaskBlocks: FC<TaskBlocksProps> = (props) => {
 
     const setSelectedTaskId = useSetAtom(selectedTaskIdAtom)
 
-    useHotkeys(isFocused)
+    useHotkeys((props.style?.visible ?? true) && blocks.length > 0, isFocused)
 
     if (blocks.length === 0) return undefined
 

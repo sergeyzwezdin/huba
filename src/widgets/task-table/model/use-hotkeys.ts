@@ -25,6 +25,8 @@ const useHotkeys = (enabled: boolean, selectRef: RefObject<TaskSelectRenderable 
     }
 
     useKeyboard((key) => {
+        if (key.name === '1') focus('task-table')
+
         if (!enabled) return
 
         if (key.name === 'escape') {

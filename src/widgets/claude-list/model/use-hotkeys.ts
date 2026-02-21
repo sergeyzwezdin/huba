@@ -14,6 +14,11 @@ const useHotkeys = (
     const { focus } = useFocusManager()
 
     useKeyboard((key) => {
+        if (key.shift && key.name === 'l') {
+            focus('lists-table')
+            setFullScreen('lists')
+        }
+
         if (!enabled) return
 
         if (key.name === 'escape') {

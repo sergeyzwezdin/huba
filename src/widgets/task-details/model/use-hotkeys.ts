@@ -6,7 +6,8 @@ import { useKeyboard } from '@opentui/react'
 import { useFocusManager } from '@/shared/focus-manager'
 
 const useHotkeys = (
-    enabled: boolean,
+    visible: boolean,
+    focused: boolean,
     expanded: false | 'lists' | 'task-details',
     toggleExpanded: (value: false | 'lists' | 'task-details') => void,
     scrollRef: RefObject<ScrollBoxRenderable | null>,
@@ -14,7 +15,11 @@ const useHotkeys = (
     const { focus } = useFocusManager()
 
     useKeyboard((key) => {
-        if (!enabled) return
+        if (!visible) return
+        if (key.name === '2') focus('task-details')
+
+        if (!focused) return
+
         if (key.name === 'return') {
             toggleExpanded('task-details')
         } else if (key.name === 'escape') {

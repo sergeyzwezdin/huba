@@ -24,7 +24,7 @@ const TaskDetails: FC<TaskDetailsProps> = (props) => {
 
     const { disableTabButton, enableTabButton } = useFocusManager()
 
-    useHotkeys(isFocused, expanded, toggleExpanded, scrollRef)
+    useHotkeys((props.style?.visible ?? true) && !!selectedTask, isFocused, expanded, toggleExpanded, scrollRef)
 
     useEffect(() => {
         if (isFocused && expanded) disableTabButton()

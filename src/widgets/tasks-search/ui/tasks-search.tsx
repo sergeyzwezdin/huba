@@ -7,6 +7,8 @@ import { selectedTaskIdAtom, taskFilterAtom } from '@/entities/task'
 import { useFocus, useFocusManager } from '@/shared/focus-manager'
 import { Panel } from '@/shared/ui/panel'
 
+import { useHotkeys } from '../model/use-hotkeys'
+
 type TasksSearchProps = Pick<ComponentProps<typeof Panel>, 'style'>
 
 const TasksSearch: FC<TasksSearchProps> = (props) => {
@@ -19,10 +21,10 @@ const TasksSearch: FC<TasksSearchProps> = (props) => {
     useEffect(() => {
         if (isFocused) {
             inputRef.current?.focus()
-        } else {
-            // inputRef.current?.blur()
         }
     }, [isFocused])
+
+    useHotkeys(isFocused)
 
     return (
         <Panel focusable focused={isFocused} ref={ref} title={['[:]', 'Search']} style={{ paddingLeft: 2 }} {...props}>
