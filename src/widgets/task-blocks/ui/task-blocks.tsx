@@ -42,7 +42,7 @@ const TaskBlocks: FC<TaskBlocksProps> = (props) => {
         title: task.subject,
         description: task.description,
         status: task.status,
-        date: new Date(),
+        date: task.updatedAt,
     }))
 
     return (

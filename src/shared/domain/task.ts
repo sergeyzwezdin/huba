@@ -57,6 +57,12 @@ export const taskSchema = z.object({
      * Optional metadata (arbitrary key-value pairs)
      */
     metadata: z.record(z.string(), z.unknown()).optional(),
+
+    /**
+     * Last modification time of the task file
+     * Injected from filesystem stat, not stored in JSON
+     */
+    updatedAt: z.date().optional(),
 })
 
 /**

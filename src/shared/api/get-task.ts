@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises'
+import { readFile, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 
 import type { Task } from '@/shared/domain'
@@ -18,10 +18,10 @@ export const getTask = async (taskId: string, listId?: string): Promise<Task | n
     const filePath = join(dirPath, `${taskId}.json`)
 
     try {
-        const content = await readFile(filePath, 'utf-8')
+        const [content, fileStat] = await Promise.all([readFile(filePath, 'utf-8'), stat(filePath)])
         const data = JSON.parse(content)
 
-        const result = taskSchema.safeParse(data)
+        const result = taskSchema.safeParse({ ...data, updatedAt: fileStat.mtime })
 
         if (!result.success) {
             console.error(`Invalid task data in ${filePath}:`, result.error)

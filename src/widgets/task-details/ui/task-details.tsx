@@ -13,48 +13,6 @@ import { Markdown } from '@/shared/ui/markdown'
 import { Panel } from '@/shared/ui/panel'
 
 type TaskDetailsProps = Pick<ComponentProps<typeof Panel>, 'style'>
-const text = `# Add scrollable task details panel
-
-## Summary
-
-Implement a scrollable details panel in the task view that renders the task description as Markdown. The panel should support keyboard navigation (j/k or arrow keys) and respect focus state for proper integration with the TUI.
-
-## Background
-
-Currently the task list shows only **subject** and \`status\`. Users need to see the full task description without leaving the TUI. The description field contains arbitrary Markdown authored by Claude Code and may include:
-
-- Code blocks
-- Nested lists
-- Headers and emphasis
-- Tables and links
-
-## Requirements
-
-1. **Scrollable content** — Long descriptions must scroll within a fixed-height panel
-2. **Keyboard navigation** — Use \`j\`/\`k\` or arrow keys to scroll
-3. **Focus management** — Panel participates in the app's focus chain
-4. **Markdown rendering** — Support common Markdown syntax
-
-## Technical Notes
-
-The \`ScrollBox\` component from OpenTUI should handle scroll behavior. Consider:
-
-\`\`\`
-scrollRef.current?.scrollBy(1)   // scroll down
-scrollRef.current?.scrollBy(-1)  // scroll up
-\`\`\`
-
-## Acceptance Criteria
-
-- [ ] Panel scrolls smoothly with keyboard
-- [ ] Markdown renders correctly (headers, lists, code)
-- [ ] Focus indicator visible when panel is active
-- [ ] Enter toggles panel expand/collapse
-
-## References
-
-See the OpenTUI ScrollBox API and existing \`Markdown\` component in \`@/shared/ui/markdown\`.
-`
 
 const TaskDetails: FC<TaskDetailsProps> = (props) => {
     const { theme } = useTheme()

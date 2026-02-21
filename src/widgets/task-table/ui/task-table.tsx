@@ -24,15 +24,17 @@ const TaskTable: FC<TaskTableProps> = (props) => {
 
     const [selectedTaskId, setSelectedTaskId] = useAtom(selectedTaskIdAtom)
 
-    const options = useMemo(() => {
-        return tasks?.map((task) => ({
-            id: task.id,
-            title: task.subject,
-            description: task.description,
-            status: task.status,
-            date: new Date(),
-        }))
-    }, [tasks])
+    const options = useMemo(
+        () =>
+            tasks?.map((task) => ({
+                id: task.id,
+                title: task.subject,
+                description: task.description,
+                status: task.status,
+                date: task.updatedAt,
+            })),
+        [tasks],
+    )
 
     useKeyboard((key) => {
         if (!isFocused) return
