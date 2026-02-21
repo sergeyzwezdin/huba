@@ -33,7 +33,8 @@ const TaskBlocks: FC<TaskBlocksProps> = (props) => {
             style={{
                 ...props.style,
                 height: Math.min(8, blocks.length + 2),
-            }}>
+            }}
+            onMouseUp={() => focus('task-blocks')}>
             <TaskBlockers
                 items={blocks}
                 isFocused={isFocused}

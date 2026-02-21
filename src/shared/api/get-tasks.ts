@@ -30,7 +30,11 @@ export const getTasks = async (listId?: string): Promise<TasksData> => {
         const result = await Promise.all(taskIds.map((taskId) => getTask(taskId, listId)))
 
         const rawList: Task[] = result.filter((task): task is Task => task !== undefined)
-        const list = resolveBlockedStatuses(rawList)
+        const list = resolveBlockedStatuses(rawList).sort((a, b) => {
+            const aNum = Number(a.id)
+            const bNum = Number(b.id)
+            return !Number.isNaN(aNum) && !Number.isNaN(bNum) ? aNum - bNum : a.id.localeCompare(b.id)
+        })
 
         const map: Record<string, Task> = Object.fromEntries(list.map((task) => [task.id, task]))
 

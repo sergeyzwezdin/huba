@@ -12,9 +12,10 @@ import { TasksSearch } from '@/widgets/tasks-search'
 
 import '@/entities/task/ui/task-select'
 
-import { useAtomValue } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 
-import { selectedTaskIdAtom } from '@/entities/task'
+import { selectedListAtom } from '@/entities/claude-list'
+import { selectedTaskIdAtom, useSelectedTask } from '@/entities/task'
 import { fullScreenAtom, showTaskDetailsAtom, taskDetailsLayoutAtom } from '@/shared/settings'
 import { NoTaskSelected } from '@/shared/ui/placeholders'
 
@@ -22,6 +23,9 @@ const TaskListPage: FC = () => {
     const fullScreen = useAtomValue(fullScreenAtom)
     const showDetails = useAtomValue(showTaskDetailsAtom)
     const layout = useAtomValue(taskDetailsLayoutAtom)
+
+    const [selectedList] = useAtom(selectedListAtom)
+    const selectedTask = useSelectedTask(selectedList)
 
     return (
         <RequiredWindowSize minWidth={70} minHeight={5}>
@@ -48,7 +52,7 @@ const TaskListPage: FC = () => {
                         visible: !fullScreen || fullScreen === 'task-details',
                     }}>
                     <TaskTable style={{ flexGrow: 1, flexBasis: 1, visible: !fullScreen }} />
-                    {showDetails && <TaskListDetails />}
+                    {showDetails && !!selectedTask && <TaskListDetails />}
                 </box>
                 {fullScreen !== 'lists' && <TaskProgress />}
                 <Footer />

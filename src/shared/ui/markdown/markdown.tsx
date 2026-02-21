@@ -1,14 +1,15 @@
 import type { FC } from 'react'
 
-import { SyntaxStyle } from '@opentui/core'
+import { type MarkdownRenderable, SyntaxStyle } from '@opentui/core'
+import type { ExtendedComponentProps } from '@opentui/react'
 
 import { useTheme } from '@/shared/settings'
 
 export type MarkdownProps = {
     children: string
-}
+} & Omit<ExtendedComponentProps<typeof MarkdownRenderable>, 'content' | 'syntaxStyle'>
 
-const Markdown: FC<MarkdownProps> = ({ children }) => {
+const Markdown: FC<MarkdownProps> = ({ children, ...props }) => {
     const { theme } = useTheme()
 
     const style = SyntaxStyle.fromStyles({
@@ -19,7 +20,7 @@ const Markdown: FC<MarkdownProps> = ({ children }) => {
         default: { fg: theme.markdown.default },
     })
 
-    return <markdown content={children} syntaxStyle={style} />
+    return <markdown content={children} syntaxStyle={style} {...props} />
 }
 
 export { Markdown }

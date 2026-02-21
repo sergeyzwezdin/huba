@@ -1,18 +1,18 @@
 import { type FC, type ReactNode, type Ref, useCallback } from 'react'
 
 import type { BoxRenderable, OptimizedBuffer } from '@opentui/core'
-import { parseColor } from '@opentui/core'
-import type { BoxProps } from '@opentui/react'
+import type { BoxProps, ExtendedComponentProps } from '@opentui/react'
 
 import { useTheme } from '@/shared/settings'
 
-type PanelProps = Omit<BoxProps, 'title'> & {
-    title?: string | string[]
-    subTitle?: string
-    footer?: string
-    subFooter?: string
-    ref?: Ref<BoxRenderable>
-}
+type PanelProps = Omit<BoxProps, 'title'> &
+    Omit<ExtendedComponentProps<typeof BoxRenderable>, 'title'> & {
+        title?: string | string[]
+        subTitle?: string
+        footer?: string
+        subFooter?: string
+        ref?: Ref<BoxRenderable>
+    }
 
 function padText(text: string): string {
     return text.replaceAll(' ', '\u00A0')
@@ -64,7 +64,7 @@ const Panel: FC<PanelProps> = ({ title, subTitle, footer, subFooter, ref, style,
             {...props}
             style={{
                 borderStyle: 'rounded',
-                borderColor: theme.border.default,
+                borderColor: props.focused ? theme.border.focused : theme.border.default,
                 focusedBorderColor: theme.border.focused,
                 ...style,
             }}

@@ -18,6 +18,7 @@ type TaskDetailsProps = Pick<ComponentProps<typeof Panel>, 'style'>
 const TaskDetails: FC<TaskDetailsProps> = (props) => {
     const { theme } = useTheme()
     const { isFocused, ref } = useFocus({ id: 'task-details' })
+    const { focus } = useFocusManager()
     const scrollRef = useRef<ScrollBoxRenderable>(null)
     const [expanded, toggleExpanded] = useAtom(fullScreenAtom)
 
@@ -48,7 +49,8 @@ const TaskDetails: FC<TaskDetailsProps> = (props) => {
                 paddingLeft: 1,
                 paddingTop: 1,
                 paddingRight: 1,
-            }}>
+            }}
+            onMouseUp={() => focus('task-details')}>
             <box style={{ flexDirection: 'row', paddingBottom: 1, gap: 1 }}>
                 <box style={{ flexShrink: 0 }}>
                     <text fg={theme.colors.accent} attributes={TextAttributes.DIM}>
@@ -69,8 +71,10 @@ const TaskDetails: FC<TaskDetailsProps> = (props) => {
                     <text fg={theme.colors.primary}>{selectedTask.status}</text>
                 </box>
             </box>
+            {/** biome-ignore lint/a11y/noStaticElementInteractions: <explanation> */}
             <scrollbox
                 ref={scrollRef}
+                focusable={false}
                 scrollbarOptions={{
                     showArrows: false,
                     trackOptions: {
@@ -84,7 +88,8 @@ const TaskDetails: FC<TaskDetailsProps> = (props) => {
                     flexShrink: 1,
                     flexBasis: 0,
                     titleAlignment: 'center',
-                }}>
+                }}
+                onMouseUp={() => focus('task-details')}>
                 <Markdown>{selectedTask.description}</Markdown>
             </scrollbox>
         </Panel>

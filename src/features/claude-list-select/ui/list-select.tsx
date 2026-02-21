@@ -2,7 +2,7 @@ import type { ComponentProps } from 'react'
 import { forwardRef, useMemo, useState } from 'react'
 
 import { useKeyboard } from '@opentui/react'
-import { useAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 
 import {
     type ClaudeListSelectRenderable,
@@ -10,12 +10,15 @@ import {
     selectedListAtom,
     useListsQuery,
 } from '@/entities/claude-list'
+import { selectedTaskIdAtom, taskFilterAtom } from '@/entities/task'
 
 type ListSelectProps = Pick<ComponentProps<typeof ListSelectControl>, 'onSelect' | 'style' | 'focused'>
 
 const ListSelect = forwardRef<ClaudeListSelectRenderable, ListSelectProps>(({ style, focused, onSelect }, ref) => {
     const { data: lists } = useListsQuery()
     const [selectedList, setSelectedList] = useAtom(selectedListAtom)
+    const setTaskFilter = useSetAtom(taskFilterAtom)
+    const setSelectedTaskId = useSetAtom(selectedTaskIdAtom)
 
     const options = useMemo(() => (lists ?? []).map((list) => ({ id: list.id, createdAt: list.createdAt })), [lists])
 
@@ -26,6 +29,9 @@ const ListSelect = forwardRef<ClaudeListSelectRenderable, ListSelectProps>(({ st
 
         if (key.name === 'return') {
             setSelectedList(selected)
+            setTaskFilter({ status: 'all', search: '' })
+            setSelectedTaskId(undefined)
+
             onSelect?.(selected ?? '')
         }
     })

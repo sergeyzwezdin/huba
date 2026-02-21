@@ -35,7 +35,8 @@ const ClaudeList: FC<ClaudeListProps> = (props) => {
             focused={isFocused}
             ref={ref}
             title={!fullScreen ? ['[L]', 'Claude List'] : 'Claude List'}
-            {...props}>
+            {...props}
+            onMouseUp={() => focus('lists-table')}>
             {fullScreen === 'lists' ? (
                 <ListSelect
                     ref={selectRef}

@@ -33,7 +33,8 @@ const TaskBlockedBy: FC<TaskBlockedByProps> = (props) => {
             style={{
                 ...props.style,
                 height: Math.min(8, blockedBy.length + 2),
-            }}>
+            }}
+            onMouseUp={() => focus('task-blocked-by')}>
             <TaskBlockers
                 items={blockedBy}
                 isFocused={isFocused}

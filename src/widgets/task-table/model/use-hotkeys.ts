@@ -27,7 +27,9 @@ const useHotkeys = (enabled: boolean, selectRef: RefObject<TaskSelectRenderable 
     useKeyboard((key) => {
         if (!enabled) return
 
-        if (key.name === 'space') {
+        if (key.name === 'escape') {
+            setShowDetails(false)
+        } else if (key.name === 'space') {
             setShowDetails((prev) => !prev)
         } else if (key.name === 'return') {
             setShowDetails(true)

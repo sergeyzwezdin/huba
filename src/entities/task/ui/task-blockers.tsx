@@ -28,10 +28,16 @@ const TaskBlockers: FC<TaskBlockersProps> = ({ items, isFocused, style, onSelect
             })),
         [items],
     )
+    const optionsRef = useRef(options)
+    useEffect(() => {
+        optionsRef.current = options
+    }, [options])
 
     useEffect(() => {
-        setSelectedId((prev) => prev ?? items[0]?.id)
-    }, [items])
+        if (isFocused) {
+            if (optionsRef.current.length > 0) setSelectedId(optionsRef.current[0]?.id)
+        }
+    }, [isFocused])
 
     useKeyboard((key) => {
         if (!isFocused) return

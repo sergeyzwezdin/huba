@@ -18,7 +18,6 @@ export const useSettings = (): void => {
     useKeyboard((key) => {
         if (key.name === '/') {
             setShowDetails((prev) => !prev)
-            // setDetailsExpanded(false)
         } else if (key.name === 'h') {
             setLayout((prev: TaskDetailsLayout) => (prev === 'horizontal' ? 'vertical' : 'horizontal'))
         } else if (key.name === 'w' && !key.shift) {

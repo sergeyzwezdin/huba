@@ -1,7 +1,7 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import { useQuery } from '@tanstack/react-query'
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 
 import { getTasks } from '@/shared/api'
 import type { Task, TaskStatus } from '@/shared/domain'
@@ -20,10 +20,20 @@ const statusOrder: Record<TaskStatus, number> = { in_progress: 0, pending: 1, bl
  * @returns Query result with `data.list` (sorted array) and `data.map` (tasks indexed by id)
  */
 export const useTasksQuery = (listId?: string) => {
-    return useQuery({
+    const setSelectedTaskId = useSetAtom(selectedTaskIdAtom)
+
+    const result = useQuery({
         queryKey: queryKeys.tasks.list(listId),
         queryFn: () => getTasks(listId),
     })
+
+    useEffect(() => {
+        if (result.data) {
+            setSelectedTaskId((prev) => (!!prev && result.data.map[prev] ? prev : result.data.list[0]?.id))
+        }
+    }, [result.data, setSelectedTaskId])
+
+    return result
 }
 
 /**
