@@ -11,7 +11,8 @@
     "url": "git+https://github.com/sergeyzwezdin/claude-tasks.git"
   },
   "scripts": {
-    "dev": "bun run --watch index.tsx",
+    "dev": "bun run index.tsx",
+    "dev:watch": "bun run --watch index.tsx",
     "typecheck": "tsc --noEmit",
     "format": "biome check",
     "format:file": "biome check --write --log-level=warn",

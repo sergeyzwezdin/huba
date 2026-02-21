@@ -16,6 +16,8 @@ export { useProgress } from './model/use-progress'
 export {
     TaskBlockers,
     type TaskBlockersProps,
+    TaskDetailsView,
+    type TaskDetailsViewProps,
     TaskProgress,
     type TaskProgressProps,
     TaskSelect,
