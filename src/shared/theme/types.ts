@@ -1,39 +1,44 @@
-import type { RGBA } from '@opentui/core'
+import { RGBA } from '@opentui/core'
+import { z } from 'zod'
 
-export type Theme = {
-    border: {
-        default: RGBA
-        focused: RGBA
-    }
-    status: {
-        blocked: { id: RGBA; icon: RGBA; title: RGBA }
-        pending: { id: RGBA; icon: RGBA; title: RGBA }
-        inProgress: { id: RGBA; icon: RGBA; title: RGBA }
-        completed: { id: RGBA; icon: RGBA; title: RGBA }
-    }
-    colors: {
-        primary: RGBA
-        secondary: RGBA
-        tertiary: RGBA
-        date: RGBA
-        hint: RGBA
-        accent: RGBA
-    }
-    surface: {
-        selection: RGBA
-        scrollbarTrack: RGBA
-        scrollbarThumb: RGBA
-    }
-    progress: {
-        blocked: RGBA
-        pending: RGBA
-        inProgress: RGBA
-        completed: RGBA
-    }
-    markdown: {
-        heading: RGBA
-        list: RGBA
-        code: RGBA
-        default: RGBA
-    }
-}
+export const rgbaSchema = z.string().transform((hex) => RGBA.fromHex(hex))
+
+export const themeSchema = z.object({
+    border: z.object({
+        default: rgbaSchema,
+        focused: rgbaSchema,
+    }),
+    status: z.object({
+        blocked: z.object({ id: rgbaSchema, icon: rgbaSchema, title: rgbaSchema }),
+        pending: z.object({ id: rgbaSchema, icon: rgbaSchema, title: rgbaSchema }),
+        inProgress: z.object({ id: rgbaSchema, icon: rgbaSchema, title: rgbaSchema }),
+        completed: z.object({ id: rgbaSchema, icon: rgbaSchema, title: rgbaSchema }),
+    }),
+    colors: z.object({
+        primary: rgbaSchema,
+        secondary: rgbaSchema,
+        tertiary: rgbaSchema,
+        date: rgbaSchema,
+        hint: rgbaSchema,
+        accent: rgbaSchema,
+    }),
+    surface: z.object({
+        selection: rgbaSchema,
+        scrollbarTrack: rgbaSchema,
+        scrollbarThumb: rgbaSchema,
+    }),
+    progress: z.object({
+        blocked: rgbaSchema,
+        pending: rgbaSchema,
+        inProgress: rgbaSchema,
+        completed: rgbaSchema,
+    }),
+    markdown: z.object({
+        heading: rgbaSchema,
+        list: rgbaSchema,
+        code: rgbaSchema,
+        default: rgbaSchema,
+    }),
+})
+
+export type Theme = z.infer<typeof themeSchema>
