@@ -1,6 +1,7 @@
 import type { RefObject } from 'react'
+import { useNavigate } from 'react-router'
 
-import { useSetAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 
 import type { TaskFilterStatus, TaskSelectRenderable, TaskSortField } from '@/entities/task'
 import { taskFilterAtom, taskSortAtom } from '@/entities/task'
@@ -12,7 +13,9 @@ const filterCycle: TaskFilterStatus[] = ['all', 'pending', 'in_progress', 'compl
 
 const useHotkeys = (enabled: boolean, selectRef: RefObject<TaskSelectRenderable | null>): void => {
     const { focus } = useFocusManager()
-    const setShowDetails = useSetAtom(showTaskDetailsAtom)
+    const navigate = useNavigate()
+
+    const [showDetails, setShowDetails] = useAtom(showTaskDetailsAtom)
     const setSort = useSetAtom(taskSortAtom)
     const setFilter = useSetAtom(taskFilterAtom)
 
@@ -34,10 +37,14 @@ const useHotkeys = (enabled: boolean, selectRef: RefObject<TaskSelectRenderable 
         } else if (key.name === 'space') {
             setShowDetails((prev) => !prev)
         } else if (key.name === 'return') {
-            setShowDetails(true)
-            setTimeout(() => {
-                focus('task-details')
-            }, 100)
+            if (showDetails) {
+                setShowDetails(true)
+                setTimeout(() => {
+                    focus('task-details')
+                }, 100)
+            } else {
+                navigate('/task-details')
+            }
         } else if (key.shift && key.name === 'i') {
             toggleSort('id')
         } else if (key.shift && key.name === 't') {

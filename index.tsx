@@ -3,21 +3,15 @@
 import { ConsolePosition, createCliRenderer } from '@opentui/core'
 import { createRoot } from '@opentui/react'
 
-import { TaskListPage } from '@/pages/task-list'
-
 import { App } from './src/app'
 
 const renderer = await createCliRenderer({
     exitOnCtrlC: true,
-    // autoFocus: true,
+    autoFocus: true,
     useMouse: true,
     consoleOptions: {
         position: ConsolePosition.BOTTOM,
         sizePercent: 30,
     },
 })
-createRoot(renderer).render(
-    <App>
-        <TaskListPage />
-    </App>,
-)
+createRoot(renderer).render(<App />)

@@ -1,5 +1,4 @@
 export {
-    fullScreenAtom,
     showProgressAtom,
     showTaskDetailsAtom,
     type TaskDetailsLayout,

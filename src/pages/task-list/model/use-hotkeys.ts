@@ -6,7 +6,6 @@ import { selectedTaskIdAtom, taskFilterAtom } from '@/entities/task'
 import { useFocusManager } from '@/shared/focus-manager'
 import { useKeyboard } from '@/shared/keyboard'
 import {
-    fullScreenAtom,
     showProgressAtom,
     showTaskDetailsAtom,
     type TaskDetailsLayout,
@@ -30,7 +29,6 @@ export const useHotkeys = () => {
     const [selectedList, setSelectedList] = useAtom(selectedListAtom)
     const setTaskFilter = useSetAtom(taskFilterAtom)
     const setSelectedTaskId = useSetAtom(selectedTaskIdAtom)
-    const setFullScreen = useSetAtom(fullScreenAtom)
 
     const { data: lists } = useListsQuery()
 
@@ -56,8 +54,6 @@ export const useHotkeys = () => {
             setSelectedList(latestListId)
             setTaskFilter({ status: 'all', search: '' })
             setSelectedTaskId(undefined)
-
-            setFullScreen(false)
 
             setTimeout(() => {
                 focus('task-table')

@@ -1,38 +1,27 @@
-import type { RefObject } from 'react'
+import { useNavigate } from 'react-router'
 
-import type { ClaudeListSelectRenderable } from '@/entities/claude-list'
 import { useFocusManager } from '@/shared/focus-manager'
 import { useKeyboard } from '@/shared/keyboard'
 
-const useHotkeys = (
-    enabled: boolean,
-    fullScreen: false | 'lists' | 'task-details',
-    setFullScreen: (value: false | 'lists' | 'task-details') => void,
-    selectRef: RefObject<ClaudeListSelectRenderable | null>,
-): void => {
+const useHotkeys = (enabled: boolean): void => {
+    const navigate = useNavigate()
     const { focus } = useFocusManager()
 
     useKeyboard((key) => {
         if (key.shift && key.name === 'l') {
-            focus('lists-table')
-            setFullScreen('lists')
+            navigate('/claude-list')
+            return
         }
 
         if (!enabled) return
 
         if (key.name === 'escape') {
-            if (!fullScreen) {
-                focus('task-table')
-            } else {
-                setFullScreen(false)
-            }
+            focus('task-table')
             return
-        } else if (key.name === 'return' && fullScreen !== 'lists') {
-            setFullScreen('lists')
+        } else if (key.name === 'return') {
+            navigate('/claude-list')
             return
         }
-
-        selectRef.current?.handleKeyPress(key)
     })
 }
 

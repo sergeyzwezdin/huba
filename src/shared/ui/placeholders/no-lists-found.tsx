@@ -4,7 +4,7 @@ import { TextAttributes } from '@opentui/core'
 
 import { useTheme } from '@/shared/settings'
 
-const NoTasksFound: FC = () => {
+const NoListsFound: FC = () => {
     const { theme } = useTheme()
 
     return (
@@ -24,9 +24,9 @@ const NoTasksFound: FC = () => {
  /\\_/\\
 ( o.o )
  > ^ <`}></text>
-            <text style={{ fg: theme.colors.hint }}>All done</text>
+            <text style={{ fg: theme.colors.hint }}>No lists found</text>
         </box>
     )
 }
 
-export { NoTasksFound }
+export { NoListsFound }
