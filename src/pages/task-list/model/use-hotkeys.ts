@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router'
+
 import { toast } from '@opentui-ui/toast'
 import { useAtom, useSetAtom } from 'jotai'
 
@@ -22,6 +24,7 @@ import {
  */
 export const useHotkeys = () => {
     const { focus } = useFocusManager()
+    const navigate = useNavigate()
 
     const setLayout = useSetAtom(taskDetailsLayoutAtom)
     const setShowDetails = useSetAtom(showTaskDetailsAtom)
@@ -42,6 +45,8 @@ export const useHotkeys = () => {
             setLayout((prev: TaskDetailsLayout) => (prev === 'horizontal' ? 'vertical' : 'horizontal'))
         } else if (key.name === 'p') {
             setShowProgress((prev) => !prev)
+        } else if (key.name === 's') {
+            navigate('/settings')
         } else if (key.name === 'w' && !key.shift) {
             toggleTheme(false)
         } else if (key.name === 'w' && key.shift) {

@@ -1,5 +1,11 @@
 import type { FC } from 'react'
 
+import { useTerminalDimensions } from '@opentui/react'
+import { useAtom, useAtomValue } from 'jotai'
+
+import { selectedListAtom } from '@/entities/claude-list'
+import { useSelectedTask } from '@/entities/task'
+import { showProgressAtom, showTaskDetailsAtom, taskDetailsLayoutAtom } from '@/shared/settings'
 import { RequiredWindowSize } from '@/shared/ui/required-window-size'
 import { ClaudeList } from '@/widgets/claude-list'
 import { TaskBlockedBy } from '@/widgets/task-blocked-by'
@@ -8,15 +14,6 @@ import { TaskDetails } from '@/widgets/task-details'
 import { TaskProgress } from '@/widgets/task-progress'
 import { TaskTable } from '@/widgets/task-table'
 import { TasksSearch } from '@/widgets/tasks-search'
-
-import '@/entities/task/ui/task-select'
-
-import { useTerminalDimensions } from '@opentui/react'
-import { useAtom, useAtomValue } from 'jotai'
-
-import { selectedListAtom } from '@/entities/claude-list'
-import { useSelectedTask } from '@/entities/task'
-import { showProgressAtom, showTaskDetailsAtom, taskDetailsLayoutAtom } from '@/shared/settings'
 
 import { useHotkeys } from '../model/use-hotkeys'
 
