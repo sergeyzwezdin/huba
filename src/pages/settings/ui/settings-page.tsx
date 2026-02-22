@@ -54,9 +54,9 @@ const SettingsPage: FC = () => {
                             <ThemeField autoFocus />
                             <LayoutField />
                             <ProgressField />
-                            <FilterStatusField />
+                            {/* <FilterStatusField />
                             <SortFieldField />
-                            <SortDirectionField />
+                            <SortDirectionField /> */}
                         </Form>
                     </scrollbox>
                 </Panel>
