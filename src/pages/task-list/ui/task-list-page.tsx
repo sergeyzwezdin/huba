@@ -6,7 +6,6 @@ import { useAtom, useAtomValue } from 'jotai'
 import { selectedListAtom } from '@/entities/claude-list'
 import { useSelectedTask } from '@/entities/task'
 import { showProgressAtom, showTaskDetailsAtom, taskDetailsLayoutAtom } from '@/shared/settings'
-import { RequiredWindowSize } from '@/shared/ui/required-window-size'
 import { ClaudeList } from '@/widgets/claude-list'
 import { TaskBlockedBy } from '@/widgets/task-blocked-by'
 import { TaskBlocks } from '@/widgets/task-blocks'
@@ -30,27 +29,25 @@ const TaskListPage: FC = () => {
     useHotkeys()
 
     return (
-        <RequiredWindowSize minWidth={40} minHeight={28}>
-            <box style={{ flexDirection: 'column', paddingLeft: 1, paddingRight: 1, paddingTop: 0, flexGrow: 1 }}>
-                <box style={{ flexDirection: 'row' }}>
-                    <TasksSearch style={{ flexGrow: 1 }} />
-                    <ClaudeList style={{ width: columns > 90 ? 40 : 15, paddingLeft: 1 }} />
-                </box>
-
-                <box style={{ flexGrow: 1, flexDirection: layout === 'horizontal' ? 'row' : 'column' }}>
-                    <TaskTable style={{ flexGrow: 1, flexBasis: 1 }} />
-                    {showDetails && !!selectedTask && (
-                        <box style={{ flexDirection: 'column', flexGrow: 1, flexBasis: 1 }}>
-                            <TaskDetails style={{ flexGrow: 1 }} />
-                            <TaskBlockedBy style={{ visible: showDetails }} />
-                            <TaskBlocks style={{ visible: showDetails }} />
-                        </box>
-                    )}
-                </box>
-
-                {showProgress && rows > 35 && <TaskProgress />}
+        <box style={{ flexDirection: 'column', paddingLeft: 1, paddingRight: 1, paddingTop: 0, flexGrow: 1 }}>
+            <box style={{ flexDirection: 'row' }}>
+                <TasksSearch style={{ flexGrow: 1 }} />
+                <ClaudeList style={{ width: columns > 90 ? 40 : 15, paddingLeft: 1 }} />
             </box>
-        </RequiredWindowSize>
+
+            <box style={{ flexGrow: 1, flexDirection: layout === 'horizontal' ? 'row' : 'column' }}>
+                <TaskTable style={{ flexGrow: 1, flexBasis: 1 }} />
+                {showDetails && !!selectedTask && (
+                    <box style={{ flexDirection: 'column', flexGrow: 1, flexBasis: 1 }}>
+                        <TaskDetails style={{ flexGrow: 1 }} />
+                        <TaskBlockedBy style={{ visible: showDetails }} />
+                        <TaskBlocks style={{ visible: showDetails }} />
+                    </box>
+                )}
+            </box>
+
+            {showProgress && rows > 35 && <TaskProgress />}
+        </box>
     )
 }
 

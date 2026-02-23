@@ -54,6 +54,7 @@ export const contrast: Theme = {
         accent: palette.brightYellow,
     },
     surface: {
+        background: palette.black,
         selection: palette.deepGray,
         scrollbarTrack: palette.black,
         scrollbarThumb: palette.darkGray,

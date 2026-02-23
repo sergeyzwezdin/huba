@@ -58,6 +58,7 @@ export const github: Theme = {
         accent: palette.accent,
     },
     surface: {
+        background: palette.overlay,
         selection: palette.borderMuted,
         scrollbarTrack: palette.overlay,
         scrollbarThumb: palette.gray5,

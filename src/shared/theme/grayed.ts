@@ -56,6 +56,7 @@ export const grayed: Theme = {
         accent: palette.silver,
     },
     surface: {
+        background: palette.ash,
         selection: palette.zinc,
         scrollbarTrack: palette.ash,
         scrollbarThumb: palette.steel,

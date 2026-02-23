@@ -23,6 +23,7 @@ export const themeSchema = z.object({
         accent: rgbaSchema,
     }),
     surface: z.object({
+        background: rgbaSchema,
         selection: rgbaSchema,
         scrollbarTrack: rgbaSchema,
         scrollbarThumb: rgbaSchema,

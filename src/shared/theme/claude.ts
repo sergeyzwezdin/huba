@@ -13,6 +13,7 @@ const palette = {
     stone: RGBA.fromHex('#888888'),
     flint: RGBA.fromHex('#666666'),
     coal: RGBA.fromHex('#444444'),
+    void: RGBA.fromHex('#1A1A1A'),
     pebble: RGBA.fromHex('#aaaaaa'),
     fog: RGBA.fromHex('#A2A2A2'),
     bark: RGBA.fromHex('#C1484C'),
@@ -59,6 +60,7 @@ export const claude: Theme = {
         accent: palette.rust,
     },
     surface: {
+        background: palette.void,
         selection: palette.coal,
         scrollbarTrack: palette.coal,
         scrollbarThumb: palette.flint,

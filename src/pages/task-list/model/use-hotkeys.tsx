@@ -1,10 +1,14 @@
 import { useNavigate } from 'react-router'
 
+import { rgbToHex } from '@opentui/core'
+import { useTerminalDimensions } from '@opentui/react'
+import { useDialog } from '@opentui-ui/dialog/react'
 import { toast } from '@opentui-ui/toast'
 import { useAtom, useSetAtom } from 'jotai'
 
 import { selectedListAtom, useListsQuery } from '@/entities/claude-list'
 import { selectedTaskIdAtom, taskFilterAtom } from '@/entities/task'
+import { HelpContent } from '@/features/help'
 import { useFocusManager } from '@/shared/focus-manager'
 import { useKeyboard } from '@/shared/keyboard'
 import {
@@ -15,16 +19,11 @@ import {
     useTheme,
 } from '@/shared/settings'
 
-/**
- * Hook that manages all settings keyboard shortcuts
- * - `/` toggles showDetails
- * - `h` toggles layout between horizontal and vertical
- * - `w` cycles themes forward
- * - `W` cycles themes backward
- */
 export const useHotkeys = () => {
     const { focus } = useFocusManager()
     const navigate = useNavigate()
+    const dialog = useDialog()
+    const { height: rows } = useTerminalDimensions()
 
     const setLayout = useSetAtom(taskDetailsLayoutAtom)
     const setShowDetails = useSetAtom(showTaskDetailsAtom)
@@ -35,17 +34,31 @@ export const useHotkeys = () => {
 
     const { data: lists } = useListsQuery()
 
-    const { toggleTheme } = useTheme()
+    const { toggleTheme, theme } = useTheme()
 
     useKeyboard((key) => {
         if (key.name === '/') {
             setShowDetails((prev) => !prev)
         }
+        if (key.name === '?') {
+            dialog.show({
+                content: () => <HelpContent />,
+                closeOnClickOutside: true,
+                closeOnEscape: true,
+                style: {
+                    backgroundColor: rgbToHex(theme.surface.background),
+                    borderColor: rgbToHex(theme.border.focused),
+                    border: true,
+                    borderStyle: 'rounded',
+                    maxHeight: rows - 4,
+                },
+            })
+        }
         if (key.name === 'h') {
             setLayout((prev: TaskDetailsLayout) => (prev === 'horizontal' ? 'vertical' : 'horizontal'))
-        } else if (key.name === 'p') {
+        } else if (key.name === 'p' && !key.shift) {
             setShowProgress((prev) => !prev)
-        } else if (key.name === 's') {
+        } else if (key.name === 's' && !key.shift) {
             navigate('/settings')
         } else if (key.name === 'w' && !key.shift) {
             toggleTheme(false)

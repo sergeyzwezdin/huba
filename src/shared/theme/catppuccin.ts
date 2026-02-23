@@ -67,6 +67,7 @@ export const catppuccin: Theme = {
         accent: palette.mauve,
     },
     surface: {
+        background: palette.crust,
         selection: palette.surface1,
         scrollbarTrack: palette.mantle,
         scrollbarThumb: palette.surface2,

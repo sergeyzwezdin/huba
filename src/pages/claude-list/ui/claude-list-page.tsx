@@ -7,7 +7,6 @@ import { ListSelect } from '@/features/claude-list-select'
 import { useFocus } from '@/shared/focus-manager'
 import { Panel } from '@/shared/ui/panel'
 import { NoListsFound } from '@/shared/ui/placeholders'
-import { RequiredWindowSize } from '@/shared/ui/required-window-size'
 
 import { useHotkeys } from '../model/use-hotkeys'
 
@@ -21,22 +20,20 @@ const ClaudeListPage: FC = () => {
     useHotkeys(isFocused, selectRef)
 
     return (
-        <RequiredWindowSize minWidth={40} minHeight={28}>
-            <box style={{ flexDirection: 'column', paddingLeft: 1, paddingRight: 1, paddingTop: 0, flexGrow: 1 }}>
-                <Panel focusable focused={isFocused} ref={ref} title="Lists" style={{ flexGrow: 1 }}>
-                    {!!lists && lists.length > 0 ? (
-                        <ListSelect
-                            ref={selectRef}
-                            focused={isFocused}
-                            style={{ flexGrow: 1, flexBasis: 1 }}
-                            onSelect={() => navigate('/')}
-                        />
-                    ) : (
-                        <NoListsFound />
-                    )}
-                </Panel>
-            </box>
-        </RequiredWindowSize>
+        <box style={{ flexDirection: 'column', paddingLeft: 1, paddingRight: 1, paddingTop: 0, flexGrow: 1 }}>
+            <Panel focusable focused={isFocused} ref={ref} title="Lists" style={{ flexGrow: 1 }}>
+                {!!lists && lists.length > 0 ? (
+                    <ListSelect
+                        ref={selectRef}
+                        focused={isFocused}
+                        style={{ flexGrow: 1, flexBasis: 1 }}
+                        onSelect={() => navigate('/')}
+                    />
+                ) : (
+                    <NoListsFound />
+                )}
+            </Panel>
+        </box>
     )
 }
 

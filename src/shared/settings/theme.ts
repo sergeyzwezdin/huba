@@ -6,7 +6,7 @@ import { themes } from '@/shared/theme'
 
 export const activeThemeAtom = atomWithStorage<ThemeName>('theme', 'claude')
 
-export const themeAtom = atom<Theme>((get) => themes[get(activeThemeAtom)] ?? themes['claude'])
+export const themeAtom = atom<Theme>((get) => themes[get(activeThemeAtom)] ?? themes.claude)
 
 export const useTheme = (): {
     theme: Theme
@@ -15,7 +15,7 @@ export const useTheme = (): {
     toggleTheme: (reverse?: boolean) => void
 } => {
     const [themeName, setThemeName] = useAtom(activeThemeAtom)
-    const theme = themes[themeName] ?? themes['claude']
+    const theme = themes[themeName] ?? themes.claude
 
     const setTheme = (name: ThemeName) => setThemeName(name)
 

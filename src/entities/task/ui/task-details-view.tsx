@@ -61,25 +61,6 @@ const TaskDetailsView = forwardRef<ScrollBoxRenderable, TaskDetailsViewProps>(({
                     titleAlignment: 'center',
                 }}>
                 <Markdown>{task.description}</Markdown>
-                <Markdown>{task.description}</Markdown>
-                <Markdown>{task.description}</Markdown>
-                <Markdown>{task.description}</Markdown>
-                <Markdown>{task.description}</Markdown>
-                <Markdown>{task.description}</Markdown>
-                <Markdown>{task.description}</Markdown>
-                <Markdown>{task.description}</Markdown>
-                <Markdown>{task.description}</Markdown>
-                <Markdown>{task.description}</Markdown>
-                <Markdown>{task.description}</Markdown>
-                <Markdown>{task.description}</Markdown>
-                <Markdown>{task.description}</Markdown>
-                <Markdown>{task.description}</Markdown>
-                <Markdown>{task.description}</Markdown>
-                <Markdown>{task.description}</Markdown>
-                <Markdown>{task.description}</Markdown>
-                <Markdown>{task.description}</Markdown>
-                <Markdown>{task.description}</Markdown>
-                <Markdown>{task.description}</Markdown>
             </scrollbox>
         </>
     )
