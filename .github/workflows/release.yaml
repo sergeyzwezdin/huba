@@ -58,21 +58,11 @@ jobs:
 
       - run: bun run ${{ matrix.script }}
 
-      - name: Calculate SHA256 checksum
-        run: |
-          cd .bin
-          if [[ "$RUNNER_OS" == "macOS" ]]; then
-            shasum -a 256 ${{ matrix.artifact }} > ${{ matrix.artifact }}.sha256
-          else
-            sha256sum ${{ matrix.artifact }} > ${{ matrix.artifact }}.sha256
-          fi
-
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
           path: |
             .bin/${{ matrix.artifact }}
-            .bin/${{ matrix.artifact }}.sha256
 
   release:
     name: Release
@@ -96,7 +86,7 @@ jobs:
             echo "EXISTS=false" >> $GITHUB_OUTPUT
           fi
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
 
       - name: Download all artifacts
         if: steps.check.outputs.EXISTS == 'false'
@@ -127,4 +117,4 @@ jobs:
             --latest \
             release/*
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
