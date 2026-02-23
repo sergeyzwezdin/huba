@@ -121,12 +121,20 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           prompt: |
-            You are writing release notes for version ${{ steps.version.outputs.VERSION }} of "huba".
+            You are writing release notes for version ${{ steps.version.outputs.VERSION }} of "huba" — a slick TUI for managing Claude Code tasks.
             Below is the diff summary and commit log since the previous release (${{ steps.prev.outputs.TAG || 'initial' }}):
 
             ${{ steps.diff.outputs.DIFF }}
 
             Write concise, user-facing release notes in markdown. Group changes into sections like "New Features", "Improvements", "Bug Fixes" as appropriate. Only include sections that have changes. Do not include the version number as a heading. Do not include raw commit hashes.
+
+            Style guide — match the project's voice:
+            - Casual, punchy, developer-first tone. Talk to the reader directly ("you", not "users").
+            - Short sentences. Em dashes for asides — like this.
+            - Bold key terms for scannability.
+            - Be specific about what changed. No filler, no corporate fluff, no "we're excited to announce".
+            - Keep it fun but informative — think changelog meets dev blog, not press release.
+            - Use active voice and imperative mood where it fits ("Browse tasks", not "Tasks can now be browsed").
 
       - name: Download all artifacts
         if: steps.check.outputs.EXISTS == 'false'
@@ -159,3 +167,13 @@ jobs:
             release/*
         env:
           GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+
+      - name: Delete build artifacts
+        if: always()
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: |
+            hb-linux-x64
+            hb-linux-arm64
+            hb-darwin-x64
+            hb-darwin-arm64
