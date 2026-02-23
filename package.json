@@ -44,6 +44,12 @@
     "react-router": "^7.13.0",
     "zod": "^4.3.6"
   },
+  "optionalDependencies": {
+    "@opentui/core-darwin-arm64": "0.1.79",
+    "@opentui/core-darwin-x64": "0.1.79",
+    "@opentui/core-linux-arm64": "0.1.79",
+    "@opentui/core-linux-x64": "0.1.79"
+  },
   "patchedDependencies": {
     "@types/react@19.2.14": "patches/@types%2Freact@19.2.14.patch"
   }
