@@ -11,6 +11,8 @@
             "**",
             "!.vscode",
             "!**/.vscode",
+            "!.claude",
+            "!**/.claude",
             "!.changeset",
             "!*.code-workspace",
             "!package.json",
