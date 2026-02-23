@@ -3,6 +3,7 @@ import { Outlet } from 'react-router'
 
 import { useTerminalDimensions } from '@opentui/react'
 
+import { VersionChecker } from '@/features/upgrade'
 import { RequiredWindowSize } from '@/shared/ui/required-window-size'
 import { Footer } from '@/widgets/footer'
 
@@ -17,6 +18,7 @@ const Layout: FC = () => {
                 </RequiredWindowSize>
             </box>
             {rows > 40 && columns > 28 && <Footer />}
+            <VersionChecker />
         </box>
     )
 }
