@@ -1,0 +1,130 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: biomejs/setup-biome@v2.7.0
+        with:
+          version: "2.4.4"
+
+      - run: biome ci .
+
+  build:
+    name: Build (${{ matrix.target }})
+    needs: check
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            target: linux-x64
+            script: build:linux-x64
+            artifact: hb-linux-x64
+
+          - runner: ubuntu-24.04-arm
+            target: linux-arm64
+            script: build:linux-arm64
+            artifact: hb-linux-arm64
+
+          - runner: macos-15-intel
+            target: darwin-x64
+            script: build:darwin-x64
+            artifact: hb-darwin-x64
+
+          - runner: macos-15
+            target: darwin-arm64
+            script: build:darwin-arm64
+            artifact: hb-darwin-arm64
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install --frozen-lockfile
+
+      - run: bun run ${{ matrix.script }}
+
+      - name: Calculate SHA256 checksum
+        run: |
+          cd .bin
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            shasum -a 256 ${{ matrix.artifact }} > ${{ matrix.artifact }}.sha256
+          else
+            sha256sum ${{ matrix.artifact }} > ${{ matrix.artifact }}.sha256
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            .bin/${{ matrix.artifact }}
+            .bin/${{ matrix.artifact }}.sha256
+
+  release:
+    name: Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version from package.json
+        id: version
+        run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
+
+      - name: Check if release already exists
+        id: check
+        run: |
+          if gh release view "${{ steps.version.outputs.VERSION }}" &>/dev/null; then
+            echo "EXISTS=true" >> $GITHUB_OUTPUT
+          else
+            echo "EXISTS=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Download all artifacts
+        if: steps.check.outputs.EXISTS == 'false'
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Package tarballs
+        if: steps.check.outputs.EXISTS == 'false'
+        run: |
+          VERSION=${{ steps.version.outputs.VERSION }}
+          mkdir -p release
+
+          for pair in "hb-darwin-arm64:darwin-arm64" "hb-darwin-x64:darwin-amd64" "hb-linux-x64:linux-amd64" "hb-linux-arm64:linux-arm64"; do
+            artifact="${pair%%:*}"
+            target="${pair##*:}"
+            cp "artifacts/${artifact}/${artifact}" hb
+            chmod +x hb
+            tar -czf "release/huba-${VERSION}-${target}.tar.gz" hb
+            rm hb
+          done
+
+      - name: Create release and upload binaries
+        if: steps.check.outputs.EXISTS == 'false'
+        run: |
+          gh release create "${{ steps.version.outputs.VERSION }}" \
+            --title "${{ steps.version.outputs.VERSION }}" \
+            --latest \
+            release/*
+        env:
+          GH_TOKEN: ${{ github.token }}

@@ -1,0 +1,22 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  homebrew:
+    name: Publish to Homebrew
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Justintime50/homebrew-releaser@v3
+        with:
+          homebrew_owner: sergeyzwezdin
+          homebrew_tap: homebrew-huba
+          github_token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          install: 'bin.install "hb"'
+          test: 'assert_predicate bin/"hb", :exist?'
+          target_darwin_amd64: true
+          target_darwin_arm64: true
+          target_linux_amd64: true
+          target_linux_arm64: true
