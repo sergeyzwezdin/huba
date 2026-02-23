@@ -29,7 +29,7 @@ const isBrewInstall = (): boolean => {
  */
 const useBrewUpdateAvailable = (onUpdateAvailable: (version: string) => void): void => {
     useEffect(() => {
-        // if (!isBrewInstall()) return
+        if (!isBrewInstall()) return
 
         void (async () => {
             try {
