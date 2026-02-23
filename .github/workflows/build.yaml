@@ -1,0 +1,77 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install
+
+      - run: bun run format
+
+      - run: bun run lint
+
+  build:
+    name: Build (${{ matrix.target }})
+    needs: check
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            target: linux-x64
+            script: build:linux-x64
+            artifact: hb-linux-x64
+
+          - runner: ubuntu-24.04-arm
+            target: linux-arm64
+            script: build:linux-arm64
+            artifact: hb-linux-arm64
+
+          - runner: macos-15-intel
+            target: darwin-x64
+            script: build:darwin-x64
+            artifact: hb-darwin-x64
+
+          - runner: macos-15
+            target: darwin-arm64
+            script: build:darwin-arm64
+            artifact: hb-darwin-arm64
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install
+
+      - run: bun run ${{ matrix.script }}
+
+      - name: Calculate SHA256 checksum
+        run: |
+          cd .bin
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            shasum -a 256 ${{ matrix.artifact }} > ${{ matrix.artifact }}.sha256
+          else
+            sha256sum ${{ matrix.artifact }} > ${{ matrix.artifact }}.sha256
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            .bin/${{ matrix.artifact }}
+            .bin/${{ matrix.artifact }}.sha256
