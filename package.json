@@ -1,14 +1,14 @@
 {
-  "name": "claude-tasks",
-  "version": "0.1.0",
+  "name": "huba",
+  "version": "0.0.1",
   "description": "TUI for managing Claude Code tasks - search, view, create, edit, and delete tasks across projects",
   "type": "module",
   "private": true,
   "author": "Sergey Zwezdin",
-  "homepage": "https://github.com/sergeyzwezdin/claude-tasks",
+  "homepage": "https://github.com/sergeyzwezdin/huba",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sergeyzwezdin/claude-tasks.git"
+    "url": "git+https://github.com/sergeyzwezdin/huba.git"
   },
   "scripts": {
     "dev": "bun run index.tsx",

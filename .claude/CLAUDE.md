@@ -99,7 +99,7 @@ These skills provide SOLID principles, naming conventions, architectural pattern
 
 - Install dependencies: `bun install`
 - Run dev mode: `bun run dev`
-- Build executable: `bun build --compile --outfile=claude-tasks`
+- Build executable: `bun build --compile --outfile=hb`
 - Type check: `bun run typecheck`
 - Format code: `bun run format`
 - Format specific file: `bun run format:file <file>`

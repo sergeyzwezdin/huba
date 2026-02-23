@@ -3,7 +3,7 @@
   "tasks": [
     {
       "type": "shell",
-      "label": "claude-tasks",
+      "label": "huba",
       "command": "bun run dev",
       "options": {
         "env": {}
@@ -11,7 +11,7 @@
       "presentation": {
         "reveal": "always",
         "focus": true,
-        "group": "claude-tasks"
+        "group": "huba"
       },
       "problemMatcher": [],
       "icon": {
