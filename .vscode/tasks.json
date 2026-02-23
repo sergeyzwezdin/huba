@@ -1,0 +1,23 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "shell",
+      "label": "huba",
+      "command": "bun run dev",
+      "options": {
+        "env": {}
+      },
+      "presentation": {
+        "reveal": "always",
+        "focus": true,
+        "group": "huba"
+      },
+      "problemMatcher": [],
+      "icon": {
+        "id": "circle-outline",
+        "color": "terminal.ansiBlue"
+      }
+    }
+  ]
+}

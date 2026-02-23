@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bun run lint)",
+      "Bash(bun run typecheck:*)",
+      "Bash(bun run format:file:*)",
+      "Bash(bun run format:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | xargs bun run format:file"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "name": "huba",
+  "version": "0.0.1",
+  "description": "TUI for managing Claude Code tasks - search, view, create, edit, and delete tasks across projects",
+  "type": "module",
+  "private": true,
+  "author": "Sergey Zwezdin",
+  "homepage": "https://github.com/sergeyzwezdin/huba",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sergeyzwezdin/huba.git"
+  },
+  "scripts": {
+    "dev": "bun run index.tsx",
+    "dev:watch": "bun run --watch index.tsx",
+    "build": "bun build --compile --minify ./index.tsx --outfile .bin/hb",
+    "build:darwin-arm64": "bun build --compile --minify --target=bun-darwin-arm64 ./index.tsx --outfile .bin/hb-darwin-arm64",
+    "build:darwin-x64": "bun build --compile --minify --target=bun-darwin-x64 ./index.tsx --outfile .bin/hb-darwin-x64",
+    "build:linux-x64": "bun build --compile --minify --target=bun-linux-x64-modern ./index.tsx --outfile .bin/hb-linux-x64",
+    "build:linux-arm64": "bun build --compile --minify --target=bun-linux-arm64 ./index.tsx --outfile .bin/hb-linux-arm64",
+    "build:windows-x64": "bun build --compile --minify --target=bun-windows-x64-modern ./index.tsx --outfile .bin/hb-windows-x64.exe",
+    "typecheck": "tsc --noEmit",
+    "format": "biome check",
+    "format:file": "biome check --write --log-level=warn",
+    "lint": "biome lint"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.4",
+    "@types/bun": "latest",
+    "@types/react": "^19"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@opentui-ui/dialog": "^0.1.2",
+    "@opentui-ui/toast": "^0.0.5",
+    "@opentui/core": "^0.1.79",
+    "@opentui/react": "^0.1.79",
+    "@tanstack/react-query": "^5.90.21",
+    "chokidar": "^5.0.0",
+    "jotai": "^2.17.1",
+    "react": "^19",
+    "react-router": "^7.13.0",
+    "zod": "^4.3.6"
+  },
+  "patchedDependencies": {
+    "@types/react@19.2.14": "patches/@types%2Freact@19.2.14.patch"
+  }
+}
