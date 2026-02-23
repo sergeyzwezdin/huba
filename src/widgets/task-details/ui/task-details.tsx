@@ -1,5 +1,5 @@
 import type { ComponentProps, FC } from 'react'
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 
 import type { ScrollBoxRenderable } from '@opentui/core'
 import { useAtom } from 'jotai'
@@ -22,14 +22,7 @@ const TaskDetails: FC<TaskDetailsProps> = ({ autoFocus = false, ...props }) => {
     const [selectedList] = useAtom(selectedListAtom)
     const selectedTask = useSelectedTask(selectedList)
 
-    const { disableTabButton, enableTabButton } = useFocusManager()
-
     useHotkeys((props.style?.visible ?? true) && !!selectedTask, isFocused, scrollRef)
-
-    useEffect(() => {
-        if (isFocused) disableTabButton()
-        else enableTabButton()
-    }, [isFocused, disableTabButton, enableTabButton])
 
     if (!selectedTask) return undefined
 
