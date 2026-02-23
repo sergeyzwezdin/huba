@@ -16,8 +16,8 @@ const hotkeys: HotkeyGroup[] = [
             { key: ['Shift⇧ + M'], description: 'Switch to latest list created' },
             { key: ['1'], description: 'Focus task list' },
             { key: ['2'], description: 'Focus task details' },
-            { key: ['3'], description: 'Focus task blocks' },
-            { key: ['4'], description: 'Focus task blocked by' },
+            { key: ['3'], description: 'Focus task blocked by' },
+            { key: ['4'], description: 'Focus task blocks' },
         ],
     },
     {
