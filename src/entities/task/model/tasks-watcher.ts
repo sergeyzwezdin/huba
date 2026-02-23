@@ -7,12 +7,15 @@ import { useAtomValue } from 'jotai'
 
 import { selectedListAtom } from '@/entities/claude-list'
 import { getTasksDir } from '@/shared/api/paths'
+import { debounce } from '@/shared/lib'
 
 const WATCHER_OPTIONS = {
     depth: 0,
     ignoreInitial: true,
     persistent: true,
 } as const
+
+const DEBOUNCE_DELAY = 150
 
 /**
  * Watches ~/.claude/tasks/{listId}/*.json for file changes.
@@ -33,8 +36,10 @@ export const useTasksWatcher = (onChanged: (listId: string) => void | Promise<vo
 
         const watcher = chokidar.watch(tasksPath, WATCHER_OPTIONS)
 
+        const debouncedOnChanged = debounce((id: string) => void onChangedRef.current(id), DEBOUNCE_DELAY)
+
         const handleFileChange = (filePath: string) => {
-            if (filePath.endsWith('.json')) void onChangedRef.current(listId)
+            if (filePath.endsWith('.json')) debouncedOnChanged(listId)
         }
 
         watcher.on('add', handleFileChange)

@@ -38,7 +38,8 @@ const ListSelect = forwardRef<ClaudeListSelectRenderable, ListSelectProps>(({ st
         if (!focused) return
 
         if (key.name === 'return') {
-            handleConfirm(selected ?? '')
+            if (!selected) return
+            handleConfirm(selected)
         }
     })
 

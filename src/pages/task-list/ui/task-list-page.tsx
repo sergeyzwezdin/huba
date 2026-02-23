@@ -1,7 +1,7 @@
 import type { FC } from 'react'
 
 import { useTerminalDimensions } from '@opentui/react'
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtomValue } from 'jotai'
 
 import { selectedListAtom } from '@/entities/claude-list'
 import { useSelectedTask } from '@/entities/task'
@@ -23,7 +23,7 @@ const TaskListPage: FC = () => {
     const { width: columns, height: rows } = useTerminalDimensions()
     const layout = columns < 90 ? 'vertical' : layoutAtom
 
-    const [selectedList] = useAtom(selectedListAtom)
+    const selectedList = useAtomValue(selectedListAtom)
     const selectedTask = useSelectedTask(selectedList)
 
     useHotkeys()

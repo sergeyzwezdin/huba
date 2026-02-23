@@ -89,6 +89,7 @@ const resolveBlockedStatuses = (tasks: Task[]): Task[] => {
 
         // Circular dependency → blocked
         if (visiting.has(taskId)) {
+            cache.set(taskId, 'blocked')
             return 'blocked'
         }
 

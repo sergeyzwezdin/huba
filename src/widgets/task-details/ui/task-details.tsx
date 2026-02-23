@@ -2,7 +2,7 @@ import type { ComponentProps, FC } from 'react'
 import { useRef } from 'react'
 
 import type { ScrollBoxRenderable } from '@opentui/core'
-import { useAtom } from 'jotai'
+import { useAtomValue } from 'jotai'
 
 import { selectedListAtom } from '@/entities/claude-list'
 import { TaskDetailsView, useSelectedTask } from '@/entities/task'
@@ -19,7 +19,7 @@ const TaskDetails: FC<TaskDetailsProps> = ({ autoFocus = false, ...props }) => {
     const { focus } = useFocusManager()
     const scrollRef = useRef<ScrollBoxRenderable>(null)
 
-    const [selectedList] = useAtom(selectedListAtom)
+    const selectedList = useAtomValue(selectedListAtom)
     const selectedTask = useSelectedTask(selectedList)
 
     useHotkeys((props.style?.visible ?? true) && !!selectedTask, isFocused, scrollRef)

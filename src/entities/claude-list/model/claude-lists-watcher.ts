@@ -7,12 +7,15 @@ import { toast } from '@opentui-ui/toast'
 import chokidar from 'chokidar'
 
 import { getTasksBaseDir } from '@/shared/api/paths'
+import { debounce } from '@/shared/lib'
 
 const WATCHER_OPTIONS = {
     depth: 1,
     ignoreInitial: true,
     persistent: true,
 } as const
+
+const DEBOUNCE_DELAY = 150
 
 const basePath = getTasksBaseDir()
 
@@ -24,21 +27,23 @@ export const useListsWatcher = (onChanged: () => void | Promise<void>): void => 
     const onChangedRef = useRef(onChanged)
     onChangedRef.current = onChanged
 
+    const debouncedOnChangedRef = useRef(debounce(() => void onChangedRef.current(), DEBOUNCE_DELAY))
+
     const onAddDir = useCallback((changedPath: string) => {
         if (changedPath !== basePath) {
-            void onChangedRef.current()
-            toast.success('New list created [M]', {
+            debouncedOnChangedRef.current()
+            toast.success('New list created', {
                 description: path.basename(changedPath),
             })
         }
     }, [])
 
-    const onRemoveDir = useCallback((path: string) => {
-        if (path !== basePath) void onChangedRef.current()
+    const onRemoveDir = useCallback((changedPath: string) => {
+        if (changedPath !== basePath) debouncedOnChangedRef.current()
     }, [])
 
     const onFilesChange = useCallback((changedPath: string) => {
-        if (changedPath.endsWith('.json')) void onChangedRef.current()
+        if (changedPath.endsWith('.json')) debouncedOnChangedRef.current()
     }, [])
 
     useEffect(() => {

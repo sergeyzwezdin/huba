@@ -1,7 +1,7 @@
 import { type FC, useRef } from 'react'
 
 import type { ScrollBoxRenderable } from '@opentui/core'
-import { useAtom } from 'jotai'
+import { useAtomValue } from 'jotai'
 
 import { selectedListAtom } from '@/entities/claude-list'
 import { useSelectedTask } from '@/entities/task'
@@ -15,7 +15,7 @@ import { useHotkeys } from '../model/use-hotkeys'
 const TaskDetailsPage: FC = () => {
     const scrollRef = useRef<ScrollBoxRenderable>(null)
 
-    const [selectedList] = useAtom(selectedListAtom)
+    const selectedList = useAtomValue(selectedListAtom)
     const selectedTask = useSelectedTask(selectedList)
 
     useHotkeys(scrollRef)

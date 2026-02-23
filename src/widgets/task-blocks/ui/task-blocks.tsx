@@ -1,6 +1,6 @@
 import type { ComponentProps, FC } from 'react'
 
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 
 import { selectedListAtom } from '@/entities/claude-list'
 import { selectedTaskIdAtom, TaskBlockers, useSelectedTasksBlocks } from '@/entities/task'
@@ -14,7 +14,7 @@ const TaskBlocks: FC<TaskBlocksProps> = (props) => {
     const { isFocused, ref } = useFocus({ id: 'task-blocks' })
     const { focus } = useFocusManager()
 
-    const [selectedList] = useAtom(selectedListAtom)
+    const selectedList = useAtomValue(selectedListAtom)
     const blocks = useSelectedTasksBlocks(selectedList)
 
     const setSelectedTaskId = useSetAtom(selectedTaskIdAtom)

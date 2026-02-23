@@ -8,12 +8,17 @@ import { createJSONStorage, atomWithStorage as jotaiAtomWithStorage } from 'jota
 const SETTINGS_DIR = join(homedir(), '.claude-tasks')
 const SETTINGS_FILE = join(SETTINGS_DIR, 'settings.json')
 
+let settingsCache: Record<string, unknown> | null = null
+
 const readSettings = (): Record<string, unknown> => {
+    if (settingsCache !== null) return settingsCache
     try {
         const content = readFileSync(SETTINGS_FILE, 'utf-8')
-        return JSON.parse(content) as Record<string, unknown>
+        settingsCache = JSON.parse(content) as Record<string, unknown>
+        return settingsCache
     } catch {
-        return {}
+        settingsCache = {}
+        return settingsCache
     }
 }
 

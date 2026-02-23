@@ -46,7 +46,7 @@ export class ProgressRenderable extends BoxRenderable {
     }
 
     get emptyColor(): string | RGBA | undefined {
-        return undefined
+        return this._emptyColor ?? undefined
     }
 
     set emptyColor(value: string | RGBA | undefined) {

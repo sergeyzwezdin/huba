@@ -1,7 +1,7 @@
 import type { ComponentProps, FC } from 'react'
 import { useMemo, useRef } from 'react'
 
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 
 import { selectedListAtom } from '@/entities/claude-list'
 import { selectedTaskIdAtom, TaskSelect, type TaskSelectRenderable, useTasks } from '@/entities/task'
@@ -18,7 +18,7 @@ const TaskTable: FC<TaskTableProps> = (props) => {
     const { focus } = useFocusManager()
     const selectRef = useRef<TaskSelectRenderable>(null)
 
-    const [selectedList] = useAtom(selectedListAtom)
+    const selectedList = useAtomValue(selectedListAtom)
     const { data: tasks } = useTasks(selectedList)
 
     const options = useMemo(

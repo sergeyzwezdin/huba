@@ -2,6 +2,8 @@ import { existsSync } from 'node:fs'
 import { readdir, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 
+import { toast } from '@opentui-ui/toast'
+
 import { type TaskList, taskListSchema } from '@/shared/domain'
 
 import { getTasksBaseDir } from './paths'
@@ -41,7 +43,8 @@ export const getTaskLists = async (): Promise<TaskList[]> => {
                 // Validate using Zod schema
                 const result = taskListSchema.safeParse(rawData)
                 if (!result.success) {
-                    throw new Error(`Invalid task list data for ${entry.name}: ${result.error.message}`)
+                    toast.error(`Invalid task list data for ${entry.name}`)
+                    return undefined
                 }
 
                 return result.data
@@ -49,5 +52,7 @@ export const getTaskLists = async (): Promise<TaskList[]> => {
     )
 
     // Sort by creation date (newest first)
-    return lists.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    return lists
+        .filter((list): list is TaskList => list !== undefined)
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 }

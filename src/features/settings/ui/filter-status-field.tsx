@@ -2,7 +2,7 @@ import type { FC } from 'react'
 
 import { useAtom } from 'jotai'
 
-import { type TaskFilterStatus, taskFilterAtom } from '@/entities/task/model/tasks-filter.atom'
+import { type TaskFilterStatus, taskFilterAtom } from '@/entities/task'
 import { useFocus } from '@/shared/focus-manager'
 import { FormField } from '@/shared/ui/forms'
 import { Selector } from '@/shared/ui/input'

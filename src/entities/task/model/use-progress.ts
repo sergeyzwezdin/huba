@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { useAtom } from 'jotai'
+import { useAtomValue } from 'jotai'
 
 import { selectedListAtom } from '@/entities/claude-list'
 
@@ -23,7 +23,7 @@ export type ProgressValues = {
  * @returns Per-status counts grouped in `items`, total, and overall completion percentage
  */
 export const useProgress = (): ProgressValues => {
-    const [selectedList] = useAtom(selectedListAtom)
+    const selectedList = useAtomValue(selectedListAtom)
     const { data } = useTasksQuery(selectedList)
     const tasks = data?.list ?? []
 

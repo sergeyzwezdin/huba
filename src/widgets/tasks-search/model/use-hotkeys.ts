@@ -1,5 +1,5 @@
 import { useKeyboard as useCoreKeyboard } from '@opentui/react'
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 
 import { selectedListAtom } from '@/entities/claude-list'
 import { selectedTaskIdAtom, taskFilterAtom, useTasks } from '@/entities/task'
@@ -11,7 +11,7 @@ const useHotkeys = (enabled: boolean) => {
 
     const [filter, setFilter] = useAtom(taskFilterAtom)
 
-    const [selectedList] = useAtom(selectedListAtom)
+    const selectedList = useAtomValue(selectedListAtom)
     const { data: tasks } = useTasks(selectedList)
     const setSelectedTaskId = useSetAtom(selectedTaskIdAtom)
 
