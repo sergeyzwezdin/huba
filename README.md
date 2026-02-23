@@ -36,6 +36,18 @@ brew tap sergeyzwezdin/huba
 brew install sergeyzwezdin/huba/huba
 ```
 
+### Usage
+
+```bash
+hb
+```
+
+### Upgrade
+
+```bash
+brew upgrade huba
+```
+
 ### Uninstall
 
 ```bash

@@ -70,8 +70,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      models: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Read version from package.json
         id: version
@@ -87,6 +90,43 @@ jobs:
           fi
         env:
           GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+
+      - name: Find previous release
+        if: steps.check.outputs.EXISTS == 'false'
+        id: prev
+        run: |
+          PREV_TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName // empty')
+          echo "TAG=${PREV_TAG}" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+
+      - name: Generate diff for release notes
+        if: steps.check.outputs.EXISTS == 'false'
+        id: diff
+        run: |
+          if [ -n "${{ steps.prev.outputs.TAG }}" ]; then
+            DIFF=$(git diff "${{ steps.prev.outputs.TAG }}"..HEAD --stat && echo "---" && git log "${{ steps.prev.outputs.TAG }}"..HEAD --pretty=format:"%h %s")
+          else
+            FIRST_COMMIT=$(git rev-list --max-parents=0 HEAD)
+            DIFF=$(git diff "${FIRST_COMMIT}"..HEAD --stat && echo "---" && git log "${FIRST_COMMIT}"..HEAD --pretty=format:"%h %s")
+          fi
+          EOF_MARKER=$(dd if=/dev/urandom bs=15 count=1 2>/dev/null | base64)
+          echo "DIFF<<${EOF_MARKER}" >> $GITHUB_OUTPUT
+          echo "$DIFF" >> $GITHUB_OUTPUT
+          echo "${EOF_MARKER}" >> $GITHUB_OUTPUT
+
+      - name: Generate release notes with AI
+        if: steps.check.outputs.EXISTS == 'false'
+        id: notes
+        uses: actions/ai-inference@v1
+        with:
+          prompt: |
+            You are writing release notes for version ${{ steps.version.outputs.VERSION }} of "huba".
+            Below is the diff summary and commit log since the previous release (${{ steps.prev.outputs.TAG || 'initial' }}):
+
+            ${{ steps.diff.outputs.DIFF }}
+
+            Write concise, user-facing release notes in markdown. Group changes into sections like "New Features", "Improvements", "Bug Fixes" as appropriate. Only include sections that have changes. Do not include the version number as a heading. Do not include raw commit hashes.
 
       - name: Download all artifacts
         if: steps.check.outputs.EXISTS == 'false'
@@ -115,6 +155,7 @@ jobs:
           gh release create "${{ steps.version.outputs.VERSION }}" \
             --title "${{ steps.version.outputs.VERSION }}" \
             --latest \
+            --notes-file <(cat "${{ steps.notes.outputs.response-file }}") \
             release/*
         env:
           GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
