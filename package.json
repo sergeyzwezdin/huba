@@ -1,6 +1,6 @@
 {
   "name": "huba",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "TUI for managing Claude Code tasks - search, view, create, edit, and delete tasks across projects",
   "type": "module",
   "private": true,

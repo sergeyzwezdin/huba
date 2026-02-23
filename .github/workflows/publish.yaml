@@ -16,6 +16,7 @@ jobs:
           github_token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
           install: 'bin.install "hb"'
           test: 'assert_predicate bin/"hb", :exist?'
+          version: ${{ github.ref_name }}
           target_darwin_amd64: true
           target_darwin_arm64: true
           target_linux_amd64: true
