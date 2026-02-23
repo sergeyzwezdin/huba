@@ -27,6 +27,22 @@ Huba gives you the full picture: browse your tasks in a beautiful terminal UI, r
 - **Keyboard-first** — fully navigable without touching the mouse
 - **Themeable** — ships with multiple themes, or bring your own
 
+## Installation
+
+### Homebrew (macOS and Linux)
+
+```bash
+brew tap sergeyzwezdin/huba
+brew install sergeyzwezdin/huba/huba
+```
+
+### Uninstall
+
+```bash
+brew uninstall huba
+brew untap sergeyzwezdin/huba
+```
+
 ## Development Guide
 
 ```bash
