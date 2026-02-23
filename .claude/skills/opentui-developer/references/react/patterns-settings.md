@@ -14,7 +14,7 @@ import { atomWithStorage } from '@/shared/state'
 // Transient: resets on app restart
 export const detailsExpandedAtom = atom<false | 'lists' | 'task-details'>(false)
 
-// Persistent: survives restarts (stored in ~/.claude-tasks/settings.json)
+// Persistent: survives restarts (stored in ~/.huba/settings.json)
 export const showTaskDetailsAtom = atomWithStorage<boolean>('showTaskDetails', true)
 ```
 

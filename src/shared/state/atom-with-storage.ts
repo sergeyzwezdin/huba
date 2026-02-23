@@ -5,7 +5,7 @@ import { join } from 'node:path'
 import type { PrimitiveAtom } from 'jotai'
 import { createJSONStorage, atomWithStorage as jotaiAtomWithStorage } from 'jotai/utils'
 
-const SETTINGS_DIR = join(homedir(), '.claude-tasks')
+const SETTINGS_DIR = join(homedir(), '.huba')
 const SETTINGS_FILE = join(SETTINGS_DIR, 'settings.json')
 
 let settingsCache: Record<string, unknown> | null = null
@@ -49,7 +49,7 @@ const createSyncStorage = <T>() =>
     }))
 
 /**
- * Creates a Jotai atom whose value is persisted in ~/.claude-tasks/settings.json.
+ * Creates a Jotai atom whose value is persisted in ~/.huba/settings.json.
  * Reads the initial value from storage, falls back to `initialValue` if absent.
  */
 export const atomWithStorage = <T>(key: string, initialValue: T): PrimitiveAtom<T> =>

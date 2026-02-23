@@ -72,7 +72,7 @@ These skills provide SOLID principles, naming conventions, architectural pattern
 
 ### Theme System
 - Built-in themes in `src/shared/theme/` (claude, catppuccin, github, contrast, grayed)
-- Custom theme loadable from `~/.claude-tasks` (JSON)
+- Custom theme loadable from `~/.huba` (JSON)
 - Access via `useTheme()` from `@/shared/settings`; use `theme.*` color tokens with `rgbToHex()`
 
 ### Persistent State

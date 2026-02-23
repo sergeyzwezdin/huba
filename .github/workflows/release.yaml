@@ -153,7 +153,7 @@ jobs:
             target="${pair##*:}"
             cp "artifacts/${artifact}/${artifact}" hb
             chmod +x hb
-            tar -czf "release/huba-${target}-${VERSION}.tar.gz" hb
+            tar -czf "release/huba-${VERSION}-${target}.tar.gz" hb
             rm hb
           done
 

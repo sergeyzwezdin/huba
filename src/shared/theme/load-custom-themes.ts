@@ -5,10 +5,10 @@ import { join } from 'node:path'
 import type { Theme } from './types'
 import { themeSchema } from './types'
 
-const THEMES_DIR = join(homedir(), '.claude-tasks', 'themes')
+const THEMES_DIR = join(homedir(), '.huba', 'themes')
 
 /**
- * Reads custom theme JSON files from ~/.claude-tasks/themes/.
+ * Reads custom theme JSON files from ~/.huba/themes/.
  * Each valid .json file is validated against themeSchema and included in the result.
  * Invalid files are skipped with a console.warn.
  *
