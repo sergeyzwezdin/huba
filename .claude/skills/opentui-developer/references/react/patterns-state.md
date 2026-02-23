@@ -24,7 +24,7 @@ export const taskFilterAtom = atomWithStorage<TaskFilter>('filter', {
 })
 ```
 
-Backed by `~/.claude-tasks/settings.json` using a synchronous file store.
+Backed by `~/.huba/settings.json` using a synchronous file store.
 
 ### Transient Atoms
 
