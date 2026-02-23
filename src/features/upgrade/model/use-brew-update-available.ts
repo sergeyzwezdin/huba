@@ -6,7 +6,7 @@ import { version as currentVersion } from '~/package.json'
 
 import { compareSemver } from './compare-semver'
 
-const FORMULA_URL = 'https://raw.githubusercontent.com/sergeyzwezdin/homebrew-huba/HEAD/Formula/huba.rb'
+const FORMULA_URL = 'https://raw.githubusercontent.com/sergeyzwezdin/homebrew-huba/refs/heads/master/Formula/huba.rb'
 
 /**
  * Parses the version string from a Homebrew formula file content.
@@ -29,7 +29,7 @@ const isBrewInstall = (): boolean => {
  */
 const useBrewUpdateAvailable = (onUpdateAvailable: (version: string) => void): void => {
     useEffect(() => {
-        if (!isBrewInstall()) return
+        // if (!isBrewInstall()) return
 
         void (async () => {
             try {
@@ -38,6 +38,7 @@ const useBrewUpdateAvailable = (onUpdateAvailable: (version: string) => void): v
 
                 const content = await response.text()
                 const parsed = parseFormulaVersion(content)
+
                 if (!parsed) return
 
                 if (compareSemver(parsed, currentVersion) > 0) {
