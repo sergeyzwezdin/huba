@@ -5,6 +5,8 @@ import { useTerminalDimensions } from '@opentui/react'
 
 import { useTheme } from '@/shared/settings'
 
+import { homepage, version } from '~/package.json'
+
 const Footer: FC = () => {
     const { theme } = useTheme()
     const { width: columns } = useTerminalDimensions()
@@ -13,14 +15,14 @@ const Footer: FC = () => {
         <box style={{ flexDirection: 'row', gap: 2, paddingLeft: 2, paddingRight: 2, justifyContent: 'space-between' }}>
             <box style={{ flexDirection: 'row', gap: 2 }}>
                 <text fg={theme.colors.hint} attributes={TextAttributes.BOLD}>
-                    Huba v.0.0.1
+                    Huba v.{version}
                 </text>
 
                 {columns > 75 && (
                     <text
                         style={{ fg: theme.colors.hint }}
                         attributes={TextAttributes.ITALIC | TextAttributes.UNDERLINE | TextAttributes.DIM}>
-                        <a href="https://github.com/sergeyzwezdin/huba">https://github.com/sergeyzwezdin/huba</a>
+                        <a href={homepage}>{homepage}</a>
                     </text>
                 )}
             </box>
