@@ -45,6 +45,7 @@ hb
 ### Upgrade
 
 ```bash
+brew update
 brew upgrade huba
 ```
 

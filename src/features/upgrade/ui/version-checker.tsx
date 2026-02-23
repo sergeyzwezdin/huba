@@ -18,7 +18,7 @@ const VersionChecker: FC = () => {
                 New version available: {latestVersion}. Run:{' '}
             </text>
             <text fg={theme.colors.primary} attributes={TextAttributes.BOLD | TextAttributes.ITALIC}>
-                brew upgrade huba
+                brew update && brew upgrade huba
             </text>
         </box>
     )
