@@ -18,9 +18,9 @@ jobs:
 
       - run: bun install
 
-      - run: bun run format
+      - run: bunx biome check
 
-      - run: bun run lint
+      - run: bunx biome lint
 
   build:
     name: Build (${{ matrix.target }})
