@@ -21,37 +21,47 @@ const scanTasksDir = async (source: TaskSource): Promise<TaskList[]> => {
 
     if (!existsSync(baseDir)) return []
 
-    const entries = await readdir(baseDir, { withFileTypes: true })
+    try {
+        const entries = await readdir(baseDir, { withFileTypes: true })
 
-    const lists = await Promise.all(
-        entries
-            .filter((entry) => entry.isDirectory())
-            .map(async (entry) => {
-                const listPath = join(baseDir, entry.name)
-                const stats = await stat(listPath)
+        const lists = await Promise.all(
+            entries
+                .filter((entry) => entry.isDirectory())
+                .map(async (entry) => {
+                    try {
+                        const listPath = join(baseDir, entry.name)
+                        const stats = await stat(listPath)
 
-                const listEntries = await readdir(listPath)
-                const tasksCount = listEntries.filter((name) => name.endsWith('.json')).length
+                        const listEntries = await readdir(listPath)
+                        const tasksCount = listEntries.filter((name) => name.endsWith('.json')).length
 
-                const rawData = {
-                    id: entry.name,
-                    path: listPath,
-                    createdAt: stats.birthtime,
-                    tasksCount,
-                    instance,
-                }
+                        const rawData = {
+                            id: entry.name,
+                            path: listPath,
+                            createdAt: stats.birthtime,
+                            tasksCount,
+                            instance,
+                        }
 
-                const result = taskListSchema.safeParse(rawData)
-                if (!result.success) {
-                    toast.error(`Invalid task list data for ${entry.name}`)
-                    return undefined
-                }
+                        const result = taskListSchema.safeParse(rawData)
+                        if (!result.success) {
+                            toast.error(`Invalid task list data for ${entry.name}`)
+                            return undefined
+                        }
 
-                return result.data
-            }),
-    )
+                        return result.data
+                    } catch {
+                        toast.error(`Failed to read task list ${entry.name}`)
+                        return undefined
+                    }
+                }),
+        )
 
-    return lists.filter((list): list is TaskList => list !== undefined)
+        return lists.filter((list): list is TaskList => list !== undefined)
+    } catch {
+        toast.error(`Failed to scan tasks directory: ${baseDir}`)
+        return []
+    }
 }
 
 /**
