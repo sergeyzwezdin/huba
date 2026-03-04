@@ -13,4 +13,4 @@ export type SelectedList = {
 /**
  * Atom holding the currently selected task list.
  */
-export const selectedListAtom = atomWithStorage<SelectedList | undefined>('list', undefined)
+export const selectedListAtom = atomWithStorage<SelectedList | undefined>('selected-list', undefined)
