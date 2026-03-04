@@ -1,5 +1,7 @@
 import { type FC, type PropsWithChildren, useEffect, useRef } from 'react'
 
+import { join } from 'node:path'
+
 import { useAtom } from 'jotai'
 
 import { type SelectedList, selectedListAtom, useListsQuery } from '@/entities/claude-list'
@@ -37,7 +39,7 @@ export const ListSelector: FC<PropsWithChildren> = ({ children }) => {
                 setSelectedList(toSelectedList(found))
             } else {
                 // Fallback: assume it's a default ~/.claude/tasks/ list
-                setSelectedList({ id: envListId, path: `${getTasksBaseDir()}/${envListId}` })
+                setSelectedList({ id: envListId, path: join(getTasksBaseDir(), envListId) })
             }
         } else if (!selectedListRef.current && !!lists && lists.length > 0) {
             setSelectedList(toSelectedList(lists[0]))
