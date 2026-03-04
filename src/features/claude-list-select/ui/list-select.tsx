@@ -21,12 +21,13 @@ const ListSelect = forwardRef<ClaudeListSelectRenderable, ListSelectProps>(({ st
     const setTaskFilter = useSetAtom(taskFilterAtom)
     const setSelectedTaskId = useSetAtom(selectedTaskIdAtom)
 
-    const listMap = useMemo(() => new Map((lists ?? []).map((list) => [list.id, list])), [lists])
+    const listMap = useMemo(() => new Map((lists ?? []).map((list) => [list.path, list])), [lists])
 
     const options = useMemo(
         () =>
             (lists ?? []).map((list) => ({
-                id: list.id,
+                id: list.path,
+                name: list.id,
                 createdAt: list.createdAt,
                 tasksCount: list.tasksCount,
                 instance: list.instance,
@@ -34,17 +35,17 @@ const ListSelect = forwardRef<ClaudeListSelectRenderable, ListSelectProps>(({ st
         [lists],
     )
 
-    const [selected, setSelected] = useState(selectedList?.id)
+    const [selected, setSelected] = useState(selectedList?.path)
 
-    const handleConfirm = (id: string) => {
-        const list = listMap.get(id)
+    const handleConfirm = (path: string) => {
+        const list = listMap.get(path)
         if (!list) return
 
         const sel: SelectedList = { id: list.id, path: list.path, instance: list.instance }
         setSelectedList(sel)
         setTaskFilter({ status: 'all', search: '' })
         setSelectedTaskId(undefined)
-        onSelect?.(id)
+        onSelect?.(path)
     }
 
     useKeyboard((key) => {

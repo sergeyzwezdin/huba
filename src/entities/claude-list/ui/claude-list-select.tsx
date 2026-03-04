@@ -9,6 +9,7 @@ import { BaseSelectRenderable, type BaseSelectRenderableOptions, useListData } f
 
 export type ClaudeListSelectOption = {
     id: string
+    name: string
     createdAt: Date
     tasksCount: number
     instance?: string
@@ -74,7 +75,7 @@ export class ClaudeListSelectRenderable extends BaseSelectRenderable<ClaudeListS
         y: number,
         _width: number,
     ): void {
-        const idText = item.id.length > this._idWidth ? `${item.id.slice(0, this._idWidth - 1)}…` : item.id
+        const idText = item.name.length > this._idWidth ? `${item.name.slice(0, this._idWidth - 1)}…` : item.name
         fb.drawText(idText, 0, y, this._colors.id)
 
         if (this._instanceReserved > 0 && item.instance) {
