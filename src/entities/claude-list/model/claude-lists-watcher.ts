@@ -60,6 +60,30 @@ export const useListsWatcher = (onChanged: () => void | Promise<void>): void => 
         [],
     )
 
+    const onAddDirCcs = useCallback(
+        (ccsInstancesDir: string) => (changedPath: string) => {
+            if (changedPath === ccsInstancesDir) return
+            debouncedOnChangedRef.current()
+
+            // Show toast for new list directories (instances/{name}/tasks/{list}/)
+            const relative = path.relative(ccsInstancesDir, changedPath)
+            const segments = relative.split(path.sep)
+            if (segments.length === 3 && segments[1] === 'tasks') {
+                toast.success('New list created', {
+                    description: segments[2],
+                })
+            }
+        },
+        [],
+    )
+
+    const onRemoveDirCcs = useCallback(
+        (ccsInstancesDir: string) => (changedPath: string) => {
+            if (changedPath !== ccsInstancesDir) debouncedOnChangedRef.current()
+        },
+        [],
+    )
+
     const onFilesChange = useCallback((changedPath: string) => {
         if (changedPath.endsWith('.json')) debouncedOnChangedRef.current()
     }, [])
@@ -98,14 +122,13 @@ export const useListsWatcher = (onChanged: () => void | Promise<void>): void => 
         const ccsInstancesDir = getCcsInstancesDir()
         if (!existsSync(ccsInstancesDir)) return
 
+        const handleAddDirCcs = onAddDirCcs(ccsInstancesDir)
+        const handleRemoveDirCcs = onRemoveDirCcs(ccsInstancesDir)
+
         const watcher = chokidar.watch(ccsInstancesDir, CCS_WATCHER_OPTIONS)
 
-        watcher.on('addDir', (changedPath) => {
-            if (changedPath !== ccsInstancesDir) debouncedOnChangedRef.current()
-        })
-        watcher.on('unlinkDir', (changedPath) => {
-            if (changedPath !== ccsInstancesDir) debouncedOnChangedRef.current()
-        })
+        watcher.on('addDir', handleAddDirCcs)
+        watcher.on('unlinkDir', handleRemoveDirCcs)
         watcher.on('add', onFilesChange)
         watcher.on('unlink', onFilesChange)
         watcher.on('error', () => {})
@@ -113,5 +136,5 @@ export const useListsWatcher = (onChanged: () => void | Promise<void>): void => 
         return () => {
             watcher.close()
         }
-    }, [onFilesChange])
+    }, [onAddDirCcs, onRemoveDirCcs, onFilesChange])
 }
