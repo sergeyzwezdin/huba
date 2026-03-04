@@ -6,7 +6,7 @@ import path from 'node:path'
 import { toast } from '@opentui-ui/toast'
 import chokidar from 'chokidar'
 
-import { getCcsInstancesDir, getCcsInstancesWithTasks, getCcsTasksBaseDir, getTasksBaseDir } from '@/shared/api/paths'
+import { getCcsInstancesDir, getTasksBaseDir } from '@/shared/api/paths'
 import { debounce } from '@/shared/lib'
 
 const WATCHER_OPTIONS = {
@@ -88,23 +88,15 @@ export const useListsWatcher = (onChanged: () => void | Promise<void>): void => 
         if (changedPath.endsWith('.json')) debouncedOnChangedRef.current()
     }, [])
 
-    // Main watcher for ~/.claude/tasks/ and already-known CCS task dirs
+    // Main watcher for ~/.claude/tasks/ only; CCS dirs are covered by the CCS watcher
     useEffect(() => {
         const basePath = getTasksBaseDir()
         mkdirSync(basePath, { recursive: true })
 
-        const watchPaths = [basePath]
-        for (const instance of getCcsInstancesWithTasks()) {
-            const ccsPath = getCcsTasksBaseDir(instance)
-            if (existsSync(ccsPath)) {
-                watchPaths.push(ccsPath)
-            }
-        }
+        const handleAddDir = onAddDir([basePath])
+        const handleRemoveDir = onRemoveDir([basePath])
 
-        const handleAddDir = onAddDir(watchPaths)
-        const handleRemoveDir = onRemoveDir(watchPaths)
-
-        const watcher = chokidar.watch(watchPaths, WATCHER_OPTIONS)
+        const watcher = chokidar.watch(basePath, WATCHER_OPTIONS)
 
         watcher.on('addDir', handleAddDir)
         watcher.on('unlinkDir', handleRemoveDir)
