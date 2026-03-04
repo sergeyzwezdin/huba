@@ -6,6 +6,7 @@ import { useAtom, useSetAtom } from 'jotai'
 import {
     type ClaudeListSelectRenderable,
     ClaudeListSelect as ListSelectControl,
+    type SelectedList,
     selectedListAtom,
     useListsQuery,
 } from '@/entities/claude-list'
@@ -20,15 +21,27 @@ const ListSelect = forwardRef<ClaudeListSelectRenderable, ListSelectProps>(({ st
     const setTaskFilter = useSetAtom(taskFilterAtom)
     const setSelectedTaskId = useSetAtom(selectedTaskIdAtom)
 
+    const listMap = useMemo(() => new Map((lists ?? []).map((list) => [list.id, list])), [lists])
+
     const options = useMemo(
-        () => (lists ?? []).map((list) => ({ id: list.id, createdAt: list.createdAt, tasksCount: list.tasksCount })),
+        () =>
+            (lists ?? []).map((list) => ({
+                id: list.id,
+                createdAt: list.createdAt,
+                tasksCount: list.tasksCount,
+                instance: list.instance,
+            })),
         [lists],
     )
 
-    const [selected, setSelected] = useState(selectedList)
+    const [selected, setSelected] = useState(selectedList?.id)
 
     const handleConfirm = (id: string) => {
-        setSelectedList(id)
+        const list = listMap.get(id)
+        if (!list) return
+
+        const sel: SelectedList = { id: list.id, path: list.path, instance: list.instance }
+        setSelectedList(sel)
         setTaskFilter({ status: 'all', search: '' })
         setSelectedTaskId(undefined)
         onSelect?.(id)

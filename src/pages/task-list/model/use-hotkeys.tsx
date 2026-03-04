@@ -6,7 +6,7 @@ import { useDialog } from '@opentui-ui/dialog/react'
 import { toast } from '@opentui-ui/toast'
 import { useAtom, useSetAtom } from 'jotai'
 
-import { selectedListAtom, useListsQuery } from '@/entities/claude-list'
+import { type SelectedList, selectedListAtom, useListsQuery } from '@/entities/claude-list'
 import { selectedTaskIdAtom, taskFilterAtom } from '@/entities/task'
 import { HelpContent } from '@/features/help'
 import { useFocusManager } from '@/shared/focus-manager'
@@ -65,11 +65,12 @@ export const useHotkeys = () => {
         } else if (key.name === 'w' && key.shift) {
             toggleTheme(true)
         } else if (key.name === 'm' && key.shift) {
-            const latestListId = lists && lists.length > 0 ? lists[0].id : undefined
-            if (!latestListId) return
-            if (selectedList === latestListId) return
+            const latestList = lists && lists.length > 0 ? lists[0] : undefined
+            if (!latestList) return
+            if (selectedList?.id === latestList.id && selectedList?.instance === latestList.instance) return
 
-            setSelectedList(latestListId)
+            const sel: SelectedList = { id: latestList.id, path: latestList.path, instance: latestList.instance }
+            setSelectedList(sel)
             setTaskFilter({ status: 'all', search: '' })
             setSelectedTaskId(undefined)
 
@@ -78,7 +79,7 @@ export const useHotkeys = () => {
             }, 100)
 
             toast.info('Switched to the latest list', {
-                description: latestListId,
+                description: latestList.id,
             })
         }
     })

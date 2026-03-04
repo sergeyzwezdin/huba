@@ -4,7 +4,6 @@ import { readdir } from 'node:fs/promises'
 import type { Task, TaskStatus } from '@/shared/domain'
 
 import { getTask } from './get-task'
-import { getTasksDir } from './paths'
 
 export type TasksData = {
     list: Task[]
@@ -12,15 +11,13 @@ export type TasksData = {
 }
 
 /**
- * Read all task files for a given list ID
+ * Read all task files from the given directory
  *
- * @param listId - Optional list ID
+ * @param dirPath - Full path to the list directory
  * @returns Object with `list` (sorted array) and `map` (tasks indexed by id)
  */
-export const getTasks = async (listId?: string): Promise<TasksData> => {
-    if (!listId) return { list: [], map: {} }
-
-    const dirPath = getTasksDir(listId)
+export const getTasks = async (dirPath?: string): Promise<TasksData> => {
+    if (!dirPath) return { list: [], map: {} }
 
     if (!existsSync(dirPath)) return { list: [], map: {} }
 
@@ -29,7 +26,7 @@ export const getTasks = async (listId?: string): Promise<TasksData> => {
         const jsonFiles = files.filter((file) => file.endsWith('.json'))
 
         const taskIds = jsonFiles.map((file) => file.replace(/\.json$/, ''))
-        const result = await Promise.all(taskIds.map((taskId) => getTask(taskId, listId)))
+        const result = await Promise.all(taskIds.map((taskId) => getTask(taskId, dirPath)))
 
         const rawList: Task[] = result.filter((task): task is Task => task !== undefined)
         const list = resolveBlockedStatuses(rawList).sort((a, b) => {

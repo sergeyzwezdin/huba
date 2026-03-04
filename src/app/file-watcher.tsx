@@ -10,7 +10,9 @@ const FileWatcher: FC<PropsWithChildren> = ({ children }) => {
     const queryClient = useQueryClient()
 
     useListsWatcher(async () => await queryClient.invalidateQueries({ queryKey: queryKeys.taskLists.all() }))
-    useTasksWatcher(async (listId) => await queryClient.invalidateQueries({ queryKey: queryKeys.tasks.list(listId) }))
+    useTasksWatcher(
+        async (listPath) => await queryClient.invalidateQueries({ queryKey: queryKeys.tasks.list(listPath) }),
+    )
 
     return children
 }

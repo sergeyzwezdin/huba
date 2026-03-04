@@ -6,7 +6,6 @@ import chokidar from 'chokidar'
 import { useAtomValue } from 'jotai'
 
 import { selectedListAtom } from '@/entities/claude-list'
-import { getTasksDir } from '@/shared/api/paths'
 import { debounce } from '@/shared/lib'
 
 const WATCHER_OPTIONS = {
@@ -18,28 +17,28 @@ const WATCHER_OPTIONS = {
 const DEBOUNCE_DELAY = 150
 
 /**
- * Watches ~/.claude/tasks/{listId}/*.json for file changes.
+ * Watches the selected list directory for file changes.
  * Re-attaches watcher when the selected list changes.
  * Calls onChanged whenever a JSON task file is added, modified, or removed.
  */
-export const useTasksWatcher = (onChanged: (listId: string) => void | Promise<void>): void => {
+export const useTasksWatcher = (onChanged: (listPath: string) => void | Promise<void>): void => {
     const onChangedRef = useRef(onChanged)
     onChangedRef.current = onChanged
 
-    const listId = useAtomValue(selectedListAtom)
+    const selectedList = useAtomValue(selectedListAtom)
+    const tasksPath = selectedList?.path
 
     useEffect(() => {
-        if (!listId) return
+        if (!tasksPath) return
 
-        const tasksPath = getTasksDir(listId)
         mkdirSync(tasksPath, { recursive: true })
 
         const watcher = chokidar.watch(tasksPath, WATCHER_OPTIONS)
 
-        const debouncedOnChanged = debounce((id: string) => void onChangedRef.current(id), DEBOUNCE_DELAY)
+        const debouncedOnChanged = debounce((p: string) => void onChangedRef.current(p), DEBOUNCE_DELAY)
 
         const handleFileChange = (filePath: string) => {
-            if (filePath.endsWith('.json')) debouncedOnChanged(listId)
+            if (filePath.endsWith('.json')) debouncedOnChanged(tasksPath)
         }
 
         watcher.on('add', handleFileChange)
@@ -50,5 +49,5 @@ export const useTasksWatcher = (onChanged: (listId: string) => void | Promise<vo
         return () => {
             watcher.close()
         }
-    }, [listId])
+    }, [tasksPath])
 }
