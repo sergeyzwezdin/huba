@@ -30,7 +30,9 @@ const ClaudeList: FC<ClaudeListProps> = (props) => {
             title={columns > 90 ? ['[L]', 'Claude List'] : ['[L]']}
             {...props}
             onMouseUp={() => focus('lists-table')}>
-            <text style={{ flexGrow: 1, height: 1, truncate: true, fg: theme.colors.secondary }}>{selectedList}</text>
+            <text style={{ flexGrow: 1, height: 1, truncate: true, fg: theme.colors.secondary }}>
+                {selectedList?.id}
+            </text>
         </Panel>
     )
 }

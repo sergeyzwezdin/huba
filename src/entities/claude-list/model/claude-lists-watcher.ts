@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef } from 'react'
 
-import { mkdirSync } from 'node:fs'
+import { existsSync, mkdirSync } from 'node:fs'
 import path from 'node:path'
 
 import { toast } from '@opentui-ui/toast'
 import chokidar from 'chokidar'
 
-import { getTasksBaseDir } from '@/shared/api/paths'
+import { getCcsInstancesDir, getTasksBaseDir } from '@/shared/api/paths'
 import { debounce } from '@/shared/lib'
 
 const WATCHER_OPTIONS = {
@@ -15,13 +15,25 @@ const WATCHER_OPTIONS = {
     persistent: true,
 } as const
 
+/**
+ * Depth 3 from ~/.ccs/instances/ covers:
+ * 0: instances/
+ * 1: instances/{name}/
+ * 2: instances/{name}/tasks/
+ * 3: instances/{name}/tasks/{list}/  (and *.json files at this level)
+ */
+const CCS_WATCHER_OPTIONS = {
+    depth: 3,
+    ignoreInitial: true,
+    persistent: true,
+} as const
+
 const DEBOUNCE_DELAY = 150
 
-const basePath = getTasksBaseDir()
-
 /**
- * Watches ~/.claude/tasks/ for new or removed task list directories.
- * Calls onChanged whenever a first-level subdirectory is added or removed.
+ * Watches ~/.claude/tasks/ and CCS instance task directories for changes.
+ * Also watches ~/.ccs/instances/ at depth 3 to fully cover new CCS instances,
+ * their tasks/ directories, list subdirectories, and JSON file changes.
  */
 export const useListsWatcher = (onChanged: () => void | Promise<void>): void => {
     const onChangedRef = useRef(onChanged)
@@ -29,30 +41,65 @@ export const useListsWatcher = (onChanged: () => void | Promise<void>): void => 
 
     const debouncedOnChangedRef = useRef(debounce(() => void onChangedRef.current(), DEBOUNCE_DELAY))
 
-    const onAddDir = useCallback((changedPath: string) => {
-        if (changedPath !== basePath) {
-            debouncedOnChangedRef.current()
-            toast.success('New list created', {
-                description: path.basename(changedPath),
-            })
-        }
-    }, [])
+    const onAddDir = useCallback(
+        (basePaths: string[]) => (changedPath: string) => {
+            if (!basePaths.includes(changedPath)) {
+                debouncedOnChangedRef.current()
+                toast.success('New list created', {
+                    description: path.basename(changedPath),
+                })
+            }
+        },
+        [],
+    )
 
-    const onRemoveDir = useCallback((changedPath: string) => {
-        if (changedPath !== basePath) debouncedOnChangedRef.current()
-    }, [])
+    const onRemoveDir = useCallback(
+        (basePaths: string[]) => (changedPath: string) => {
+            if (!basePaths.includes(changedPath)) debouncedOnChangedRef.current()
+        },
+        [],
+    )
+
+    const onAddDirCcs = useCallback(
+        (ccsInstancesDir: string) => (changedPath: string) => {
+            if (changedPath === ccsInstancesDir) return
+            debouncedOnChangedRef.current()
+
+            // Show toast for new list directories (instances/{name}/tasks/{list}/)
+            const relative = path.relative(ccsInstancesDir, changedPath)
+            const segments = relative.split(path.sep)
+            if (segments.length === 3 && segments[1] === 'tasks') {
+                toast.success('New list created', {
+                    description: segments[2],
+                })
+            }
+        },
+        [],
+    )
+
+    const onRemoveDirCcs = useCallback(
+        (ccsInstancesDir: string) => (changedPath: string) => {
+            if (changedPath !== ccsInstancesDir) debouncedOnChangedRef.current()
+        },
+        [],
+    )
 
     const onFilesChange = useCallback((changedPath: string) => {
         if (changedPath.endsWith('.json')) debouncedOnChangedRef.current()
     }, [])
 
+    // Main watcher for ~/.claude/tasks/ only; CCS dirs are covered by the CCS watcher
     useEffect(() => {
+        const basePath = getTasksBaseDir()
         mkdirSync(basePath, { recursive: true })
+
+        const handleAddDir = onAddDir([basePath])
+        const handleRemoveDir = onRemoveDir([basePath])
 
         const watcher = chokidar.watch(basePath, WATCHER_OPTIONS)
 
-        watcher.on('addDir', onAddDir)
-        watcher.on('unlinkDir', onRemoveDir)
+        watcher.on('addDir', handleAddDir)
+        watcher.on('unlinkDir', handleRemoveDir)
         watcher.on('add', onFilesChange)
         watcher.on('unlink', onFilesChange)
         watcher.on('error', () => {})
@@ -61,4 +108,25 @@ export const useListsWatcher = (onChanged: () => void | Promise<void>): void => 
             watcher.close()
         }
     }, [onAddDir, onRemoveDir, onFilesChange])
+
+    // CCS watcher: covers new instances, their tasks/ dirs, list subdirs, and JSON files
+    useEffect(() => {
+        const ccsInstancesDir = getCcsInstancesDir()
+        if (!existsSync(ccsInstancesDir)) return
+
+        const handleAddDirCcs = onAddDirCcs(ccsInstancesDir)
+        const handleRemoveDirCcs = onRemoveDirCcs(ccsInstancesDir)
+
+        const watcher = chokidar.watch(ccsInstancesDir, CCS_WATCHER_OPTIONS)
+
+        watcher.on('addDir', handleAddDirCcs)
+        watcher.on('unlinkDir', handleRemoveDirCcs)
+        watcher.on('add', onFilesChange)
+        watcher.on('unlink', onFilesChange)
+        watcher.on('error', () => {})
+
+        return () => {
+            watcher.close()
+        }
+    }, [onAddDirCcs, onRemoveDirCcs, onFilesChange])
 }

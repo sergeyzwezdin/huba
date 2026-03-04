@@ -9,8 +9,10 @@ import { BaseSelectRenderable, type BaseSelectRenderableOptions, useListData } f
 
 export type ClaudeListSelectOption = {
     id: string
+    name: string
     createdAt: Date
     tasksCount: number
+    instance?: string
 }
 
 type ClaudeListSelectRenderableOptions = BaseSelectRenderableOptions<ClaudeListSelectOption>
@@ -23,6 +25,7 @@ export class ClaudeListSelectRenderable extends BaseSelectRenderable<ClaudeListS
             id: parseColor(t.colors.primary),
             date: parseColor(t.colors.date),
             count: parseColor(t.colors.hint),
+            instance: parseColor(t.colors.hint),
         }
     }
 
@@ -30,6 +33,7 @@ export class ClaudeListSelectRenderable extends BaseSelectRenderable<ClaudeListS
 
     private _showDateComputed = false
     private _dateReserved = 0
+    private _instanceReserved = 0
     private _countReserved = 0
     private _idWidth = 0
 
@@ -52,10 +56,13 @@ export class ClaudeListSelectRenderable extends BaseSelectRenderable<ClaudeListS
             : 0
         this._dateReserved = showDate ? maxDateLen + DATE_PADDING_RIGHT + 1 : 0
 
+        const maxInstanceLen = items.reduce((max, item) => Math.max(max, item.instance?.length ?? 0), 0)
+        this._instanceReserved = maxInstanceLen > 0 ? maxInstanceLen + 2 : 0
+
         const maxCountLen = items.reduce((max, item) => Math.max(max, String(item.tasksCount).length), 0)
         this._countReserved = maxCountLen + 2
 
-        this._idWidth = Math.max(0, width - this._dateReserved - this._countReserved)
+        this._idWidth = Math.max(0, width - this._instanceReserved - this._countReserved - this._dateReserved)
         this._showDateComputed = showDate
 
         return items.map(() => 1)
@@ -68,11 +75,16 @@ export class ClaudeListSelectRenderable extends BaseSelectRenderable<ClaudeListS
         y: number,
         _width: number,
     ): void {
-        const idText = item.id.length > this._idWidth ? `${item.id.slice(0, this._idWidth - 1)}…` : item.id
+        const idText = item.name.length > this._idWidth ? `${item.name.slice(0, this._idWidth - 1)}…` : item.name
         fb.drawText(idText, 0, y, this._colors.id)
 
+        if (this._instanceReserved > 0 && item.instance) {
+            const instanceX = this._idWidth + 1
+            fb.drawText(item.instance, instanceX, y, this._colors.instance, undefined, TextAttributes.DIM)
+        }
+
         const countStr = String(item.tasksCount)
-        const countX = this._idWidth + this._countReserved - 1 - countStr.length
+        const countX = this._idWidth + this._instanceReserved + this._countReserved - 1 - countStr.length
         fb.drawText(countStr, countX, y, this._colors.count, undefined, TextAttributes.DIM)
 
         if (this._showDateComputed && item.createdAt) {

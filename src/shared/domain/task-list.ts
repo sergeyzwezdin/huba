@@ -24,6 +24,12 @@ export const taskListSchema = z.object({
      * Number of task JSON files in the list directory
      */
     tasksCount: z.number().int().nonnegative(),
+
+    /**
+     * CCS instance name (e.g. "personal", "bluprynt").
+     * Undefined for lists from ~/.claude/tasks/
+     */
+    instance: z.string().optional(),
 })
 
 /**

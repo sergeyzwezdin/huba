@@ -3,6 +3,7 @@ import { useEffect, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useAtomValue, useSetAtom } from 'jotai'
 
+import type { SelectedList } from '@/entities/claude-list'
 import { getTasks } from '@/shared/api'
 import type { Task, TaskStatus } from '@/shared/domain'
 import { queryKeys } from '@/shared/state'
@@ -16,15 +17,15 @@ const statusOrder: Record<TaskStatus, number> = { in_progress: 0, pending: 1, bl
 /**
  * Hook to load all tasks from the file system
  *
- * @param listId - Optional list ID (defaults to CLAUDE_CODE_TASK_LIST_ID env var or 'default')
+ * @param list - Selected list (contains path for reading tasks)
  * @returns Query result with `data.list` (sorted array) and `data.map` (tasks indexed by id)
  */
-export const useTasksQuery = (listId?: string) => {
+export const useTasksQuery = (list?: SelectedList) => {
     const setSelectedTaskId = useSetAtom(selectedTaskIdAtom)
 
     const result = useQuery({
-        queryKey: queryKeys.tasks.list(listId),
-        queryFn: () => getTasks(listId),
+        queryKey: queryKeys.tasks.list(list?.path),
+        queryFn: () => getTasks(list?.path),
     })
 
     useEffect(() => {
@@ -40,11 +41,11 @@ export const useTasksQuery = (listId?: string) => {
  * Hook to get filtered and sorted tasks for a list.
  * Reads sort/filter state from atoms and applies them to the raw task list.
  *
- * @param listId - Optional list ID passed to useTasksQuery
+ * @param list - Selected list passed to useTasksQuery
  * @returns All fields from useTasksQuery plus `data` overridden with filtered/sorted task array
  */
-export const useTasks = (listId?: string): Omit<ReturnType<typeof useTasksQuery>, 'data'> & { data: Task[] } => {
-    const query = useTasksQuery(listId)
+export const useTasks = (list?: SelectedList): Omit<ReturnType<typeof useTasksQuery>, 'data'> & { data: Task[] } => {
+    const query = useTasksQuery(list)
     const sort = useAtomValue(taskSortAtom)
     const filter = useAtomValue(taskFilterAtom)
 
@@ -101,22 +102,22 @@ export const useTasks = (listId?: string): Omit<ReturnType<typeof useTasksQuery>
 /**
  * Hook to get the currently selected task
  *
- * @param listId - Optional list ID passed to useTasksQuery
+ * @param list - Selected list passed to useTasksQuery
  */
-export const useSelectedTask = (listId?: string): Task | undefined => {
+export const useSelectedTask = (list?: SelectedList): Task | undefined => {
     const selectedId = useAtomValue(selectedTaskIdAtom)
-    const { data } = useTasksQuery(listId)
+    const { data } = useTasksQuery(list)
     return selectedId !== undefined ? data?.map[selectedId] : undefined
 }
 
 /**
  * Hook to get tasks blocked by the currently selected task
  *
- * @param listId - Optional list ID passed to useTasksQuery
+ * @param list - Selected list passed to useTasksQuery
  */
-export const useSelectedTasksBlocks = (listId?: string): Task[] => {
-    const selectedTask = useSelectedTask(listId)
-    const { data } = useTasksQuery(listId)
+export const useSelectedTasksBlocks = (list?: SelectedList): Task[] => {
+    const selectedTask = useSelectedTask(list)
+    const { data } = useTasksQuery(list)
     return useMemo(
         () => (selectedTask?.blocks ?? []).map((id) => data?.map[id]).filter((task) => task !== undefined),
         [selectedTask, data],
@@ -126,11 +127,11 @@ export const useSelectedTasksBlocks = (listId?: string): Task[] => {
 /**
  * Hook to get tasks that block the currently selected task
  *
- * @param listId - Optional list ID passed to useTasksQuery
+ * @param list - Selected list passed to useTasksQuery
  */
-export const useSelectedTasksBlockedBy = (listId?: string): Task[] => {
-    const selectedTask = useSelectedTask(listId)
-    const { data } = useTasksQuery(listId)
+export const useSelectedTasksBlockedBy = (list?: SelectedList): Task[] => {
+    const selectedTask = useSelectedTask(list)
+    const { data } = useTasksQuery(list)
     return useMemo(
         () => (selectedTask?.blockedBy ?? []).map((id) => data?.map[id]).filter((task) => task !== undefined),
         [selectedTask, data],

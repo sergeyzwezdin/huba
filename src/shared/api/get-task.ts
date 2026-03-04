@@ -5,19 +5,16 @@ import { join } from 'node:path'
 import type { Task } from '@/shared/domain'
 import { taskSchema } from '@/shared/domain'
 
-import { getTasksDir } from './paths'
-
 /**
  * Read and parse a single task file
  * Returns undefined if file doesn't exist or is invalid
  *
  * @param taskId - Task identifier (filename without .json extension)
- * @param listId - Optional list ID
+ * @param dirPath - Full path to the list directory
  */
-export const getTask = async (taskId: string, listId?: string): Promise<Task | undefined> => {
-    if (!listId) return undefined
+export const getTask = async (taskId: string, dirPath?: string): Promise<Task | undefined> => {
+    if (!dirPath) return undefined
 
-    const dirPath = getTasksDir(listId)
     const filePath = join(dirPath, `${taskId}.json`)
 
     if (!existsSync(filePath)) return undefined
