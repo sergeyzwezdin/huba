@@ -15,8 +15,15 @@ const WATCHER_OPTIONS = {
     persistent: true,
 } as const
 
+/**
+ * Depth 3 from ~/.ccs/instances/ covers:
+ * 0: instances/
+ * 1: instances/{name}/
+ * 2: instances/{name}/tasks/
+ * 3: instances/{name}/tasks/{list}/  (and *.json files at this level)
+ */
 const CCS_WATCHER_OPTIONS = {
-    depth: 2,
+    depth: 3,
     ignoreInitial: true,
     persistent: true,
 } as const
@@ -25,8 +32,8 @@ const DEBOUNCE_DELAY = 150
 
 /**
  * Watches ~/.claude/tasks/ and CCS instance task directories for changes.
- * Also watches ~/.ccs/instances/ so newly created instances are picked up at runtime.
- * Calls onChanged whenever a task list subdirectory or its files change.
+ * Also watches ~/.ccs/instances/ at depth 3 to fully cover new CCS instances,
+ * their tasks/ directories, list subdirectories, and JSON file changes.
  */
 export const useListsWatcher = (onChanged: () => void | Promise<void>): void => {
     const onChangedRef = useRef(onChanged)
@@ -57,6 +64,7 @@ export const useListsWatcher = (onChanged: () => void | Promise<void>): void => 
         if (changedPath.endsWith('.json')) debouncedOnChangedRef.current()
     }, [])
 
+    // Main watcher for ~/.claude/tasks/ and already-known CCS task dirs
     useEffect(() => {
         const basePath = getTasksBaseDir()
         mkdirSync(basePath, { recursive: true })
@@ -80,27 +88,30 @@ export const useListsWatcher = (onChanged: () => void | Promise<void>): void => 
         watcher.on('unlink', onFilesChange)
         watcher.on('error', () => {})
 
-        // Watch ~/.ccs/instances/ for new instances gaining tasks/ directories
-        const ccsInstancesDir = getCcsInstancesDir()
-        let ccsWatcher: ReturnType<typeof chokidar.watch> | undefined
-        if (existsSync(ccsInstancesDir)) {
-            ccsWatcher = chokidar.watch(ccsInstancesDir, CCS_WATCHER_OPTIONS)
-            ccsWatcher.on('addDir', (changedPath) => {
-                if (changedPath.endsWith('/tasks') || changedPath.endsWith('\\tasks')) {
-                    debouncedOnChangedRef.current()
-                }
-            })
-            ccsWatcher.on('unlinkDir', (changedPath) => {
-                if (changedPath.endsWith('/tasks') || changedPath.endsWith('\\tasks')) {
-                    debouncedOnChangedRef.current()
-                }
-            })
-            ccsWatcher.on('error', () => {})
+        return () => {
+            watcher.close()
         }
+    }, [onAddDir, onRemoveDir, onFilesChange])
+
+    // CCS watcher: covers new instances, their tasks/ dirs, list subdirs, and JSON files
+    useEffect(() => {
+        const ccsInstancesDir = getCcsInstancesDir()
+        if (!existsSync(ccsInstancesDir)) return
+
+        const watcher = chokidar.watch(ccsInstancesDir, CCS_WATCHER_OPTIONS)
+
+        watcher.on('addDir', (changedPath) => {
+            if (changedPath !== ccsInstancesDir) debouncedOnChangedRef.current()
+        })
+        watcher.on('unlinkDir', (changedPath) => {
+            if (changedPath !== ccsInstancesDir) debouncedOnChangedRef.current()
+        })
+        watcher.on('add', onFilesChange)
+        watcher.on('unlink', onFilesChange)
+        watcher.on('error', () => {})
 
         return () => {
             watcher.close()
-            ccsWatcher?.close()
         }
-    }, [onAddDir, onRemoveDir, onFilesChange])
+    }, [onFilesChange])
 }
