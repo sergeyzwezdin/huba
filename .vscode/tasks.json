@@ -3,15 +3,16 @@
   "tasks": [
     {
       "type": "shell",
-      "label": "huba",
+      "label": "huba-tui",
       "command": "bun run dev",
       "options": {
+        "cwd": "${workspaceFolder}/apps/huba-tui",
         "env": {}
       },
       "presentation": {
         "reveal": "always",
         "focus": true,
-        "group": "huba"
+        "group": "tui"
       },
       "problemMatcher": [],
       "icon": {
