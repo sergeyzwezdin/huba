@@ -1,6 +1,6 @@
 {
     "name": "huba-tui",
-    "version": "0.0.14",
+    "version": "0.0.15",
     "description": "TUI for managing Claude Code tasks - search, view, create, edit, and delete tasks across projects",
     "type": "module",
     "private": true,
@@ -25,30 +25,30 @@
         "lint": "biome lint"
     },
     "devDependencies": {
-        "@biomejs/biome": "^2.4.4",
-        "@types/bun": "latest",
-        "@types/react": "^19"
+        "@biomejs/biome": "catalog:",
+        "@types/bun": "catalog:",
+        "@types/react": "catalog:"
     },
     "peerDependencies": {
-        "typescript": "^5"
+        "typescript": "catalog:"
     },
     "dependencies": {
-        "@opentui-ui/dialog": "^0.1.2",
-        "@opentui-ui/toast": "^0.0.5",
-        "@opentui/core": "^0.1.79",
-        "@opentui/react": "^0.1.79",
-        "@tanstack/react-query": "^5.90.21",
-        "chokidar": "^5.0.0",
-        "jotai": "^2.17.1",
-        "react": "^19",
-        "react-router": "^7.13.0",
-        "zod": "^4.3.6"
+        "@opentui-ui/dialog": "catalog:",
+        "@opentui-ui/toast": "catalog:",
+        "@opentui/core": "catalog:",
+        "@opentui/react": "catalog:",
+        "@tanstack/react-query": "catalog:",
+        "chokidar": "catalog:",
+        "jotai": "catalog:",
+        "react": "catalog:",
+        "react-router": "catalog:",
+        "zod": "catalog:"
     },
     "optionalDependencies": {
-        "@opentui/core-darwin-arm64": "0.1.79",
-        "@opentui/core-darwin-x64": "0.1.79",
-        "@opentui/core-linux-arm64": "0.1.79",
-        "@opentui/core-linux-x64": "0.1.79"
+        "@opentui/core-darwin-arm64": "catalog:",
+        "@opentui/core-darwin-x64": "catalog:",
+        "@opentui/core-linux-arm64": "catalog:",
+        "@opentui/core-linux-x64": "catalog:"
     },
     "patchedDependencies": {
         "@types/react@19.2.14": "apps/huba-tui/patches/@types%2Freact@19.2.14.patch"

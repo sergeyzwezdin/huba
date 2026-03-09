@@ -19,6 +19,25 @@
         "id": "circle-outline",
         "color": "terminal.ansiBlue"
       }
+    },
+    {
+      "type": "shell",
+      "label": "docs",
+      "command": "bun run dev",
+      "options": {
+        "cwd": "${workspaceFolder}/apps/docs",
+        "env": {}
+      },
+      "presentation": {
+        "reveal": "always",
+        "focus": true,
+        "group": "tui"
+      },
+      "problemMatcher": [],
+      "icon": {
+        "id": "circle-outline",
+        "color": "terminal.ansiBlue"
+      }
     }
   ]
 }
