@@ -1,4 +1,4 @@
-name: Release
+name: Release TUI
 
 on:
   push:
@@ -56,13 +56,14 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
-      - run: bun run ${{ matrix.script }}
+      - run: bun run  ${{ matrix.script }}
+        working-directory: apps/huba-tui
 
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
           path: |
-            .bin/${{ matrix.artifact }}
+            apps/huba-tui/.bin/${{ matrix.artifact }}
 
   release:
     name: Release
@@ -78,7 +79,7 @@ jobs:
 
       - name: Read version from package.json
         id: version
-        run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
+        run: echo "VERSION=$(jq -r .version apps/huba-tui/package.json)" >> $GITHUB_OUTPUT
 
       - name: Check if release already exists
         id: check

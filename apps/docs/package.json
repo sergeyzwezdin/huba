@@ -1,0 +1,33 @@
+{
+    "name": "docs",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "biome check",
+        "format": "biome format --write"
+    },
+    "dependencies": {
+        "@radix-ui/react-slot": "catalog:",
+        "class-variance-authority": "catalog:",
+        "clsx": "catalog:",
+        "next": "catalog:",
+        "next-themes": "catalog:",
+        "react": "catalog:",
+        "react-dom": "catalog:"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "catalog:",
+        "@tailwindcss/postcss": "catalog:",
+        "@types/node": "catalog:",
+        "@types/react": "catalog:",
+        "@types/react-dom": "catalog:",
+        "babel-plugin-react-compiler": "catalog:",
+        "tailwindcss": "catalog:",
+        "typescript": "catalog:"
+    },
+    "ignoreScripts": ["sharp", "unrs-resolver"],
+    "trustedDependencies": ["sharp", "unrs-resolver"]
+}

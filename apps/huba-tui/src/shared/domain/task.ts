@@ -26,12 +26,6 @@ export const taskSchema = z.object({
     description: z.string(),
 
     /**
-     * Present continuous form shown when task is in progress
-     * Example: "Setting up authentication"
-     */
-    activeForm: z.string(),
-
-    /**
      * Current task status
      */
     status: taskStatusSchema,
@@ -52,11 +46,6 @@ export const taskSchema = z.object({
      * This task cannot start until these complete
      */
     blockedBy: z.array(z.string()).optional(),
-
-    /**
-     * Optional metadata (arbitrary key-value pairs)
-     */
-    metadata: z.record(z.string(), z.unknown()).optional(),
 
     /**
      * Last modification time of the task file

@@ -1,5 +1,5 @@
 {
-    "$schema": "https://biomejs.dev/schemas/2.4.4/schema.json",
+    "$schema": "https://biomejs.dev/schemas/2.4.6/schema.json",
     "vcs": {
         "enabled": true,
         "clientKind": "git",
@@ -18,7 +18,9 @@
             "!package.json",
             "!tsconfig.json",
             "!tsconfig.*.json",
-            "!src/**/generated"
+            "!src/**/generated",
+            "!apps/docs/app/globals.css",
+            "!**/types/routes.d.ts"
         ]
     },
     "formatter": {
