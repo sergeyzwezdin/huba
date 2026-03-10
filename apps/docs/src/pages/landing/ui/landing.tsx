@@ -2,12 +2,12 @@
 
 import type { FC } from 'react'
 
+import { Explainer } from '@/widgets/explainer'
 import { Features } from '@/widgets/features'
 import { Footer } from '@/widgets/footer'
 import { Hero } from '@/widgets/hero'
 import { Installation } from '@/widgets/installation'
 import { Nav } from '@/widgets/nav'
-import { Explainer } from '@/widgets/explainer'
 import { Requirements } from '@/widgets/requirements'
 import { Screenshot } from '@/widgets/screenshot'
 

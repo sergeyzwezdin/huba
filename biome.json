@@ -18,7 +18,9 @@
             "!package.json",
             "!tsconfig.json",
             "!tsconfig.*.json",
-            "!src/**/generated"
+            "!src/**/generated",
+            "!apps/docs/app/globals.css",
+            "!**/types/routes.d.ts"
         ]
     },
     "formatter": {
