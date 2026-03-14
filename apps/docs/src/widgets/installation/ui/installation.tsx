@@ -61,9 +61,7 @@ const Installation: FC = () => {
                             <CodeLine>hb</CodeLine>
                         </CodeBlock>
                         <p className="mt-4 text-sm text-subtle">
-                            That&apos;s it. Huba scans your{' '}
-                            <code className="font-mono text-accent">~/.claude/tasks/</code> directory and shows your
-                            task lists.
+                            That&apos;s it. Huba scans your task lists and shows your tasks.
                         </p>
                     </Section>
 

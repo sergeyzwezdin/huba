@@ -17,8 +17,8 @@ const Layout: FC = () => {
                     <Outlet />
                 </RequiredWindowSize>
             </box>
-            {rows > 40 && columns > 28 && <Footer />}
-            <VersionChecker />
+            {/* {rows > 40 && columns > 28 && <Footer />} */}
+            {/* <VersionChecker /> */}
         </box>
     )
 }

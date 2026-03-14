@@ -26,7 +26,7 @@ export const taskListSchema = z.object({
     tasksCount: z.number().int().nonnegative(),
 
     /**
-     * CCS instance name (e.g. "personal", "bluprynt").
+     * CCS instance name (e.g. "personal", "work").
      * Undefined for lists from ~/.claude/tasks/
      */
     instance: z.string().optional(),

@@ -1,0 +1,67 @@
+---
+title: macOS
+description: How to install and run Huba on macOS.
+---
+
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
+
+You can install Huba using Homebrew or npm.
+
+<Tabs items={["Homebrew", "npm"]}>
+<Tab value="Homebrew">
+```bash
+brew tap sergeyzwezdin/huba
+brew install sergeyzwezdin/huba/huba
+```
+</Tab>
+<Tab value="npm">
+```bash
+npm install -g huba
+```
+</Tab>
+</Tabs>
+
+## Run
+
+Once installed, launch Huba from the terminal:
+
+```bash
+hb
+```
+
+
+## Upgrade
+
+To upgrade Huba to the latest version:
+
+<Tabs items={["Homebrew", "npm"]}>
+<Tab value="Homebrew">
+```bash
+brew update
+brew upgrade huba
+```
+</Tab>
+<Tab value="npm">
+```bash
+npm install -g huba@latest
+```
+</Tab>
+</Tabs>
+
+## Uninstall
+
+To remove Huba from your system:
+
+<Tabs items={["Homebrew", "npm"]}>
+<Tab value="Homebrew">
+```bash
+brew uninstall huba
+brew untap sergeyzwezdin/huba
+```
+</Tab>
+<Tab value="npm">
+```bash
+npm uninstall -g huba
+```
+</Tab>
+</Tabs>
