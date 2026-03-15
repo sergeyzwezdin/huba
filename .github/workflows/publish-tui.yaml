@@ -60,7 +60,7 @@ jobs:
           VERSION="${{ steps.pkg.outputs.VERSION }}"
           mkdir -p assets
 
-          for target in darwin-arm64 darwin-amd64 linux-amd64 linux-arm64; do
+          for target in darwin-arm64 darwin-amd64 linux-amd64 linux-arm64 windows-amd64; do
             gh release download "${VERSION}" \
               --pattern "huba-${VERSION}-${target}.tar.gz" \
               --dir assets
@@ -81,6 +81,7 @@ jobs:
             ["darwin-amd64"]="darwin-x64 darwin x64"
             ["linux-amd64"]="linux-x64 linux x64"
             ["linux-arm64"]="linux-arm64 linux arm64"
+            ["windows-amd64"]="windows-x64 win32 x64"
           )
 
           for target in "${!PLATFORMS[@]}"; do
@@ -89,7 +90,10 @@ jobs:
             mkdir -p "${PKG_DIR}/bin"
 
             tar -xzf "assets/huba-${VERSION}-${target}.tar.gz" -C "${PKG_DIR}/bin"
-            chmod +x "${PKG_DIR}/bin/hb"
+
+            if [ "${os}" != "win32" ]; then
+              chmod +x "${PKG_DIR}/bin/hb"
+            fi
 
             cat > "${PKG_DIR}/package.json" <<EOF
           {
@@ -136,14 +140,15 @@ jobs:
                 ("@sergeyzwezdin/huba-cli-darwin-arm64"): $version,
                 ("@sergeyzwezdin/huba-cli-darwin-x64"): $version,
                 ("@sergeyzwezdin/huba-cli-linux-x64"): $version,
-                ("@sergeyzwezdin/huba-cli-linux-arm64"): $version
+                ("@sergeyzwezdin/huba-cli-linux-arm64"): $version,
+                ("@sergeyzwezdin/huba-cli-windows-x64"): $version
               }
             }' > "${PKG_DIR}/package.json"
 
       - name: Publish platform packages
         if: steps.check.outputs.PUBLISHED == 'false'
         run: |
-          for suffix in darwin-arm64 darwin-x64 linux-x64 linux-arm64; do
+          for suffix in darwin-arm64 darwin-x64 linux-x64 linux-arm64 windows-x64; do
             npm publish "dist/@sergeyzwezdin/huba-cli-${suffix}" --access public
           done
         env:

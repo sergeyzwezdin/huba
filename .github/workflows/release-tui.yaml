@@ -47,6 +47,11 @@ jobs:
             script: build:darwin-arm64
             artifact: hb-darwin-arm64
 
+          - runner: windows-2025
+            target: windows-x64
+            script: build:windows-x64
+            artifact: hb-windows-x64.exe
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -160,6 +165,11 @@ jobs:
             rm hb
           done
 
+          # Windows (exe, no chmod needed)
+          cp "artifacts/hb-windows-x64.exe/hb-windows-x64.exe" hb.exe
+          tar -czf "release/huba-${VERSION}-windows-amd64.tar.gz" hb.exe
+          rm hb.exe
+
       - name: Create release and upload binaries
         if: steps.check.outputs.EXISTS == 'false'
         run: |
@@ -180,3 +190,4 @@ jobs:
             hb-linux-arm64
             hb-darwin-x64
             hb-darwin-arm64
+            hb-windows-x64.exe
