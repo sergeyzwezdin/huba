@@ -8,8 +8,8 @@ export const INSTALL_COMMANDS: Record<Platform, Partial<Record<Method, { install
             upgrade: ['brew update', 'brew upgrade huba'],
         },
         NPM: {
-            install: ['npm -g install huba'],
-            upgrade: ['npm -g update huba'],
+            install: ['npm -g install @sergeyzwezdin/huba'],
+            upgrade: ['npm -g install @sergeyzwezdin/huba@latest'],
         },
     },
     Linux: {
@@ -18,14 +18,14 @@ export const INSTALL_COMMANDS: Record<Platform, Partial<Record<Method, { install
             upgrade: ['brew update', 'brew upgrade huba'],
         },
         NPM: {
-            install: ['npm -g install huba'],
-            upgrade: ['npm -g update huba'],
+            install: ['npm -g install @sergeyzwezdin/huba'],
+            upgrade: ['npm -g install @sergeyzwezdin/huba@latest'],
         },
     },
     Windows: {
         NPM: {
-            install: ['npm -g install huba'],
-            upgrade: ['npm -g update huba'],
+            install: ['npm -g install @sergeyzwezdin/huba'],
+            upgrade: ['npm -g install @sergeyzwezdin/huba@latest'],
         },
     },
 }
