@@ -1,10 +1,10 @@
 {
-    "name": "huba-tui",
+    "name": "@sergeyzwezdin/huba",
     "version": "0.0.16",
     "description": "TUI for managing Claude Code tasks - search, view, create, edit, and delete tasks across projects",
     "type": "module",
-    "private": true,
     "author": "Sergey Zwezdin",
+    "license": "MIT",
     "homepage": "https://github.com/sergeyzwezdin/huba",
     "repository": {
         "type": "git",
