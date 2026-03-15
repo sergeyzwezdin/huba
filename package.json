@@ -43,7 +43,14 @@
         "react-router": "^7.13.0",
         "tailwindcss": "^4",
         "typescript": "^5",
-        "zod": "^4.3.6"
+        "zod": "^4.3.6",
+        "@orama/orama": "^3.1.18",
+        "@types/mdx": "^2.0.13",
+        "fumadocs-core": "^16.6.17",
+        "fumadocs-mdx": "^14.2.10",
+        "fumadocs-ui": "^16.6.17",
+        "lucide-react": "^0.577.0",
+        "tailwind-merge": "^3.5.0"
     },
     "devDependencies": {
         "@biomejs/biome": "^2.4.4",
