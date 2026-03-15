@@ -21,3 +21,135 @@ jobs:
           target_darwin_arm64: true
           target_linux_amd64: true
           target_linux_arm64: true
+
+  npm:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Read package metadata
+        id: pkg
+        run: |
+          echo "VERSION=$(jq -r .version apps/huba-tui/package.json)" >> $GITHUB_OUTPUT
+          echo "DESCRIPTION=$(jq -r .description apps/huba-tui/package.json)" >> $GITHUB_OUTPUT
+          echo "AUTHOR=$(jq -r .author apps/huba-tui/package.json)" >> $GITHUB_OUTPUT
+          echo "LICENSE=$(jq -r .license apps/huba-tui/package.json)" >> $GITHUB_OUTPUT
+          echo "HOMEPAGE=$(jq -r .homepage apps/huba-tui/package.json)" >> $GITHUB_OUTPUT
+          echo "REPO_URL=$(jq -r .repository.url apps/huba-tui/package.json)" >> $GITHUB_OUTPUT
+
+      - name: Check if version already published
+        id: check
+        run: |
+          if npm view "@sergeyzwezdin/huba@${{ steps.pkg.outputs.VERSION }}" version 2>/dev/null; then
+            echo "PUBLISHED=true" >> $GITHUB_OUTPUT
+          else
+            echo "PUBLISHED=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Download release assets
+        if: steps.check.outputs.PUBLISHED == 'false'
+        run: |
+          VERSION="${{ steps.pkg.outputs.VERSION }}"
+          mkdir -p assets
+
+          for target in darwin-arm64 darwin-amd64 linux-amd64 linux-arm64; do
+            gh release download "${VERSION}" \
+              --pattern "huba-${VERSION}-${target}.tar.gz" \
+              --dir assets
+          done
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Prepare platform packages
+        if: steps.check.outputs.PUBLISHED == 'false'
+        run: |
+          VERSION="${{ steps.pkg.outputs.VERSION }}"
+          DESCRIPTION="${{ steps.pkg.outputs.DESCRIPTION }}"
+          LICENSE="${{ steps.pkg.outputs.LICENSE }}"
+
+          # asset-target → npm-suffix os cpu
+          declare -A PLATFORMS=(
+            ["darwin-arm64"]="darwin-arm64 darwin arm64"
+            ["darwin-amd64"]="darwin-x64 darwin x64"
+            ["linux-amd64"]="linux-x64 linux x64"
+            ["linux-arm64"]="linux-arm64 linux arm64"
+          )
+
+          for target in "${!PLATFORMS[@]}"; do
+            read -r suffix os cpu <<< "${PLATFORMS[$target]}"
+            PKG_DIR="dist/@sergeyzwezdin/huba-cli-${suffix}"
+            mkdir -p "${PKG_DIR}/bin"
+
+            tar -xzf "assets/huba-${VERSION}-${target}.tar.gz" -C "${PKG_DIR}/bin"
+            chmod +x "${PKG_DIR}/bin/hb"
+
+            cat > "${PKG_DIR}/package.json" <<EOF
+          {
+            "name": "@sergeyzwezdin/huba-cli-${suffix}",
+            "version": "${VERSION}",
+            "description": "${DESCRIPTION}",
+            "license": "${LICENSE}",
+            "os": ["${os}"],
+            "cpu": ["${cpu}"],
+            "files": ["bin/"],
+            "preferUnplugged": true
+          }
+          EOF
+          done
+
+      - name: Prepare main package
+        if: steps.check.outputs.PUBLISHED == 'false'
+        run: |
+          VERSION="${{ steps.pkg.outputs.VERSION }}"
+          PKG_DIR="dist/@sergeyzwezdin/huba"
+          mkdir -p "${PKG_DIR}/bin"
+
+          cp apps/huba-tui/bin/run.js "${PKG_DIR}/bin/run.js"
+
+          jq -n \
+            --arg version "$VERSION" \
+            --arg description "${{ steps.pkg.outputs.DESCRIPTION }}" \
+            --arg author "${{ steps.pkg.outputs.AUTHOR }}" \
+            --arg license "${{ steps.pkg.outputs.LICENSE }}" \
+            --arg homepage "${{ steps.pkg.outputs.HOMEPAGE }}" \
+            --arg repo_url "${{ steps.pkg.outputs.REPO_URL }}" \
+            '{
+              name: "@sergeyzwezdin/huba",
+              version: $version,
+              description: $description,
+              author: $author,
+              license: $license,
+              homepage: $homepage,
+              repository: { type: "git", url: $repo_url },
+              bin: { hb: "bin/run.js" },
+              files: ["bin/"],
+              optionalDependencies: {
+                ("@sergeyzwezdin/huba-cli-darwin-arm64"): $version,
+                ("@sergeyzwezdin/huba-cli-darwin-x64"): $version,
+                ("@sergeyzwezdin/huba-cli-linux-x64"): $version,
+                ("@sergeyzwezdin/huba-cli-linux-arm64"): $version
+              }
+            }' > "${PKG_DIR}/package.json"
+
+      - name: Publish platform packages
+        if: steps.check.outputs.PUBLISHED == 'false'
+        run: |
+          for suffix in darwin-arm64 darwin-x64 linux-x64 linux-arm64; do
+            npm publish "dist/@sergeyzwezdin/huba-cli-${suffix}" --access public
+          done
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish main package
+        if: steps.check.outputs.PUBLISHED == 'false'
+        run: npm publish "dist/@sergeyzwezdin/huba" --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
