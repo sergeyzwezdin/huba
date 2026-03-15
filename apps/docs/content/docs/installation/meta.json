@@ -1,8 +1,4 @@
 {
     "title": "Installation",
-    "pages": [
-        "macos",
-        "linux",
-        "windows"
-    ]
+    "pages": ["macos", "linux", "windows"]
 }

@@ -1,7 +1,4 @@
 {
     "title": "Themes",
-    "pages": [
-        "built-in-themes",
-        "custom-themes"
-    ]
+    "pages": ["built-in-themes", "custom-themes"]
 }
