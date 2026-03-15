@@ -1,0 +1,35 @@
+---
+title: Getting Started
+description: How to install and run Huba on your system.
+icon: Rocket
+---
+
+## Installation
+
+Before using Huba, make sure you have [Claude Code](https://code.claude.com/docs/en/overview) installed on your system. Then install Huba for your platform:
+
+- [macOS](/docs/installation/macos) — via Homebrew or npm
+- [Linux](/docs/installation/linux) — via Homebrew or npm
+- [Windows](/docs/installation/windows) — via npm
+
+## Launch
+
+After installation, run Huba from the terminal:
+
+```bash
+hb
+```
+
+To open a specific task list directly, pass the list ID via environment variable:
+
+```bash
+CLAUDE_CODE_TASK_LIST_ID=a1b2c3d4-e5f6-7890-abcd-ef1234567890 hb
+```
+
+On startup, Huba auto-selects a task list with this priority:
+
+1. `CLAUDE_CODE_TASK_LIST_ID` environment variable (if set)
+2. Previously selected list (persisted between sessions)
+3. First available list (newest by creation date)
+
+If no task lists exist, you need to create tasks via Claude Code first.

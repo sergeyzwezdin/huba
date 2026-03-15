@@ -1,0 +1,16 @@
+{
+    "title": "Documentation",
+    "pages": [
+        "index",
+        "---Installation---",
+        "getting-started",
+        "installation",
+        "---Usage---",
+        "user-interface",
+        "task-management",
+        "task-lists",
+        "keyboard-shortcuts",
+        "---Customization---",
+        "themes"
+    ]
+}

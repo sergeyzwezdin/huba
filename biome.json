@@ -19,7 +19,7 @@
             "!tsconfig.json",
             "!tsconfig.*.json",
             "!src/**/generated",
-            "!apps/docs/app/globals.css",
+            "!apps/docs/**/globals.css",
             "!**/types/routes.d.ts"
         ]
     },

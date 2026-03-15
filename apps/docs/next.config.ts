@@ -1,11 +1,14 @@
+import { createMDX } from 'fumadocs-mdx/next'
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-    output: 'export',
+    output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
     reactCompiler: true,
     images: {
         unoptimized: true,
     },
 }
 
-export default nextConfig
+const withMDX = createMDX({})
+
+export default withMDX(nextConfig)

@@ -1,0 +1,82 @@
+---
+title: Custom Themes
+description: How to create and share custom themes for Huba.
+---
+
+You can create custom themes by adding JSON files to the `~/.huba/themes/` directory. The filename (without the `.json` extension) becomes the theme name.
+
+## Setting Up
+
+Create the themes directory if it doesn't exist:
+
+```bash
+mkdir -p ~/.huba/themes
+```
+
+## Creating a Theme
+
+Create a new JSON file in `~/.huba/themes/`, for example `~/.huba/themes/my-theme.json`. Each theme file must contain **all** fields — partial themes are rejected.
+
+```json
+{
+  "border": {
+    "default": "#3A3A3A",
+    "focused": "#D77757"
+  },
+  "status": {
+    "blocked":    { "id": "#E06C75", "icon": "#E06C75", "title": "#E06C75" },
+    "pending":    { "id": "#ABB2BF", "icon": "#ABB2BF", "title": "#ABB2BF" },
+    "inProgress": { "id": "#61AFEF", "icon": "#61AFEF", "title": "#61AFEF" },
+    "completed":  { "id": "#98C379", "icon": "#98C379", "title": "#98C379" }
+  },
+  "colors": {
+    "primary": "#ABB2BF",
+    "secondary": "#5C6370",
+    "tertiary": "#4B5263",
+    "date": "#D19A66",
+    "hint": "#5C6370",
+    "accent": "#C678DD"
+  },
+  "surface": {
+    "background": "#282C34",
+    "selection": "#3E4451",
+    "scrollbarTrack": "#2C313A",
+    "scrollbarThumb": "#4B5263"
+  },
+  "progress": {
+    "blocked": "#E06C75",
+    "pending": "#ABB2BF",
+    "inProgress": "#61AFEF",
+    "completed": "#98C379"
+  },
+  "markdown": {
+    "heading": "#E5C07B",
+    "list": "#C678DD",
+    "code": "#98C379",
+    "default": "#ABB2BF"
+  }
+}
+```
+
+### Schema Reference
+
+| Section      | Description                                                  |
+| ------------ | ------------------------------------------------------------ |
+| **border**   | Panel border colors for unfocused and focused states         |
+| **status**   | Colors for each task status — ID number, icon, and title text |
+| **colors**   | General UI colors — text, dates, hints, accents              |
+| **surface**  | Background, selection highlight, and scrollbar appearance    |
+| **progress** | Progress bar segment colors per task status                  |
+| **markdown** | Colors for markdown rendering in task detail view            |
+
+## Using Your Theme
+
+Restart Huba to pick up new or modified theme files.
+
+Custom themes appear after built-in themes in the cycle order. Press `w` / `Shift+W` to cycle to your theme.
+
+Invalid theme files are skipped with a warning.
+
+## Sharing Themes
+
+If you've created a theme you'd like to share with the community, consider opening a pull request to the [Huba GitHub repository](https://github.com/sergeyzwezdin/huba) to include it as a built-in theme.

@@ -10,13 +10,20 @@
         "format": "biome format --write"
     },
     "dependencies": {
+        "@orama/orama": "catalog:",
         "@radix-ui/react-slot": "catalog:",
+        "@types/mdx": "catalog:",
         "class-variance-authority": "catalog:",
         "clsx": "catalog:",
+        "fumadocs-core": "catalog:",
+        "fumadocs-mdx": "catalog:",
+        "fumadocs-ui": "catalog:",
+        "lucide-react": "catalog:",
         "next": "catalog:",
         "next-themes": "catalog:",
         "react": "catalog:",
-        "react-dom": "catalog:"
+        "react-dom": "catalog:",
+        "tailwind-merge": "catalog:"
     },
     "devDependencies": {
         "@biomejs/biome": "catalog:",
