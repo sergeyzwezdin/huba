@@ -64,9 +64,6 @@ bun install
 
 # Start in dev mode
 bun run dev
-
-# Or open a specific task list directly
-CLAUDE_CODE_TASK_LIST_ID=abc123 bun run dev
 ```
 
 ### Prerequisites

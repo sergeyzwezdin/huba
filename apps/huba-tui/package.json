@@ -1,6 +1,6 @@
 {
     "name": "@sergeyzwezdin/huba",
-    "version": "0.0.17",
+    "version": "0.0.18",
     "description": "TUI for managing Claude Code tasks - search, view, create, edit, and delete tasks across projects",
     "type": "module",
     "author": "Sergey Zwezdin",

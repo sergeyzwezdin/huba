@@ -16,8 +16,8 @@ const Hero: FC = () => (
                 your task list into something that actually drives results. All without leaving the terminal.
             </p>
             <div className="animate-fade-in-up [animation-delay:500ms] mt-12">
-                <CodeBlock className="hero-code-block mx-auto max-w-md text-left" copyText="npx huba">
-                    <CodeLine>npx huba</CodeLine>
+                <CodeBlock className="hero-code-block mx-auto max-w-md text-left" copyText="npx @sergeyzwezdin/huba">
+                    <CodeLine>npx @sergeyzwezdin/huba</CodeLine>
                 </CodeBlock>
                 <p className="animate-fade-in-up [animation-delay:600ms] mt-4 text-sm text-subtle italic">
                     Your tasks deserve a better UI than{' '}
