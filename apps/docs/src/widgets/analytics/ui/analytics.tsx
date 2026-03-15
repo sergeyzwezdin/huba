@@ -21,7 +21,7 @@ export const Analytics: FC = () => (
         <noscript>
             <div>
                 <img
-                    src="https://mc.yandex.ru/watch/107709427"
+                    src={`https://mc.yandex.ru/watch/${METRIKA_ID}`}
                     style={{ position: 'absolute', left: '-9999px' }}
                     alt=""
                 />
