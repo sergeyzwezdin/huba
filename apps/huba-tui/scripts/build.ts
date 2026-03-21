@@ -1,4 +1,4 @@
-import { realpathSync } from 'node:fs'
+import { existsSync, realpathSync } from 'node:fs'
 import { dirname, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -21,9 +21,21 @@ const targets: Record<string, TargetConfig> = {
     'windows-x64': { bunTarget: 'bun-windows-x64-modern', outfile: '.bin/hb-windows-x64.exe' },
 }
 
-const workerSourcePath = resolve(appRoot, 'node_modules/@opentui/core/parser.worker.js')
+function resolveWorkerPath(): string {
+    const coreDir = dirname(fileURLToPath(import.meta.resolve('@opentui/core')))
+    const workerPath = resolve(coreDir, 'parser.worker.js')
+    if (!existsSync(workerPath)) {
+        console.error(`OpenTUI parser worker not found at: ${workerPath}`)
+        console.error('Run "bun install" to ensure @opentui/core is installed.')
+        process.exit(1)
+    }
+    return workerPath
+}
+
+const workerSourcePath = resolveWorkerPath()
 const workerRealPath = realpathSync(workerSourcePath)
-const workerBunfsPath = `/$bunfs/root/${relative(realpathSync(repoRoot), workerRealPath)}`
+const workerRelativePath = relative(realpathSync(repoRoot), workerRealPath).replaceAll('\\', '/')
+const workerBunfsPath = `/$bunfs/root/${workerRelativePath}`
 
 async function build(target?: string) {
     const config = target ? targets[target] : undefined
