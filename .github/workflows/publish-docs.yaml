@@ -46,6 +46,7 @@ jobs:
         working-directory: apps/docs
         env:
           NODE_ENV: production
+          SITE_URL: ${{ vars.SITE_URL }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
