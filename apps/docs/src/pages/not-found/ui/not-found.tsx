@@ -3,7 +3,6 @@
 import type { FC } from 'react'
 
 import Image from 'next/image'
-import Link from 'next/link'
 
 const NotFound: FC = () => (
     <div className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-background font-sans">
@@ -38,12 +37,12 @@ const NotFound: FC = () => (
             </p>
 
             <div className="animate-fade-in-up [animation-delay:700ms] mt-10 flex items-center justify-center gap-5">
-                <Link href="/" className="btn-primary rounded-full px-7 py-2.5 text-sm font-medium">
+                <a href="/" className="btn-primary rounded-full px-7 py-2.5 text-sm font-medium">
                     Back to Home
-                </Link>
-                <Link href="/docs" className="btn-glow">
+                </a>
+                <a href="/docs" className="btn-glow">
                     Documentation
-                </Link>
+                </a>
             </div>
         </div>
     </div>
