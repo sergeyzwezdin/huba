@@ -42,7 +42,7 @@
     },
     "apps/huba-tui": {
       "name": "@sergeyzwezdin/huba",
-      "version": "0.0.21",
+      "version": "0.0.22",
       "dependencies": {
         "@opentui-ui/dialog": "catalog:",
         "@opentui-ui/toast": "catalog:",
